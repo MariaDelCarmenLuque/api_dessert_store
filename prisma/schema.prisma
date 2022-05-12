@@ -1,0 +1,172 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int       @id @default(autoincrement())
+  uuid      String    @unique @default(uuid())
+  firstName String    @map("first_name")
+  lastName  String    @map("last_name")
+  userName  String    @map("user_name")
+  email     String    @unique
+  password  String
+  role      Role      @default(USER)
+  deletedAt DateTime? @map("deleted_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+  tokens    Token[]
+  likes     Like[]
+  orders    Order[]
+  desserts  Dessert[]
+  cart      Cart?
+
+  @@map("users")
+}
+
+model Category {
+  id        Int       @id @default(autoincrement())
+  uuid      String    @unique @default(uuid())
+  name      String
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+  desserts  Dessert[]
+
+  @@map("categories")
+}
+
+model Dessert {
+  id          Int         @id @default(autoincrement())
+  uuid        String      @unique @default(uuid())
+  name        String
+  description String
+  price       Float
+  stock       Int
+  status      Status      @default(ACTIVE)
+  category    Category    @relation(fields: [categoryId], references: [id])
+  categoryId  Int         @map(name: "category_id")
+  user        User        @relation(fields: [userId], references: [id])
+  userId      Int         @map(name: "user_id")
+  deletedAt   DateTime?   @map("deleted_at")
+  updatedAt   DateTime    @updatedAt @map("updated_at")
+  createdAt   DateTime    @default(now()) @map("created_at")
+  likes       Like[]
+  orderItems  OrderItem[]
+  cartItems   CartItem[]
+  images      Image[]
+
+  @@map("desserts")
+}
+
+model Image {
+  id        Int      @id @default(autoincrement())
+  url       String
+  dessert   Dessert  @relation(fields: [dessertId], references: [id])
+  dessertId Int      @map("dessert_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("images")
+}
+
+model Cart {
+  id          Int        @id @default(autoincrement())
+  uuid        String     @unique @default(uuid())
+  user        User       @relation(fields: [userId], references: [id])
+  userId      Int        @map(name: "user_id") @unique
+  amount      Float      @map("amount")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
+  createdAt   DateTime   @default(now()) @map("created_at")
+  deletedAt   DateTime?  @map("deleted_at")
+  purchasedAt DateTime?  @map("purchased_at")
+  cartItems   CartItem[]
+
+  @@map("cart")
+}
+
+model CartItem {
+  id         Int       @id @default(autoincrement())
+  uuid       String    @unique @default(uuid())
+  cart       Cart      @relation(fields: [cartId], references: [id])
+  cartId     Int       @map(name: "cart_id")
+  dessert    Dessert   @relation(fields: [dessertId], references: [id])
+  dessertId  Int       @map("dessert_id")
+  quantity   Int
+  unitPrice  Float     @map("unit_price")
+  totalPrice Float     @map("total_price")
+  deletedAt  DateTime? @map("deleted_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
+  createdAt  DateTime  @default(now()) @map("created_at")
+
+  @@unique([cartId, dessertId])
+  @@map("cart_items")
+}
+
+model Order {
+  id         Int         @id @default(autoincrement())
+  uuid       String      @unique @default(uuid())
+  user       User        @relation(fields: [userId], references: [id])
+  userId     Int         @map(name: "user_id")
+  totalPrice Float       @map("total_price")
+  createdAt  DateTime    @default(now()) @map("created_at")
+  orderItem  OrderItem[]
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id         Int      @id @default(autoincrement())
+  uuid       String   @unique @default(uuid())
+  order      Order    @relation(fields: [orderId], references: [id])
+  orderId    Int      @map(name: "order_id")
+  dessert    Dessert  @relation(fields: [dessertId], references: [id])
+  dessertId  Int      @map(name: "dessert_id")
+  quantity   Int
+  unitPrice  Float    @map("unit_price")
+  totalPrice Float    @map("total_price")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  @@map("order_items")
+}
+
+model Like {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int      @map(name: "user_id")
+  dessert   Dessert  @relation(fields: [dessertId], references: [id])
+  dessertId Int      @map(name: "dessert_id")
+  isLike    Boolean  @map(name: "is_like")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@unique([userId, dessertId])
+  @@map("likes")
+}
+
+model Token {
+  id           Int      @id @default(autoincrement())
+  user         User     @relation(fields: [userId], references: [id])
+  userId       Int      @map(name: "user_id")
+  jti          String   @unique @default(uuid())
+  refreshToken String   @map(name: "refresh_token")
+  createdAt    DateTime @default(now()) @map(name: "created_at")
+  expiredAt    DateTime @default(now()) @map(name: "expired_at")
+
+  @@map(name: "tokens")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum Status {
+  ACTIVE
+  DISABLE
+}
