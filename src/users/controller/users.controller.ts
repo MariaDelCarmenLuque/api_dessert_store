@@ -30,11 +30,6 @@ export class UsersController {
     }
     return user;
   }
-  @Post('register')
-  async register(@Body() user: CreateUserDto) {
-    return await this.userService.create(user);
-  }
-
   @Patch(':id')
   async updateUser(@Param('id') id: number, @Body() data: UpdateUserDto) {
     return await this.userService.updateUser(id, data);
