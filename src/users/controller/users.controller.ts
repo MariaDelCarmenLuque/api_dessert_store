@@ -7,9 +7,7 @@ import {
   HttpStatus,
   Param,
   Patch,
-  Post,
 } from '@nestjs/common';
-import { CreateUserDto } from '../models/create-user.dto';
 import { UpdateUserDto } from '../models/update-user.dto';
 import { UsersService } from '../service/users.service';
 
@@ -30,11 +28,6 @@ export class UsersController {
     }
     return user;
   }
-  @Post('register')
-  async register(@Body() user: CreateUserDto) {
-    return await this.userService.create(user);
-  }
-
   @Patch(':id')
   async updateUser(@Param('id') id: number, @Body() data: UpdateUserDto) {
     return await this.userService.updateUser(id, data);
