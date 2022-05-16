@@ -61,4 +61,13 @@ export class DessertsController {
   async delete(@Param('id') id: number) {
     return await this.dessertsService.deleteDessert(id);
   }
+
+  @Patch('/:id/status')
+  async enableStatus(@Param('id') id: number) {
+    // const dessert: Dessert = await this.dessertsService.findOne(id);
+    // if (!dessert) {
+    //   throw new HttpException('Dessert Not Found', HttpStatus.NOT_FOUND);
+    // }
+    return await this.dessertsService.updateStatus(id);
+  }
 }

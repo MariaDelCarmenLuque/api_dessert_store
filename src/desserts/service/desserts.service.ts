@@ -3,7 +3,7 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { Dessert, Prisma } from '@prisma/client';
+import { Dessert, Prisma, Status } from '@prisma/client';
 import { plainToClass } from 'class-transformer';
 import { PrismaService } from 'src/prisma.service';
 import { PrismaErrorEnum } from 'src/utils/enums';
@@ -81,21 +81,21 @@ export class DessertsService {
   }
 
   async updateDessert(id: number, data: UpdateDessertDto) {
-    const oldpProduct = await this.prisma.dessert.findUnique({
+    const oldDessert = await this.prisma.dessert.findUnique({
       where: {
         id,
       },
       rejectOnNotFound: false,
     });
 
-    if (!oldpProduct) {
+    if (!oldDessert) {
       throw new NotFoundException('Product not found');
     }
 
-    if (oldpProduct.deletedAt) {
+    if (oldDessert.deletedAt) {
       throw new UnauthorizedException('Product is deleted ');
     }
-    if (oldpProduct.status == 'DISABLE') {
+    if (oldDessert.status == 'DISABLE') {
       throw new UnauthorizedException('Product is disable ');
     }
     const dessert = await this.prisma.dessert.update({
@@ -114,5 +114,27 @@ export class DessertsService {
       },
     });
     return user;
+  }
+  async updateStatus(id: number) {
+    const dessert = await this.prisma.dessert.findUnique({
+      where: {
+        id,
+      },
+      rejectOnNotFound: false,
+    });
+    let newDessert;
+    if (dessert.status == Status.ACTIVE) {
+      newDessert = await this.prisma.dessert.update({
+        data: { ...dessert, status: 'DISABLE' },
+        where: { id: dessert.id },
+      });
+    }
+    if (dessert.status == Status.DISABLE) {
+      newDessert = await this.prisma.dessert.update({
+        data: { ...dessert, status: 'ACTIVE' },
+        where: { id: dessert.id },
+      });
+    }
+    return newDessert;
   }
 }
