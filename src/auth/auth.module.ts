@@ -13,7 +13,6 @@ import { jwtConstants } from './constants';
   imports: [
     UsersModule,
     PassportModule,
-    PassportModule,
     JwtModule.register({ secret: jwtConstants.secret }),
   ],
   providers: [AuthService, LocalStrategy, PrismaService, JwtStrategy],
