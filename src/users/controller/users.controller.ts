@@ -7,9 +7,7 @@ import {
   HttpStatus,
   Param,
   Patch,
-  Post,
 } from '@nestjs/common';
-import { CreateUserDto } from '../models/create-user.dto';
 import { UpdateUserDto } from '../models/update-user.dto';
 import { UsersService } from '../service/users.service';
 
