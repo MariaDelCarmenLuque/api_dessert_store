@@ -1,4 +1,44 @@
 import { Injectable } from '@nestjs/common';
+import { Category } from '@prisma/client';
+import { PrismaService } from 'src/prisma.service';
+import { UpdateCategoryDto } from '../models/update-category.dto';
 
 @Injectable()
-export class CategoriesService {}
+export class CategoriesService {
+  constructor(private prisma: PrismaService) {}
+
+  async getAll(): Promise<Category[]> {
+    return this.prisma.category.findMany({
+      orderBy: { createdAt: 'desc' },
+    });
+  }
+
+  async findOne(id: number): Promise<Category | null> {
+    const category = await this.prisma.category.findUnique({
+      where: {
+        id,
+      },
+      rejectOnNotFound: false,
+    });
+
+    return category;
+  }
+
+  async create(data: UpdateCategoryDto) {
+    const { name, ...input } = data;
+    const category = await this.prisma.category.create({
+      data: { ...input, name: name },
+    });
+    return category;
+  }
+
+  async updateCategory(id: number, data: UpdateCategoryDto) {
+    const category = await this.prisma.category.update({
+      data: {
+        ...data,
+      },
+      where: { id },
+    });
+    return category;
+  }
+}
