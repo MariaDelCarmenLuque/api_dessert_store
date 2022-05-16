@@ -1,28 +1,27 @@
 import {
+  BadRequestException,
   HttpException,
   HttpStatus,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import { compareSync, hashSync } from 'bcryptjs';
 import { UnprocessableEntity, NotFound } from 'http-errors';
-import { Prisma, Token, User } from '@prisma/client';
+import { Prisma, Token } from '@prisma/client';
 import { PrismaService } from 'src/prisma.service';
 import { PrismaErrorEnum } from 'src/utils/enums';
 import { CreateUserDto } from 'src/users/models/create-user.dto';
-import { UsersService } from 'src/users/service/users.service';
 import { TokenDto } from '../models/token.dto';
 import { LoginDto } from '../models/login.dto';
-import { sign } from 'jsonwebtoken';
+import { sign, verify } from 'jsonwebtoken';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Injectable()
 export class AuthService {
   static prisma: any;
   constructor(
-    private usersService: UsersService,
-    private jwtService: JwtService,
     private prisma: PrismaService,
+    private eventEmitter: EventEmitter2,
   ) {}
 
   async createUser(user: CreateUserDto): Promise<TokenDto> {
@@ -42,7 +41,7 @@ export class AuthService {
         password: encryptedPassword,
       },
     });
-    const token = await this.createToken(newUser);
+    const token = await this.createToken(newUser.id);
     return await this.generateToken(token.jti);
   }
 
@@ -60,6 +59,7 @@ export class AuthService {
       );
     }
   }
+
   async login(input: LoginDto): Promise<TokenDto> {
     const userFound = await this.prisma.user.findUnique({
       where: { email: input.email },
@@ -72,10 +72,11 @@ export class AuthService {
     if (!isValidPassword) {
       throw new UnauthorizedException('Password is incorrect');
     }
-    const token = await this.createToken(userFound);
+    const token = await this.createToken(userFound.id);
 
     return this.generateToken(token.jti);
   }
+
   // validateUser() method for of retrieving a user and verifying the password
   async validateUser(email: string): Promise<any> {
     const user = await this.prisma.user.findUnique({
@@ -95,10 +96,10 @@ export class AuthService {
     return userData;
   }
 
-  async createToken(user: User): Promise<Token> {
+  async createToken(id: number): Promise<Token> {
     try {
       const token = await this.prisma.token.create({
-        data: { userId: user.id },
+        data: { userId: id },
       });
       return token;
     } catch (error) {
@@ -158,5 +159,23 @@ export class AuthService {
       process.env.REFRESH_TOKEN_SECRET as string,
     );
     return refreshToken;
+  }
+
+  async logout(accessToken: string): Promise<void> {
+    if (!accessToken) return;
+    try {
+      const { sub } = verify(
+        accessToken,
+        process.env.ACCESS_TOKEN_SECRET as string,
+      );
+
+      await this.prisma.token.delete({
+        where: {
+          jti: sub as string,
+        },
+      });
+    } catch (error) {
+      throw new BadRequestException('Token is invalid');
+    }
   }
 }
