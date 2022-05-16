@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Category } from '@prisma/client';
 import { PrismaService } from 'src/prisma.service';
-import { UpdateCategoryDto } from '../models/update-category.dto';
+import { CategoryDto } from '../models/category.dto';
 
 @Injectable()
 export class CategoriesService {
@@ -24,7 +24,7 @@ export class CategoriesService {
     return category;
   }
 
-  async create(data: UpdateCategoryDto) {
+  async create(data: CategoryDto) {
     const { name, ...input } = data;
     const category = await this.prisma.category.create({
       data: { ...input, name: name },
@@ -32,7 +32,7 @@ export class CategoriesService {
     return category;
   }
 
-  async updateCategory(id: number, data: UpdateCategoryDto) {
+  async updateCategory(id: number, data: CategoryDto) {
     const category = await this.prisma.category.update({
       data: {
         ...data,

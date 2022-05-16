@@ -9,7 +9,7 @@ import {
   Post,
 } from '@nestjs/common';
 import { Category } from '@prisma/client';
-import { UpdateCategoryDto } from '../models/update-category.dto';
+import { CategoryDto } from '../models/category.dto';
 import { CategoriesService } from '../service/categories.service';
 
 @Controller('categories')
@@ -31,14 +31,12 @@ export class CategoriesController {
   }
 
   @Post()
-  async createCategory(
-    @Body() createCategory: UpdateCategoryDto,
-  ): Promise<Category> {
+  async createCategory(@Body() createCategory: CategoryDto): Promise<Category> {
     return await this.categoriesService.create(createCategory);
   }
 
   @Patch('/:id')
-  async updateUser(@Param('id') id: number, @Body() data: UpdateCategoryDto) {
+  async updateUser(@Param('id') id: number, @Body() data: CategoryDto) {
     return await this.categoriesService.updateCategory(id, data);
   }
 }
