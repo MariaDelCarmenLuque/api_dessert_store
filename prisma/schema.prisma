@@ -25,7 +25,6 @@ model User {
   tokens    Token[]
   likes     Like[]
   orders    Order[]
-  desserts  Dessert[]
   cart      Cart?
 
   @@map("users")
@@ -52,8 +51,6 @@ model Dessert {
   status      Status      @default(ACTIVE)
   category    Category    @relation(fields: [categoryId], references: [id])
   categoryId  Int         @map(name: "category_id")
-  user        User        @relation(fields: [userId], references: [id])
-  userId      Int         @map(name: "user_id")
   deletedAt   DateTime?   @map("deleted_at")
   updatedAt   DateTime    @updatedAt @map("updated_at")
   createdAt   DateTime    @default(now()) @map("created_at")
