@@ -154,7 +154,7 @@ model Token {
   user         User     @relation(fields: [userId], references: [id])
   userId       Int      @map(name: "user_id")
   jti          String   @unique @default(uuid())
-  refreshToken String   @map(name: "refresh_token")
+  refreshToken String?   @map(name: "refresh_token")
   createdAt    DateTime @default(now()) @map(name: "created_at")
   expiredAt    DateTime @default(now()) @map(name: "expired_at")
 
