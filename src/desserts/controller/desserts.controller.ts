@@ -23,9 +23,13 @@ export class DessertsController {
   constructor(private dessertsService: DessertsService) {}
 
   @Get()
-  async getAllDesserts(
-    @Query('take', new DefaultValuePipe(10), ParseIntPipe) take,
-    @Query('skip', new DefaultValuePipe(1), ParseIntPipe) skip,
+  async getAllDesserts(): Promise<Dessert[]> {
+    return await this.dessertsService.getAllDesserts();
+  }
+  @Get('/filters')
+  async getAllDessertsFilter(
+    @Query('take', new DefaultValuePipe(10), ParseIntPipe) take?: 10,
+    @Query('skip', new DefaultValuePipe(1), ParseIntPipe) skip?: 1,
     @Query('category', new DefaultValuePipe(null), ParseIntPipe)
     category?: number,
   ): Promise<Dessert[]> {
