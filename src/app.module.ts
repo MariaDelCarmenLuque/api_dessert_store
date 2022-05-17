@@ -7,6 +7,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 import { DessertsModule } from './desserts/desserts.module';
 import { CategoriesModule } from './categories/categories.module';
 import { CartModule } from './cart/cart.module';
+import { OrdersModule } from './orders/service/orders.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { CartModule } from './cart/cart.module';
     DessertsModule,
     EventEmitterModule.forRoot(),
     CartModule,
+    OrdersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
