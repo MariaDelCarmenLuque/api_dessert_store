@@ -17,6 +17,7 @@ export class UpdateUserDto {
   readonly userName?: string;
 
   @IsEmail()
+  @IsString()
   readonly email?: string;
 
   @IsNotEmpty()
