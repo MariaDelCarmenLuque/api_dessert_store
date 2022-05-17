@@ -17,6 +17,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import {
+  ApiBadRequestResponse,
   ApiBearerAuth,
   ApiBody,
   ApiConflictResponse,
@@ -317,15 +318,26 @@ export class DessertsController {
   }
 
   @Delete('/:id')
-  // @ApiBearerAuth()
-  // @Roles(Role.ADMIN)
-  // @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiBearerAuth()
+  @Roles(Role.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: 'Delete a product by ID' })
   @ApiResponse({
     status: 200,
     description: 'Dessert deleted sucessfully',
     schema: {
       example: '200',
+    },
+  })
+  @ApiBadRequestResponse({
+    status: 200,
+    description: 'Dessert deleted sucessfully',
+    schema: {
+      example: {
+        statusCode: 400,
+        message: 'Dessert was deleted',
+        error: 'Bad Request',
+      },
     },
   })
   @ApiUnauthorizedResponse({
