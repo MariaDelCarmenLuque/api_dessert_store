@@ -13,6 +13,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { Dessert } from '@prisma/client';
+import { Public } from 'src/auth/decorators/public.decorator';
 import { CreateDessertDto } from '../models/create-dessert.dto';
 import { DessertDto } from '../models/dessert.dto';
 import { UpdateDessertDto } from '../models/update-dessert.dto';
@@ -23,6 +24,7 @@ export class DessertsController {
   constructor(private dessertsService: DessertsService) {}
 
   @Get()
+  @Public()
   async getAllDesserts(): Promise<Dessert[]> {
     return await this.dessertsService.getAllDesserts();
   }
