@@ -25,15 +25,8 @@ export class AuthService {
   ) {}
 
   async createUser(user: CreateUserDto): Promise<TokenDto> {
-    const userFound = await this.prisma.user.findUnique({
-      where: { email: user.email },
-      select: { id: true },
-      rejectOnNotFound: false,
-    });
+    await this.checkEmail(user);
 
-    if (userFound) {
-      throw new UnprocessableEntity('email already taken.');
-    }
     const encryptedPassword = hashSync(user.password, 10);
     const newUser = await this.prisma.user.create({
       data: {
@@ -54,7 +47,7 @@ export class AuthService {
 
     if (userFound) {
       throw new HttpException(
-        'User is already registered',
+        'User is already registered with email',
         HttpStatus.CONFLICT,
       );
     }
