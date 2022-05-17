@@ -27,7 +27,7 @@ export class AuthService {
   async createUser(user: CreateUserDto): Promise<TokenDto> {
     const userFound = await this.prisma.user.findUnique({
       where: { email: user.email },
-      select: { id: true },
+      // select: { id: true, email: true },
       rejectOnNotFound: false,
     });
 
@@ -39,6 +39,9 @@ export class AuthService {
       data: {
         ...user,
         password: encryptedPassword,
+        cart: {
+          create: {},
+        },
       },
     });
     const token = await this.createToken(newUser.id);
