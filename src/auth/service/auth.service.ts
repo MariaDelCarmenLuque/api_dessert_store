@@ -8,21 +8,17 @@ import {
 } from '@nestjs/common';
 import { compareSync, hashSync } from 'bcryptjs';
 import { Prisma, Token } from '@prisma/client';
-import { PrismaService } from 'src/prisma.service';
-import { PrismaErrorEnum } from 'src/utils/enums';
-import { CreateUserDto } from 'src/users/models/create-user.dto';
+import { PrismaService } from '../../prisma.service';
+import { PrismaErrorEnum } from '../../utils/enums';
+import { CreateUserDto } from '../../users/models/create-user.dto';
 import { TokenDto } from '../models/token.dto';
 import { LoginDto } from '../models/login.dto';
 import { sign, verify } from 'jsonwebtoken';
-import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Injectable()
 export class AuthService {
   static prisma: any;
-  constructor(
-    private prisma: PrismaService,
-    private eventEmitter: EventEmitter2,
-  ) {}
+  constructor(private prisma: PrismaService) {}
 
   async createUser(user: CreateUserDto): Promise<TokenDto> {
     await this.checkEmail(user);

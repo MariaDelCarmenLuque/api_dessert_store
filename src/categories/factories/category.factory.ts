@@ -1,7 +1,7 @@
 import faker from '@faker-js/faker';
 import { Category, Prisma } from '@prisma/client';
-import { PrismaService } from 'src/prisma.service';
-import { AbstractFactory } from 'src/utils/factories/abstract.factory';
+import { PrismaService } from '../../prisma.service';
+import { AbstractFactory } from '../../utils/factories/abstract.factory';
 
 type CategoryInput = Partial<Prisma.CategoryCreateInput>;
 
