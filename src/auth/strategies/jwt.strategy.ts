@@ -15,7 +15,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: any) {
-
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { sub, ...result } = payload;
     const { user } = await this.prisma.token.findUnique({

@@ -6,7 +6,6 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { compareSync, hashSync } from 'bcryptjs';
-import { UnprocessableEntity, NotFound } from 'http-errors';
 import { Prisma, Token } from '@prisma/client';
 import { PrismaService } from 'src/prisma.service';
 import { PrismaErrorEnum } from 'src/utils/enums';
