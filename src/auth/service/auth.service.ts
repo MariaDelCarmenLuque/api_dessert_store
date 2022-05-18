@@ -3,6 +3,7 @@ import {
   HttpException,
   HttpStatus,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { compareSync, hashSync } from 'bcryptjs';
@@ -98,7 +99,7 @@ export class AuthService {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         switch (error.code) {
           case PrismaErrorEnum.FOREIGN_KEY_CONSTRAINT:
-            throw new NotFound('User not found');
+            throw new NotFoundException('User not found');
           default:
             throw error;
         }
