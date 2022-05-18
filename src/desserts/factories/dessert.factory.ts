@@ -1,7 +1,7 @@
 import faker from '@faker-js/faker';
 import { Dessert, Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma.service';
-import { AbstractFactory } from 'src/utils/factories/abstract.factory';
+import { AbstractFactory } from '../../utils/factories/abstract.factory';
 
 type DessertInput = Partial<Prisma.DessertCreateInput>;
 

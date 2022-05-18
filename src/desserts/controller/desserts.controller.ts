@@ -31,11 +31,11 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { Dessert } from '@prisma/client';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-guard';
-import { RolesGuard } from 'src/auth/guards/roles.guard';
-import { Public } from 'src/auth/public.decorator';
-import { Roles } from 'src/auth/roles.decorator';
-import { Role } from 'src/auth/roles.enum';
+import { JwtAuthGuard } from '../../auth/guards/jwt-guard';
+import { RolesGuard } from '../../auth/guards/roles.guard';
+import { Public } from '../../auth/public.decorator';
+import { Roles } from '../../auth/roles.decorator';
+import { Role } from '../../auth/roles.enum';
 import { CreateDessertDto } from '../models/create-dessert.dto';
 import { DessertDto } from '../models/dessert.dto';
 import { UpdateDessertDto } from '../models/update-dessert.dto';

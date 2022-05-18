@@ -8,8 +8,8 @@ import {
 } from '@nestjs/common';
 import { Dessert, Prisma, Status } from '@prisma/client';
 import { plainToClass } from 'class-transformer';
-import { PrismaService } from 'src/prisma.service';
-import { PrismaErrorEnum } from 'src/utils/enums';
+import { PrismaService } from '../../prisma.service';
+import { PrismaErrorEnum } from '../../utils/enums';
 import { CreateDessertDto } from '../models/create-dessert.dto';
 import { DessertDto } from '../models/dessert.dto';
 import { UpdateDessertDto } from '../models/update-dessert.dto';
@@ -48,7 +48,7 @@ export class DessertsService {
         where: {
           id: id,
         },
-        rejectOnNotFound: false,
+        rejectOnNotFound: true,
       });
 
       return dessert;
