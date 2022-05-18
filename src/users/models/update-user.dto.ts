@@ -1,5 +1,11 @@
 import { Role } from '@prisma/client';
-import { IsEmail, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import {
+  IsEmail,
+  IsLowercase,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 
 export class UpdateUserDto {
   @IsNotEmpty()
@@ -22,5 +28,6 @@ export class UpdateUserDto {
 
   @IsNotEmpty()
   @IsOptional()
+  @IsLowercase()
   readonly role?: Role;
 }

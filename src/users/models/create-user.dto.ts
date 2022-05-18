@@ -1,6 +1,7 @@
 import { Role } from '@prisma/client';
 import {
   IsEmail,
+  IsLowercase,
   IsNotEmpty,
   IsOptional,
   IsString,
@@ -30,6 +31,6 @@ export class CreateUserDto {
   readonly password: string;
 
   @IsNotEmpty()
-  @IsOptional()
+  @IsLowercase()
   readonly role: Role;
 }
