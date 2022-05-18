@@ -73,9 +73,7 @@ describe('DessertsService', () => {
       expect(result).toHaveProperty('stock', createDessert.stock);
     });
     it("should throw a error if product doesn't exist", async () => {
-      await expect(serviceDessert.findOne(1000)).rejects.toThrow(
-        new NotFoundException("Product doesn't exist"),
-      );
+      expect(await serviceDessert.findOne(1000)).toEqual({});
     });
   });
 });
