@@ -34,7 +34,7 @@ export class UsersService {
       where: {
         id,
       },
-      rejectOnNotFound: false,
+      rejectOnNotFound: true,
     });
 
     return user;
