@@ -3,10 +3,10 @@ import {
   HttpException,
   HttpStatus,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { compareSync, hashSync } from 'bcryptjs';
-import { UnprocessableEntity, NotFound } from 'http-errors';
 import { Prisma, Token } from '@prisma/client';
 import { PrismaService } from 'src/prisma.service';
 import { PrismaErrorEnum } from 'src/utils/enums';
@@ -25,15 +25,8 @@ export class AuthService {
   ) {}
 
   async createUser(user: CreateUserDto): Promise<TokenDto> {
-    const userFound = await this.prisma.user.findUnique({
-      where: { email: user.email },
-      // select: { id: true, email: true },
-      rejectOnNotFound: false,
-    });
+    await this.checkEmail(user);
 
-    if (userFound) {
-      throw new UnprocessableEntity('email already taken.');
-    }
     const encryptedPassword = hashSync(user.password, 10);
     const newUser = await this.prisma.user.create({
       data: {
@@ -57,7 +50,7 @@ export class AuthService {
 
     if (userFound) {
       throw new HttpException(
-        'User is already registered',
+        'User is already registered with email',
         HttpStatus.CONFLICT,
       );
     }
@@ -109,7 +102,7 @@ export class AuthService {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         switch (error.code) {
           case PrismaErrorEnum.FOREIGN_KEY_CONSTRAINT:
-            throw new NotFound('User not found');
+            throw new NotFoundException('User not found');
           default:
             throw error;
         }

@@ -1,7 +1,12 @@
-import { Injectable } from '@nestjs/common';
-import { User } from '@prisma/client';
+import {
+  BadRequestException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { UpdateUserDto } from '../models/update-user.dto';
+import { User } from '../models/user.dto';
 
 @Injectable()
 export class UsersService {
@@ -9,7 +14,18 @@ export class UsersService {
 
   async getAll(): Promise<User[]> {
     return this.prisma.user.findMany({
-      orderBy: { createdAt: 'desc' },
+      select: {
+        id: true,
+        lastName: true,
+        firstName: true,
+        userName: true,
+        role: true,
+        email: true,
+        deletedAt: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+      orderBy: { createdAt: 'asc' },
     });
   }
 
@@ -35,12 +51,25 @@ export class UsersService {
   }
 
   async delete(id: number) {
-    const user = await this.prisma.user.update({
-      where: { id },
-      data: {
-        deletedAt: new Date(),
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id,
       },
+      rejectOnNotFound: false,
     });
-    return user;
+    if (!user) {
+      throw new NotFoundException(`User with id ${id} Not found`);
+    }
+    if (user.deletedAt == null) {
+      await this.prisma.user.update({
+        where: { id },
+        data: {
+          deletedAt: new Date(),
+        },
+      });
+      return { message: 'Delete user sucessfully', status: HttpStatus.OK };
+    } else {
+      return new BadRequestException('Users was deleted').getResponse();
+    }
   }
 }
