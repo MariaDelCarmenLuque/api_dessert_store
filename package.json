@@ -22,7 +22,7 @@
     "prisma:migrate:save": "prisma migrate dev",
     "prisma:migrate:run": "prisma migrate deploy ",
     "prisma:generate": "prisma generate",
-    "prisma:migrate:test:save": "dotenv -e .env.test -- prisma migrate dev",
+    "prisma:migrate:test:save": "dotenv -e .env.test -- prisma migrate dev"
   },
   "dependencies": {
     "@nestjs/common": "^8.4.4",
