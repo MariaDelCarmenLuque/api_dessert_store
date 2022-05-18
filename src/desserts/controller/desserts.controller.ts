@@ -6,8 +6,6 @@ import {
   ForbiddenException,
   Get,
   HttpCode,
-  HttpException,
-  HttpStatus,
   Param,
   ParseIntPipe,
   Patch,
@@ -145,14 +143,7 @@ export class DessertsController {
     },
   })
   async findDessertById(@Param('id') id: number): Promise<Dessert> {
-    const dessert = await this.dessertsService.findOne(id);
-    if (!dessert) {
-      throw new HttpException(
-        `Dessert with id ${id} Not Found`,
-        HttpStatus.NOT_FOUND,
-      );
-    }
-    return dessert;
+    return await this.dessertsService.findOne(id);
   }
 
   @Post()
