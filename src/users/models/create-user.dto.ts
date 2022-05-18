@@ -51,7 +51,7 @@ export class CreateUserDto {
 
   @ApiProperty({
     description: 'Password of user',
-    type: String,
+    example: 'MyP@55W0rD',
   })
   @IsString()
   @MinLength(8, {
@@ -72,6 +72,7 @@ export class CreateUserDto {
   @Matches(/[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/, {
     message: 'PASSWORDS_MISSING: SPECIAL_CHARACTER',
   })
+  @IsString()
   readonly password: string;
 
   @IsIn([Role.ADMIN, Role.USER])
