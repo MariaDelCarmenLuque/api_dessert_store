@@ -18,13 +18,18 @@ import { UpdateDessertDto } from '../models/update-dessert.dto';
 export class DessertsService {
   constructor(private prisma: PrismaService) {}
 
+  async getAllDesserts(): Promise<Dessert[]> {
+    const desserts = await this.prisma.dessert.findMany({
+      orderBy: { id: 'desc' },
+    });
+    return desserts;
+  }
   async getPaginationList(params: {
     skip?: number;
     take?: number;
     category?: number;
   }): Promise<Dessert[]> {
     const { skip, take, category } = params;
-
     if (isNaN(skip)) {
       return this.prisma.dessert.findMany({
         take,
