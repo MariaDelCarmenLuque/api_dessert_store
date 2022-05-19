@@ -1,6 +1,5 @@
 import {
   BadRequestException,
-  HttpException,
   HttpStatus,
   Injectable,
   NotFoundException,
@@ -8,7 +7,6 @@ import {
 } from '@nestjs/common';
 import { Dessert, Prisma, Status } from '@prisma/client';
 import { plainToClass } from 'class-transformer';
-import { truncate } from 'fs';
 import { PrismaService } from '../../prisma.service';
 import { PrismaErrorEnum } from '../../utils/enums';
 import { CreateDessertDto } from '../models/create-dessert.dto';
