@@ -41,6 +41,12 @@ export class UsersService {
   }
 
   async updateUser(id: number, data: UpdateUserDto) {
+    await this.prisma.user.findUnique({
+      where: {
+        id,
+      },
+      rejectOnNotFound: true,
+    });
     const user = await this.prisma.user.update({
       data: {
         ...data,
