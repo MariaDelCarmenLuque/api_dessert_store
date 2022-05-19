@@ -136,26 +136,32 @@ export class DessertsService {
     }
   }
   async updateStatus(id: number) {
-    const dessert = await this.prisma.dessert.findUnique({
-      where: {
-        id,
-      },
-      rejectOnNotFound: true,
-    });
-    let newDessert;
-    if (dessert.status == Status.ACTIVE) {
-      newDessert = await this.prisma.dessert.update({
-        data: { ...dessert, status: 'DISABLE' },
-        select: { id: true, name: true, status: true, updatedAt: true },
-        where: { id: dessert.id },
+    try {
+      const dessert = await this.prisma.dessert.findUnique({
+        where: {
+          id,
+        },
+        rejectOnNotFound: true,
       });
+      if (dessert.deletedAt != null)
+        return new BadRequestException('Dessert is deleted');
+      let newDessert;
+      if (dessert.status == Status.ACTIVE) {
+        newDessert = await this.prisma.dessert.update({
+          data: { ...dessert, status: 'DISABLE' },
+          select: { id: true, name: true, status: true, updatedAt: true },
+          where: { id: dessert.id },
+        });
+      }
+      if (dessert.status == Status.DISABLE) {
+        newDessert = await this.prisma.dessert.update({
+          data: { ...dessert, status: 'ACTIVE' },
+          where: { id: dessert.id },
+        });
+      }
+      return newDessert;
+    } catch (error) {
+      throw error;
     }
-    if (dessert.status == Status.DISABLE) {
-      newDessert = await this.prisma.dessert.update({
-        data: { ...dessert, status: 'ACTIVE' },
-        where: { id: dessert.id },
-      });
-    }
-    return newDessert;
   }
 }
