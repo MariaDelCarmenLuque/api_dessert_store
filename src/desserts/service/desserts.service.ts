@@ -113,21 +113,16 @@ export class DessertsService {
     }
   }
   async deleteDessert(id: number) {
-    const dessert = await this.prisma.dessert.findUnique({
-      where: {
-        id,
-      },
-      rejectOnNotFound: false,
-    });
-    if (!dessert) {
-      throw new HttpException(
-        `Dessert with id ${id} Not found`,
-        HttpStatus.NOT_FOUND,
-      );
-    }
-    if (dessert.deletedAt != null) {
-      return new BadRequestException('Dessert was deleted').getResponse();
-    } else {
+    try {
+      const dessert = await this.prisma.dessert.findUnique({
+        where: {
+          id,
+        },
+        rejectOnNotFound: true,
+      });
+      if (dessert.deletedAt != null)
+        return new BadRequestException('Dessert was deleted').getResponse();
+
       await this.prisma.dessert.update({
         where: { id },
         data: {
@@ -135,6 +130,8 @@ export class DessertsService {
         },
       });
       return { message: 'Dessert deleted sucessfully', status: HttpStatus.OK };
+    } catch (error) {
+      throw error;
     }
   }
   async updateStatus(id: number) {
