@@ -42,15 +42,14 @@ export class DessertsService {
     }
   }
 
-  async findOne(id: number): Promise<Dessert | null> {
+  async findOne(id: number): Promise<Dessert> {
     try {
       const dessert = await this.prisma.dessert.findUnique({
         where: {
-          id: id,
+          id,
         },
         rejectOnNotFound: true,
       });
-
       return dessert;
     } catch (error) {
       throw error;
@@ -88,33 +87,30 @@ export class DessertsService {
   }
 
   async updateDessert(id: number, data: UpdateDessertDto) {
-    const oldDessert = await this.prisma.dessert.findUnique({
-      where: {
-        id,
-      },
-      rejectOnNotFound: false,
-    });
+    try {
+      const oldDessert = await this.prisma.dessert.findUnique({
+        where: {
+          id,
+        },
+        rejectOnNotFound: true,
+      });
 
-    if (!oldDessert) {
-      throw new HttpException(
-        `Dessert with id ${id} Not found`,
-        HttpStatus.NOT_FOUND,
-      );
+      if (oldDessert.deletedAt) {
+        throw new NotFoundException('Dessert is deleted ');
+      }
+      if (oldDessert.status == 'DISABLE') {
+        throw new UnauthorizedException('Dessert is disable ');
+      }
+      const dessert = await this.prisma.dessert.update({
+        data: {
+          ...data,
+        },
+        where: { id },
+      });
+      return plainToClass(DessertDto, dessert);
+    } catch (error) {
+      throw error;
     }
-
-    if (oldDessert.deletedAt) {
-      throw new NotFoundException('Dessert is deleted ');
-    }
-    if (oldDessert.status == 'DISABLE') {
-      throw new UnauthorizedException('Dessert is disable ');
-    }
-    const dessert = await this.prisma.dessert.update({
-      data: {
-        ...data,
-      },
-      where: { id },
-    });
-    return plainToClass(DessertDto, dessert);
   }
   async deleteDessert(id: number) {
     const dessert = await this.prisma.dessert.findUnique({
