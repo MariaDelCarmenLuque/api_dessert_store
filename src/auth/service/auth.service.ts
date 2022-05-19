@@ -28,6 +28,9 @@ export class AuthService {
       data: {
         ...user,
         password: encryptedPassword,
+        cart: {
+          create: {},
+        },
       },
     });
     const token = await this.createToken(newUser.id);
