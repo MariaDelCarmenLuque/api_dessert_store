@@ -1,26 +1,30 @@
 import faker from '@faker-js/faker';
-import { NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpStatus,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { Category } from '@prisma/client';
+import { Category, Dessert } from '@prisma/client';
+import { NotFoundError } from 'rxjs';
 import { AuthService } from '../../auth/service/auth.service';
 import { CategoryFactory } from '../../categories/factories/category.factory';
 import { PrismaService } from '../../prisma.service';
 import { DessertFactory } from '../factories/dessert.factory';
 import { CreateDessertDto } from '../models/create-dessert.dto';
-
 import { DessertsService } from './desserts.service';
 
 jest.spyOn(console, 'error').mockImplementation(jest.fn());
 
 describe('DessertsService', () => {
-  let serviceDessert: DessertsService;
+  let dessertService: DessertsService;
   let prisma: PrismaService;
 
   let dessertFactory: DessertFactory;
   let categoryFactory: CategoryFactory;
-
+  let dessertDto: CreateDessertDto;
   let categories: Category[];
-  let dessert: CreateDessertDto;
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -28,7 +32,7 @@ describe('DessertsService', () => {
     }).compile();
 
     prisma = module.get<PrismaService>(PrismaService);
-    serviceDessert = module.get<DessertsService>(DessertsService);
+    dessertService = module.get<DessertsService>(DessertsService);
 
     dessertFactory = new DessertFactory(prisma);
     categoryFactory = new CategoryFactory(prisma);
@@ -37,12 +41,12 @@ describe('DessertsService', () => {
   });
 
   beforeEach(() => {
-    dessert = {
+    dessertDto = {
       name: faker.datatype.string(40),
       description: faker.datatype.string(255),
       price: faker.datatype.float(),
       stock: faker.datatype.number(),
-      categoryId: faker.datatype.number(),
+      categoryId: categories[1].id,
     };
   });
 
@@ -52,28 +56,195 @@ describe('DessertsService', () => {
   });
 
   describe('findOne', () => {
-    let category: Category;
     beforeAll(async () => {
-      // jest.mock('jsonwebtoken', () => ({
-      //   sign: jest.fn().mockImplementation(() => 'my.jwt.token'),
-      // }));
-      category = await categoryFactory.make();
+      jest.mock('jsonwebtoken', () => ({
+        sign: jest.fn().mockImplementation(() => 'my.jwt.token'),
+      }));
     });
 
-    it('should return dessert by Id category', async () => {
+    it('should return dessert by Id', async () => {
       const createDessert = await dessertFactory.make({
         category: {
-          connect: { id: category.id },
+          connect: { id: categories[2].id },
         },
       });
-      const result = await serviceDessert.findOne(createDessert.id);
-      expect(result).toHaveProperty('name', createDessert.name);
-      expect(result).toHaveProperty('description', createDessert.description);
-      expect(result).toHaveProperty('price', createDessert.price);
-      expect(result).toHaveProperty('stock', createDessert.stock);
+      const received = await dessertService.findOne(createDessert.id);
+      expect(received).toHaveProperty('name', createDessert.name);
+      expect(received).toHaveProperty('description', createDessert.description);
+      expect(received).toHaveProperty('price', createDessert.price);
+      expect(received).toHaveProperty('stock', createDessert.stock);
     });
-    it("should throw a error if product doesn't exist", async () => {
-      expect(await serviceDessert.findOne(1000)).toEqual({});
+    it('should throw a error if dessert not found', async () => {
+      const findDessert = dessertService.findOne(1000);
+      await expect(findDessert).rejects.toThrow(
+        new NotFoundError('No Dessert found'),
+      );
+    });
+  });
+
+  describe('create', () => {
+    beforeAll(async () => {
+      jest.mock('jsonwebtoken', () => ({
+        sign: jest.fn().mockImplementation(() => 'my.jwt.token'),
+      }));
+    });
+
+    it('should create a new dessert and return a dessert properties', async () => {
+      const received = await dessertService.create(dessertDto);
+      expect(received).toHaveProperty('name', dessertDto.name);
+      expect(received).toHaveProperty('description', dessertDto.description);
+      expect(received).toHaveProperty('price', dessertDto.price);
+      expect(received).toHaveProperty('stock', dessertDto.stock);
+    });
+    it("should throw a error if dessert's category doesn't exist ", async () => {
+      const received = dessertService.create({
+        ...dessertDto,
+        categoryId: faker.datatype.number(),
+      });
+      await expect(received).rejects.toThrow(
+        new NotFoundException('Category not found'),
+      );
+    });
+  });
+  describe('updateDessert', () => {
+    let createDessert: Dessert;
+    beforeEach(async () => {
+      createDessert = await dessertFactory.make({
+        category: {
+          connect: {
+            id: categories[2].id,
+          },
+        },
+      });
+    });
+    it('should update and return a dessert properties', async () => {
+      const received = await dessertService.updateDessert(createDessert.id, {
+        ...dessertDto,
+      });
+      expect(received).toHaveProperty('name', dessertDto.name);
+      expect(received).toHaveProperty('description', dessertDto.description);
+      expect(received).toHaveProperty('price', dessertDto.price);
+      expect(received).toHaveProperty('stock', dessertDto.stock);
+    });
+    it('should throw a error if dessert not found', async () => {
+      const id = faker.datatype.number();
+      await expect(
+        dessertService.updateDessert(id, { ...dessertDto }),
+      ).rejects.toThrow(new NotFoundException(`No Dessert found`));
+    });
+    it('should throw a error if dessert is deleted', async () => {
+      const received = await dessertFactory.make({
+        deletedAt: new Date(),
+        category: {
+          connect: {
+            id: categories[2].id,
+          },
+        },
+      });
+      await expect(
+        dessertService.updateDessert(received.id, {
+          ...dessertDto,
+        }),
+      ).rejects.toThrow(new UnauthorizedException('Dessert is deleted '));
+    });
+    it('should throw a error if status dessert is disable', async () => {
+      const received = await dessertFactory.make({
+        status: 'DISABLE',
+        category: {
+          connect: {
+            id: categories[2].id,
+          },
+        },
+      });
+      await expect(
+        dessertService.updateDessert(received.id, {
+          ...dessertDto,
+        }),
+      ).rejects.toThrow(new UnauthorizedException('Dessert is disable '));
+    });
+  });
+  describe('deleteDessert', () => {
+    let createDessert: Dessert;
+    beforeEach(async () => {
+      createDessert = await dessertFactory.make({
+        category: {
+          connect: {
+            id: categories[2].id,
+          },
+        },
+      });
+    });
+    it('should throw a error if dessert not found', async () => {
+      const id = faker.datatype.number();
+      await expect(dessertService.deleteDessert(id)).rejects.toThrow(
+        new NotFoundException(`No Dessert found`),
+      );
+    });
+    it('should throw a error if dessert is deleted', async () => {
+      const received = await dessertFactory.make({
+        deletedAt: new Date(),
+        category: {
+          connect: {
+            id: categories[2].id,
+          },
+        },
+      });
+      await expect(dessertService.deleteDessert(received.id)).resolves.toThrow(
+        new BadRequestException('Dessert is deleted'),
+      );
+    });
+    it('should delete dessert successfully', async () => {
+      await expect(
+        dessertService.deleteDessert(createDessert.id),
+      ).resolves.toEqual({
+        message: 'Dessert deleted sucessfully',
+        status: HttpStatus.OK,
+      });
+    });
+  });
+  describe('updateStatus', () => {
+    it('should throw a error if dessert not found', async () => {
+      const id = faker.datatype.number();
+      await expect(dessertService.updateStatus(id)).rejects.toThrow(
+        new NotFoundException(`No Dessert found`),
+      );
+    });
+    it('should throw a error if dessert is deleted', async () => {
+      const received = await dessertFactory.make({
+        deletedAt: new Date(),
+        category: {
+          connect: {
+            id: categories[2].id,
+          },
+        },
+      });
+      await expect(dessertService.updateStatus(received.id)).resolves.toThrow(
+        new BadRequestException('Dessert is deleted'),
+      );
+    });
+    it('should update status as ACTIVE when dessert status is DISABLE', async () => {
+      const dessert = await dessertFactory.make({
+        status: 'DISABLE',
+        category: {
+          connect: {
+            id: categories[2].id,
+          },
+        },
+      });
+      const received = await dessertService.updateStatus(dessert.id);
+      expect(received).toHaveProperty('status', 'ACTIVE');
+    });
+    it('should update status as DISABLE when dessert status is ACTIVE', async () => {
+      const dessert = await dessertFactory.make({
+        status: 'ACTIVE',
+        category: {
+          connect: {
+            id: categories[2].id,
+          },
+        },
+      });
+      const received = await dessertService.updateStatus(dessert.id);
+      expect(received).toHaveProperty('status', 'DISABLE');
     });
   });
 });
