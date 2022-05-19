@@ -6,8 +6,8 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { plainToClass, plainToInstance } from 'class-transformer';
-import { DessertDto } from 'src/desserts/models/dessert.dto';
-import { PrismaService } from 'src/prisma.service';
+import { DessertDto } from '../../desserts/models/dessert.dto';
+import { PrismaService } from '../../prisma.service';
 import { CartItemsDto } from '../models/cart-item.dto';
 import { CartDto } from '../models/cart.dto';
 import { CreateCartItemDto } from '../models/create-cart-item.dto';
@@ -22,7 +22,7 @@ export class CartService {
         where: {
           userId: userId,
         },
-        rejectOnNotFound: false,
+        rejectOnNotFound: true,
       });
       const cartItems = await this.prisma.cartItem.findMany({
         where: { cartId: cart.id },
@@ -39,7 +39,7 @@ export class CartService {
     }
   }
 
-  async updateItem(userId: number, createCartItem: CreateCartItemDto) {
+  async upsertItem(userId: number, createCartItem: CreateCartItemDto) {
     const { dessertId, quantity } = createCartItem;
 
     const dessert = await this.prisma.dessert.findUnique({

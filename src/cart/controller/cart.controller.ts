@@ -79,7 +79,7 @@ export class CartController {
     @GetUser() user: User,
     @Body() createCartItem: CreateCartItemDto,
   ): Promise<CartDto> {
-    return await this.cartService.updateItem(user.id, createCartItem);
+    return await this.cartService.upsertItem(user.id, createCartItem);
   }
 
   @Delete('/cart-item/:id')

@@ -70,7 +70,7 @@ export class AuthService {
   }
 
   // validateUser() method for of retrieving a user and verifying the password
-  async validateUser(email: string){
+  async validateUser(email: string) {
     const user = await this.prisma.user.findUnique({
       where: { email },
       rejectOnNotFound: true,
