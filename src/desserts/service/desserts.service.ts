@@ -8,6 +8,7 @@ import {
 } from '@nestjs/common';
 import { Dessert, Prisma, Status } from '@prisma/client';
 import { plainToClass } from 'class-transformer';
+import { truncate } from 'fs';
 import { PrismaService } from '../../prisma.service';
 import { PrismaErrorEnum } from '../../utils/enums';
 import { CreateDessertDto } from '../models/create-dessert.dto';
@@ -139,14 +140,8 @@ export class DessertsService {
       where: {
         id,
       },
-      rejectOnNotFound: false,
+      rejectOnNotFound: true,
     });
-    if (!dessert) {
-      throw new HttpException(
-        `Dessert with id ${id} Not found`,
-        HttpStatus.NOT_FOUND,
-      );
-    }
     let newDessert;
     if (dessert.status == Status.ACTIVE) {
       newDessert = await this.prisma.dessert.update({
