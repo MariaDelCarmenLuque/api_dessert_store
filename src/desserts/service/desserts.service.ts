@@ -121,7 +121,7 @@ export class DessertsService {
         rejectOnNotFound: true,
       });
       if (dessert.deletedAt != null)
-        return new BadRequestException('Dessert was deleted').getResponse();
+        return new BadRequestException('Dessert is deleted');
 
       await this.prisma.dessert.update({
         where: { id },
