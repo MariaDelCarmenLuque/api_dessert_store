@@ -7,7 +7,6 @@ import {
 } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Category, Dessert } from '@prisma/client';
-import { NotFoundError } from 'rxjs';
 import { AuthService } from '../../auth/service/auth.service';
 import { CategoryFactory } from '../../categories/factories/category.factory';
 import { PrismaService } from '../../prisma.service';
@@ -74,10 +73,10 @@ describe('DessertsService', () => {
       expect(received).toHaveProperty('price', createDessert.price);
       expect(received).toHaveProperty('stock', createDessert.stock);
     });
-    it('should throw a error if dessert not found', async () => {
+    it('should throw a error if dessert doesnt found', async () => {
       const findDessert = dessertService.findOne(1000);
       await expect(findDessert).rejects.toThrow(
-        new NotFoundError('No Dessert found'),
+        new NotFoundException('No Dessert found'),
       );
     });
   });

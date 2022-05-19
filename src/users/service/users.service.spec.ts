@@ -31,7 +31,6 @@ describe('UsersService', () => {
     prisma = module.get<PrismaService>(PrismaService);
     userFactory = new UserFactory(prisma);
     users = await userFactory.makeMany(5);
-    console.log(users);
   });
   beforeEach(() => {
     mockUser = plainToInstance(CreateUserDto, {

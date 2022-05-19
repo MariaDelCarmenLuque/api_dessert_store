@@ -33,7 +33,7 @@ describe('CategoriesService', () => {
     await prisma.$disconnect();
   });
   describe('getAll', () => {
-    it('should return a list of all user', async () => {
+    it('should return a list of all categories', async () => {
       const received = await categoryService.getAll();
       expect(received.length).toEqual(categories.length);
     });
