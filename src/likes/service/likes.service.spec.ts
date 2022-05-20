@@ -72,7 +72,10 @@ describe('LikesService', () => {
         }),
       );
       const received = await likeService.findLikes(newDessert.id);
-      expect(received.length).toEqual(likes.length);
+      console.log(received)
+      expect((await likeService.findLikes(newDessert.id)).length).toEqual(
+        likes.length,
+      );
     });
     it('should throw a error if dessert doesnt found', async () => {
       const received = likeService.findLikes(faker.datatype.number());
