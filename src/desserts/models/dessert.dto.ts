@@ -117,7 +117,7 @@ export class DessertDto {
    */
 
   public isAvailable(quantity: number): boolean {
-    return this.stock > quantity;
+    return this.stock >= quantity;
   }
 
   /**
