@@ -1,4 +1,6 @@
 import { ValidationPipe } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { config } from 'aws-sdk';
 import { NestFactory } from '@nestjs/core';
 import {
   DocumentBuilder,
@@ -16,8 +18,14 @@ async function bootstrap() {
       transform: true,
     }),
   );
-
-  const config = new DocumentBuilder()
+  const configService = app.get(ConfigService);
+  config.update({
+    accessKeyId: configService.get('AWS_ACCESS_KEY_ID'),
+    secretAccessKey: configService.get('AWS_SECRET_ACCESS_KEY'),
+    region: configService.get('AWS_REGION'),
+    signatureVersion: 'v4',
+  });
+  const configSwagger = new DocumentBuilder()
     .setTitle('Dessert Store API')
     .setDescription('')
     .setVersion('1.0')
@@ -27,7 +35,7 @@ async function bootstrap() {
   const options: SwaggerDocumentOptions = {
     operationIdFactory: (controllerKey: string, methodKey: string) => methodKey,
   };
-  const document = SwaggerModule.createDocument(app, config, options);
+  const document = SwaggerModule.createDocument(app, configSwagger, options);
   SwaggerModule.setup('api/docs', app, document);
   await app.listen(process.env.PORT || 3000);
 }
