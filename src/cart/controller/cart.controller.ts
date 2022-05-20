@@ -10,6 +10,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import {
+  ApiBearerAuth,
   ApiForbiddenResponse,
   ApiOperation,
   ApiResponse,
@@ -34,6 +35,7 @@ export class CartController {
   @Get('')
   @Roles(Role.USER)
   @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Get all item in Cart' })
   @ApiResponse({
     status: 200,
@@ -58,6 +60,7 @@ export class CartController {
   @Patch('/cart-item')
   @Roles(Role.USER)
   @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Added cart items in Cart' })
   @ApiResponse({
     status: 200,
@@ -85,6 +88,7 @@ export class CartController {
   @Delete('/cart-item/:id')
   @Roles(Role.ADMIN)
   @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiUnauthorizedResponse({
     schema: {
       example: new UnauthorizedException().getResponse(),
