@@ -27,16 +27,18 @@ export class LikesService {
 
   async upsertLike(userId: number, id: number, data: LikeDto): Promise<Like> {
     try {
-      const user = await this.prisma.user.findUnique({
-        where: { id: userId },
-        select: { id: true },
-        rejectOnNotFound: true,
-      });
-      const dessert = await this.prisma.dessert.findUnique({
-        where: { id: id },
-        select: { id: true },
-        rejectOnNotFound: true,
-      });
+      const [user, dessert] = await Promise.all([
+        this.prisma.user.findUnique({
+          where: { id: userId },
+          select: { id: true },
+          rejectOnNotFound: true,
+        }),
+        this.prisma.dessert.findUnique({
+          where: { id: id },
+          select: { id: true },
+          rejectOnNotFound: true,
+        }),
+      ]);
       const like = await this.prisma.like.upsert({
         create: {
           ...data,
@@ -69,17 +71,18 @@ export class LikesService {
   }
   async delete(userId: number, id: number): Promise<boolean> {
     try {
-      const user = await this.prisma.user.findUnique({
-        where: { id: userId },
-        select: { id: true },
-        rejectOnNotFound: true,
-      });
-
-      const dessert = await this.prisma.dessert.findUnique({
-        where: { id: id },
-        select: { id: true },
-        rejectOnNotFound: true,
-      });
+      const [user, dessert] = await Promise.all([
+        this.prisma.user.findUnique({
+          where: { id: userId },
+          select: { id: true },
+          rejectOnNotFound: true,
+        }),
+        this.prisma.dessert.findUnique({
+          where: { id: id },
+          select: { id: true },
+          rejectOnNotFound: true,
+        }),
+      ]);
 
       await this.prisma.like.delete({
         where: {
