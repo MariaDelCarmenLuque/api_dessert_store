@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Category } from '@prisma/client';
-import { PrismaService } from 'src/prisma.service';
+import { PrismaService } from '../../prisma.service';
 import { CategoryDto } from '../models/category.dto';
 
 @Injectable()
@@ -18,27 +18,41 @@ export class CategoriesService {
       where: {
         id,
       },
-      rejectOnNotFound: false,
+      rejectOnNotFound: true,
     });
 
     return category;
   }
 
   async create(data: CategoryDto) {
-    const { name, ...input } = data;
-    const category = await this.prisma.category.create({
-      data: { ...input, name: name },
-    });
-    return category;
+    try {
+      const { name, ...input } = data;
+      const category = await this.prisma.category.create({
+        data: { ...input, name: name },
+      });
+      return category;
+    } catch (error) {
+      throw error;
+    }
   }
 
   async updateCategory(id: number, data: CategoryDto) {
-    const category = await this.prisma.category.update({
-      data: {
-        ...data,
-      },
-      where: { id },
-    });
-    return category;
+    try {
+      await this.prisma.category.findUnique({
+        where: {
+          id,
+        },
+        rejectOnNotFound: true,
+      });
+      const category = await this.prisma.category.update({
+        data: {
+          ...data,
+        },
+        where: { id },
+      });
+      return category;
+    } catch (error) {
+      throw error;
+    }
   }
 }

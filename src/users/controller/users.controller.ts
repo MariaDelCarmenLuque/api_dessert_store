@@ -4,8 +4,6 @@ import {
   Delete,
   ForbiddenException,
   Get,
-  HttpException,
-  HttpStatus,
   Param,
   Patch,
   UnauthorizedException,
@@ -147,11 +145,7 @@ export class UsersController {
     },
   })
   async findOne(@Param('id') id: number) {
-    const user = await this.userService.findOne(id);
-    if (!user) {
-      throw new HttpException('User Not Found', HttpStatus.NOT_FOUND);
-    }
-    return user;
+    return await this.userService.findOne(id);
   }
 
   @Patch(':id')
