@@ -3,7 +3,7 @@ import { Like, Prisma } from '@prisma/client';
 import { PrismaService } from '../../prisma.service';
 import { AbstractFactory } from '../../utils/factories/abstract.factory';
 
-type LikeInput = Prisma.LikeCreateInput;
+type LikeInput = Partial<Prisma.LikeCreateInput>;
 
 export class LikeFactory extends AbstractFactory<Like> {
   constructor(protected prisma: PrismaService) {
