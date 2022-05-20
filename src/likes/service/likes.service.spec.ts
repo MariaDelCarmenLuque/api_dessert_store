@@ -54,15 +54,25 @@ describe('LikesService', () => {
   });
   describe('findLikes', () => {
     it('should return all the created likes in a Dessert', async () => {
-      const likes = await likeFactory.makeMany(5, {
-        user: { connect: { id: createUser.id } },
-        dessert: { connect: { id: dessert.id } },
-        isLike: true,
+      const users = await userFactory.makeMany(5);
+      const newDessert = await dessertFactory.make({
+        category: {
+          connect: {
+            id: category.id,
+          },
+        },
       });
-      console.log(likes, dessert, createUser);
-      const received = await likeService.findLikes(dessert.id);
-      console.log(received);
-      expect(received.length).toBe(likes.length);
+      const likes = await Promise.all(
+        users.map((user) => {
+          likeFactory.make({
+            user: { connect: { id: user.id } },
+            dessert: { connect: { id: newDessert.id } },
+            isLike: true,
+          });
+        }),
+      );
+      const received = await likeService.findLikes(newDessert.id);
+      expect(received.length).toEqual(likes.length);
     });
     it('should throw a error if dessert doesnt found', async () => {
       const received = likeService.findLikes(faker.datatype.number());
