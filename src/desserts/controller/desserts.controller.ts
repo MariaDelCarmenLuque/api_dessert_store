@@ -28,7 +28,7 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { Dessert } from '@prisma/client';
+import { Dessert, Like, User } from '@prisma/client';
 import { JwtAuthGuard } from '../../auth/guards/jwt-guard';
 import { RolesGuard } from '../../auth/guards/roles.guard';
 import { Public } from '../../auth/decorators/public.decorator';
@@ -38,11 +38,17 @@ import { CreateDessertDto } from '../models/create-dessert.dto';
 import { DessertDto } from '../models/dessert.dto';
 import { UpdateDessertDto } from '../models/update-dessert.dto';
 import { DessertsService } from '../service/desserts.service';
+import { LikesService } from '../../likes/service/likes.service';
+import { GetUser } from 'src/auth/decorators/user.decorator';
+import { LikeDto } from 'src/likes/models/like.dto';
 
 @ApiTags('Desserts')
 @Controller('desserts')
 export class DessertsController {
-  constructor(private dessertsService: DessertsService) {}
+  constructor(
+    private dessertsService: DessertsService,
+    private likesService: LikesService,
+  ) {}
 
   @Get()
   @Public()
@@ -398,5 +404,162 @@ export class DessertsController {
   })
   async enableStatus(@Param('id') id: number) {
     return await this.dessertsService.updateStatus(id);
+  }
+
+  @Get('/:id/likes')
+  @Public()
+  @ApiOperation({ summary: 'Get all likes in a dessert' })
+  @ApiResponse({
+    status: 201,
+    description: 'Get all likes in a dessert',
+    schema: {
+      example: {
+        items: [
+          {
+            id: 1,
+            userId: 633,
+            dessertId: 3759,
+            isLike: false,
+            createdAt: '2022-05-20T17:18:30.518Z',
+          },
+          {
+            id: 2,
+            userId: 632,
+            dessertId: 3759,
+            isLike: true,
+            createdAt: '2022-05-20T17:18:30.518Z',
+          },
+          {
+            id: 3,
+            userId: 634,
+            dessertId: 3759,
+            isLike: true,
+            createdAt: '2022-05-20T17:18:30.518Z',
+          },
+          {
+            id: 4,
+            userId: 636,
+            dessertId: 3759,
+            isLike: false,
+            createdAt: '2022-05-20T17:18:30.519Z',
+          },
+          {
+            id: 5,
+            userId: 635,
+            dessertId: 3759,
+            isLike: true,
+            createdAt: '2022-05-20T17:18:30.519Z',
+          },
+        ],
+      },
+    },
+  })
+  @ApiNotFoundResponse({
+    description: 'Dessert not found',
+    schema: {
+      example: {
+        statusCode: 404,
+        message: 'No Dessert found',
+        error: 'Not Found',
+      },
+    },
+  })
+  async findAllLikes(@Param('id') id: number): Promise<Like[]> {
+    return await this.likesService.findLikes(id);
+  }
+  @Patch('/:id/likes')
+  @HttpCode(204)
+  @ApiBearerAuth()
+  @Roles(Role.USER, Role.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiOperation({ summary: 'Create or Update like' })
+  @ApiResponse({
+    status: 201,
+    description: 'Create or Update like in a dessert',
+    schema: {
+      example: {
+        id: 325,
+        userId: 633,
+        dessertId: 3759,
+        isLike: false,
+        createdAt: '2022-05-20T17:18:30.518Z',
+      },
+    },
+  })
+  @ApiNotFoundResponse({
+    description: 'Dessert or User not found',
+    schema: {
+      example: {
+        items: [
+          {
+            statusCode: 404,
+            message: 'No Dessert found',
+            error: 'Not Found',
+          },
+          {
+            statusCode: 404,
+            message: 'No User found',
+            error: 'Not Found',
+          },
+        ],
+      },
+    },
+  })
+  @ApiUnauthorizedResponse({
+    schema: {
+      example: new UnauthorizedException().getResponse(),
+    },
+    description: 'User is not logged in',
+  })
+  async upsertLike(
+    @GetUser() user: User,
+    @Param('id') id: number,
+    @Body() likeDto: LikeDto,
+  ): Promise<Like> {
+    return await this.likesService.upsertLike(user.id, id, likeDto);
+  }
+  @Delete('/:id/likes')
+  @ApiBearerAuth()
+  @HttpCode(204)
+  @Roles(Role.USER, Role.ADMIN)
+  @ApiOperation({ summary: 'Delete a like in a dessert' })
+  @ApiResponse({
+    status: 201,
+    description: 'Delete a like',
+    schema: {
+      example: 'true',
+    },
+  })
+  @ApiNotFoundResponse({
+    description: 'Dessert or User not found',
+    schema: {
+      example: {
+        items: [
+          {
+            statusCode: 404,
+            message: 'No Dessert found',
+            error: 'Not Found',
+          },
+          {
+            statusCode: 404,
+            message: 'No User found',
+            error: 'Not Found',
+          },
+        ],
+      },
+    },
+  })
+  @ApiUnauthorizedResponse({
+    schema: {
+      example: new UnauthorizedException().getResponse(),
+    },
+    description: 'User is not logged in',
+  })
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async deleteLike(
+    @GetUser() user: User,
+    @Param('id') id: number,
+  ): Promise<boolean> {
+    return await this.likesService.delete(user.id, id);
   }
 }
