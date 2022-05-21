@@ -10,6 +10,7 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Put,
   Query,
   UnauthorizedException,
   UseGuards,
@@ -41,6 +42,7 @@ import { DessertsService } from '../service/desserts.service';
 import { LikesService } from '../../likes/service/likes.service';
 import { GetUser } from 'src/auth/decorators/user.decorator';
 import { LikeDto } from 'src/likes/models/like.dto';
+import { ImageDto } from '../models/image.dto';
 
 @ApiTags('Desserts')
 @Controller('desserts')
@@ -561,5 +563,33 @@ export class DessertsController {
     @Param('id') id: number,
   ): Promise<boolean> {
     return await this.likesService.delete(user.id, id);
+  }
+
+  @Put('/:id/image')
+  @Roles(Role.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiResponse({
+    status: 200,
+    description: 'upload a dessert images',
+  })
+  @ApiNotFoundResponse({ description: 'No Dessert found' })
+  @ApiUnauthorizedResponse({
+    schema: {
+      example: new UnauthorizedException().getResponse(),
+    },
+    description: 'User is not logged in',
+  })
+  @ApiForbiddenResponse({
+    description: 'User is not authorized to delete this product',
+    schema: {
+      example: new ForbiddenException().getResponse(),
+    },
+  })
+  @ApiBearerAuth()
+  async uploadImage(
+    @Param('id') dessertId: number,
+    @Body() imageDto: ImageDto,
+  ) {
+    return await this.dessertsService.createImage(dessertId, imageDto);
   }
 }
