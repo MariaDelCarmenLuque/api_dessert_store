@@ -1,40 +1,24 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
-import { Prisma, Role, User } from '@prisma/client';
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { plainToInstance } from 'class-transformer';
-import { CartItemsDto } from 'src/cart/models/cart-item.dto';
-import { PrismaService } from 'src/prisma.service';
+import { PrismaService } from '../../prisma.service';
+import { OrderItemsDto } from '../models/order-item.dto';
 import { OrderDto } from '../models/order.dto';
 
 @Injectable()
 export class OrdersService {
   constructor(private prisma: PrismaService) {}
 
-  async getMany(user: User) {
+  async getMany(userId: number) {
     try {
-      const findUser = await this.prisma.user.findUnique({
+      await this.prisma.user.findUnique({
         where: {
-          id: user.id,
+          id: userId,
         },
-        select: {
-          id: true,
-        },
-        rejectOnNotFound: false,
+        rejectOnNotFound: true,
       });
-      if (!findUser) throw new NotFoundException('User not found');
-      let where = {};
-      if (user.role !== Role.ADMIN) {
-        where = {
-          user: {
-            id: findUser.id,
-          },
-        };
-      }
       const orders = await this.prisma.order.findMany({
-        where,
+        where: { userId: userId },
         select: {
           id: true,
           totalPrice: true,
@@ -49,8 +33,8 @@ export class OrdersService {
         const { orderItem, user, ...data } = order;
         return {
           ...data,
-          client: user,
-          items: plainToInstance(CartItemsDto, orderItem),
+          user: user,
+          items: plainToInstance(OrderItemsDto, orderItem),
         };
       });
       return plainToInstance(OrderDto, dataOrders);
@@ -58,5 +42,110 @@ export class OrdersService {
       throw error;
     }
   }
+  async create(userId: number): Promise<OrderDto> {
+    try {
+      const cart = await this.prisma.cart.findUnique({
+        where: { userId: userId },
+        select: {
+          id: true,
+          userId: true,
+          amount: true,
+          cartItems: {
+            select: {
+              quantity: true,
+              totalPrice: true,
+              dessert: {
+                select: {
+                  id: true,
+                  name: true,
+                  stock: true,
+                  price: true,
+                },
+              },
+            },
+          },
+        },
+        rejectOnNotFound: true,
+      });
 
+      if (!cart.cartItems?.length) {
+        throw new BadRequestException('Cart is empty');
+      }
+
+      const cartItems =
+        async (): Promise<Prisma.OrderItemCreateManyOrderInputEnvelope> => {
+          return {
+            data: await Promise.all(
+              cart.cartItems.map(async (cartItem) => {
+                await this.prisma.dessert.update({
+                  where: { id: cartItem.dessert.id },
+                  data: { stock: cartItem.dessert.stock - cartItem.quantity },
+                });
+                return {
+                  dessertId: cartItem.dessert.id,
+                  quantity: cartItem.quantity,
+                  unitPrice: cartItem.dessert.price,
+                  totalPrice: cartItem.totalPrice,
+                };
+              }),
+            ),
+            skipDuplicates: true,
+          };
+        };
+      const [order, _, __] = await this.prisma.$transaction([
+        this.prisma.order.create({
+          data: {
+            userId: cart.userId,
+            totalPrice: cart.amount,
+            orderItem: {
+              createMany: await cartItems(),
+            },
+          },
+          select: {
+            id: true,
+            totalPrice: true,
+            createdAt: true,
+            orderItem: {
+              select: {
+                quantity: true,
+                unitPrice: true,
+                totalPrice: true,
+                dessert: {
+                  select: {
+                    id: true,
+                    name: true,
+                    price: true,
+                  },
+                },
+              },
+            },
+          },
+        }),
+
+        this.prisma.cart.update({
+          where: {
+            id: cart.id,
+          },
+          data: {
+            amount: 0,
+          },
+        }),
+
+        this.prisma.cartItem.deleteMany({
+          where: {
+            cartId: cart.id,
+          },
+        }),
+      ]);
+
+      const { orderItem, ...input } = order;
+
+      return plainToInstance(OrderDto, {
+        ...input,
+        items: orderItem,
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
 }
