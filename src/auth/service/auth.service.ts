@@ -3,44 +3,35 @@ import {
   HttpException,
   HttpStatus,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { compareSync, hashSync } from 'bcryptjs';
-import { UnprocessableEntity, NotFound } from 'http-errors';
 import { Prisma, Token } from '@prisma/client';
-import { PrismaService } from 'src/prisma.service';
-import { PrismaErrorEnum } from 'src/utils/enums';
-import { CreateUserDto } from 'src/users/models/create-user.dto';
+import { PrismaService } from '../../prisma.service';
+import { PrismaErrorEnum } from '../../utils/enums';
+import { CreateUserDto } from '../../users/models/create-user.dto';
 import { TokenDto } from '../models/token.dto';
 import { LoginDto } from '../models/login.dto';
 import { sign, verify } from 'jsonwebtoken';
-import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Injectable()
 export class AuthService {
   static prisma: any;
-  constructor(
-    private prisma: PrismaService,
-    private eventEmitter: EventEmitter2,
-  ) {}
+  constructor(private prisma: PrismaService) {}
 
   async createUser(user: CreateUserDto): Promise<TokenDto> {
-    const userFound = await this.prisma.user.findUnique({
-      where: { email: user.email },
-      // select: { id: true, email: true },
-      rejectOnNotFound: false,
-    });
+    await this.checkEmail(user);
 
-    if (userFound) {
-      throw new UnprocessableEntity('email already taken.');
-    }
     const encryptedPassword = hashSync(user.password, 10);
     const newUser = await this.prisma.user.create({
       data: {
         ...user,
         password: encryptedPassword,
         cart: {
-          create: {},
+          create: {
+            amount: 0,
+          },
         },
       },
     });
@@ -57,7 +48,7 @@ export class AuthService {
 
     if (userFound) {
       throw new HttpException(
-        'User is already registered',
+        'User is already registered with email',
         HttpStatus.CONFLICT,
       );
     }
@@ -81,14 +72,11 @@ export class AuthService {
   }
 
   // validateUser() method for of retrieving a user and verifying the password
-  async validateUser(email: string): Promise<any> {
+  async validateUser(email: string) {
     const user = await this.prisma.user.findUnique({
       where: { email },
-      rejectOnNotFound: false,
+      rejectOnNotFound: true,
     });
-    if (!user) {
-      throw new HttpException('USER_NOT_FOUND', HttpStatus.NOT_FOUND);
-    }
 
     const userData = {
       id: user.id,
@@ -109,7 +97,7 @@ export class AuthService {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         switch (error.code) {
           case PrismaErrorEnum.FOREIGN_KEY_CONSTRAINT:
-            throw new NotFound('User not found');
+            throw new NotFoundException('User not found');
           default:
             throw error;
         }

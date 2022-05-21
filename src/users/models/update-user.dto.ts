@@ -1,25 +1,6 @@
-import { Role } from '@prisma/client';
-import { IsEmail, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { OmitType } from '@nestjs/swagger';
+import { CreateUserDto } from './create-user.dto';
 
-export class UpdateUserDto {
-  @IsNotEmpty()
-  @IsString()
-  @IsOptional()
-  readonly firstName?: string;
-
-  @IsNotEmpty()
-  @IsString()
-  @IsOptional()
-  readonly lastName?: string;
-
-  @IsNotEmpty()
-  @IsString()
-  readonly userName?: string;
-
-  @IsEmail()
-  readonly email?: string;
-
-  @IsNotEmpty()
-  @IsOptional()
-  readonly role?: Role;
-}
+export class UpdateUserDto extends OmitType(CreateUserDto, [
+  'password',
+] as const) {}

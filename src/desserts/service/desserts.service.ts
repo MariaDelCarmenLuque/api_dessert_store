@@ -1,19 +1,26 @@
 import {
+  BadRequestException,
+  HttpStatus,
   Injectable,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { Dessert, Prisma, Status } from '@prisma/client';
 import { plainToClass } from 'class-transformer';
-import { PrismaService } from 'src/prisma.service';
-import { PrismaErrorEnum } from 'src/utils/enums';
+import { FilesService } from 'src/files/service/files.service';
+import { PrismaService } from '../../prisma.service';
+import { PrismaErrorEnum } from '../../utils/enums';
 import { CreateDessertDto } from '../models/create-dessert.dto';
 import { DessertDto } from '../models/dessert.dto';
+import { ImageDto } from '../models/image.dto';
 import { UpdateDessertDto } from '../models/update-dessert.dto';
 
 @Injectable()
 export class DessertsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private filesService: FilesService,
+  ) {}
 
   async getAllDesserts(): Promise<Dessert[]> {
     const desserts = await this.prisma.dessert.findMany({
@@ -44,15 +51,18 @@ export class DessertsService {
     }
   }
 
-  async findOne(id: number): Promise<Dessert | null> {
-    const dessert = await this.prisma.dessert.findUnique({
-      where: {
-        id: id,
-      },
-      rejectOnNotFound: false,
-    });
-
-    return dessert;
+  async findOne(dessertId: number): Promise<Dessert> {
+    try {
+      const dessert = await this.prisma.dessert.findUnique({
+        where: {
+          id: dessertId,
+        },
+        rejectOnNotFound: true,
+      });
+      return dessert;
+    } catch (error) {
+      throw error;
+    }
   }
 
   async create(createDessert: CreateDessertDto): Promise<DessertDto> {
@@ -85,61 +95,116 @@ export class DessertsService {
     }
   }
 
-  async updateDessert(id: number, data: UpdateDessertDto) {
-    const oldDessert = await this.prisma.dessert.findUnique({
-      where: {
-        id,
-      },
-      rejectOnNotFound: false,
-    });
+  async updateDessert(dessertId: number, data: UpdateDessertDto) {
+    try {
+      const oldDessert = await this.prisma.dessert.findUnique({
+        where: {
+          id: dessertId,
+        },
+        rejectOnNotFound: true,
+      });
 
-    if (!oldDessert) {
-      throw new NotFoundException('Product not found');
+      if (oldDessert.deletedAt) {
+        throw new NotFoundException('Dessert is deleted ');
+      }
+      if (oldDessert.status == 'DISABLE') {
+        throw new UnauthorizedException('Dessert is disable ');
+      }
+      const dessert = await this.prisma.dessert.update({
+        data: {
+          ...data,
+        },
+        where: { id: dessertId },
+      });
+      return plainToClass(DessertDto, dessert);
+    } catch (error) {
+      throw error;
     }
-
-    if (oldDessert.deletedAt) {
-      throw new UnauthorizedException('Product is deleted ');
-    }
-    if (oldDessert.status == 'DISABLE') {
-      throw new UnauthorizedException('Product is disable ');
-    }
-    const dessert = await this.prisma.dessert.update({
-      data: {
-        ...data,
-      },
-      where: { id },
-    });
-    return plainToClass(DessertDto, dessert);
   }
-  async deleteDessert(id: number) {
-    const user = await this.prisma.user.update({
-      where: { id },
-      data: {
-        deletedAt: new Date(),
-      },
-    });
-    return user;
+  async deleteDessert(dessertId: number) {
+    try {
+      const dessert = await this.prisma.dessert.findUnique({
+        where: {
+          id: dessertId,
+        },
+        rejectOnNotFound: true,
+      });
+      if (dessert.deletedAt != null)
+        return new BadRequestException('Dessert is deleted');
+
+      await this.prisma.dessert.update({
+        where: { id: dessertId },
+        data: {
+          deletedAt: new Date(),
+        },
+      });
+      return { message: 'Dessert deleted sucessfully', status: HttpStatus.OK };
+    } catch (error) {
+      throw error;
+    }
   }
   async updateStatus(id: number) {
-    const dessert = await this.prisma.dessert.findUnique({
-      where: {
-        id,
-      },
-      rejectOnNotFound: false,
-    });
-    let newDessert;
-    if (dessert.status == Status.ACTIVE) {
-      newDessert = await this.prisma.dessert.update({
-        data: { ...dessert, status: 'DISABLE' },
-        where: { id: dessert.id },
+    try {
+      const dessert = await this.prisma.dessert.findUnique({
+        where: {
+          id,
+        },
+        rejectOnNotFound: true,
       });
+      if (dessert.deletedAt != null)
+        return new BadRequestException('Dessert is deleted');
+      let newDessert;
+      if (dessert.status == Status.ACTIVE) {
+        newDessert = await this.prisma.dessert.update({
+          data: { ...dessert, status: 'DISABLE' },
+          select: { id: true, name: true, status: true, updatedAt: true },
+          where: { id: dessert.id },
+        });
+      }
+      if (dessert.status == Status.DISABLE) {
+        newDessert = await this.prisma.dessert.update({
+          data: { ...dessert, status: 'ACTIVE' },
+          where: { id: dessert.id },
+        });
+      }
+      return newDessert;
+    } catch (error) {
+      throw error;
     }
-    if (dessert.status == Status.DISABLE) {
-      newDessert = await this.prisma.dessert.update({
-        data: { ...dessert, status: 'ACTIVE' },
-        where: { id: dessert.id },
+  }
+
+  async createImage(dessertId: number, imageDto: ImageDto) {
+    try {
+      await this.prisma.dessert.findUnique({
+        where: {
+          id: dessertId,
+        },
+        select: {
+          id: true,
+          name: true,
+        },
+        rejectOnNotFound: true,
       });
+      const createImage = await this.prisma.image.create({
+        data: { name: imageDto.name, dessertId: dessertId },
+      });
+
+      await this.filesService.uploadPublicFile(
+        createImage.uuid,
+        createImage.name,
+      );
+      return await this.prisma.dessert.findUnique({
+        where: { id: dessertId },
+        select: {
+          id: true,
+          name: true,
+          category: { select: { name: true } },
+          images: { select: { uuid: true, name: true } },
+        },
+        rejectOnNotFound: false,
+      });
+    } catch (error) {
+      throw error;
     }
-    return newDessert;
   }
 }

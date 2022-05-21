@@ -1,3 +1,4 @@
+import { Dessert } from '@prisma/client';
 import { Exclude, Expose, Transform } from 'class-transformer';
 
 @Exclude()
@@ -15,7 +16,7 @@ export class CartItemsDto {
   cartId: number;
 
   @Expose()
-  dessertId: number;
+  dessert: Dessert;
 
   @Expose()
   @Transform(({ value }) => value?.toISOString())
