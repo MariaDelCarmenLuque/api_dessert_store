@@ -29,7 +29,9 @@ export class AuthService {
         ...user,
         password: encryptedPassword,
         cart: {
-          create: {},
+          create: {
+            amount: 0,
+          },
         },
       },
     });
