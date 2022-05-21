@@ -12,9 +12,9 @@
 
 [This project is an API for a Dessert Store App where you can register & login users, create products,search products by category.
 
-As an *MANAGER* user, you can create, uodate, delete and disable products, upload images per product and, show client orders.
+As an *ADMIN* user, you can create, uodate, delete and disable products, upload images per product and, show client orders.
 
-As a *CLIENT* user, you can see, buy and like products, see the product details, add products to cart and, show your order.
+As a *USER* user, you can see, buy and like products, see the product details, add products to cart and, show your orders.
 
 ## Installation
 
@@ -42,7 +42,14 @@ ACCESS_TOKEN_EXPIRATION=900s
 REFRESH_TOKEN_SECRET=
 REFRESH_TOKEN_EXPIRATION=1y
 JWT_EXPIRE_TIME_RESET_PASSWORD=300s
+# aws credentials
+AWS_REGION=eu-central-1
+AWS_ACCESS_KEY_ID='****************'
+AWS_SECRET_ACCESS_KEY= ****************
 
+# BUCKET
+AWS_BUCKET_NAME=
+AWS_EXPIRE_TIME=
 ```
 ## Running the app
 
@@ -68,6 +75,9 @@ $ npm run start:prod
 ```bash
 # unit tests
 $ npm run test
+
+# coverage
+$ npm run test:cov
 ```
 
 #### Documentation:
@@ -87,10 +97,10 @@ $ npm run test
 
 ## Pending Features
 
-- Include Unit Testing in  Services.
-- Add Order functionality
-- Add Like Products by Client.
-- Add images in Dessert
+- Include Unit Testing in Order Service.
+- Include Unit Testing in createImage and uploadImage methods in dessert service.
+- Add forgot password functionality.
+- Send an email when the user changes the password
 
 
 ## Collaboration
