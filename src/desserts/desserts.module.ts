@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { FilesService } from 'src/files/service/files.service';
 import { LikesModule } from 'src/likes/likes.module';
 import { LikesService } from 'src/likes/service/likes.service';
 import { AuthModule } from '../auth/auth.module';
@@ -18,6 +19,7 @@ import { DessertsService } from './service/desserts.service';
     JwtAuthGuard,
     RolesGuard,
     LikesService,
+    FilesService,
   ],
   exports: [DessertsService],
 })

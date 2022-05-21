@@ -64,7 +64,8 @@ model Dessert {
 
 model Image {
   id        Int      @id @default(autoincrement())
-  url       String
+  uuid      String   @unique @default(uuid())
+  name      String
   dessert   Dessert  @relation(fields: [dessertId], references: [id])
   dessertId Int      @map("dessert_id")
   createdAt DateTime @default(now()) @map("created_at")
