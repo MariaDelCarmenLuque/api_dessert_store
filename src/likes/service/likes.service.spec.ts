@@ -80,7 +80,7 @@ describe('LikesService', () => {
     it('should throw a error if dessert doesnt found', async () => {
       const received = likeService.findLikes(faker.datatype.number());
       await expect(received).rejects.toThrow(
-        new NotFoundException('No Dessert found'),
+        new NotFoundException('No dessert found'),
       );
     });
     it('should return a empty list', async () => {
