@@ -9,11 +9,14 @@ export class LikesService {
   constructor(private prisma: PrismaService) {}
 
   async findLikes(id: number): Promise<Like[]> {
-    await this.prisma.dessert.findUnique({
+    const dessert = await this.prisma.dessert.findUnique({
       where: { id: id },
       select: { id: true },
-      rejectOnNotFound: true,
+      rejectOnNotFound: false,
     });
+    if (!dessert) {
+      throw new NotFoundException('No dessert found');
+    }
     const likes = await this.prisma.like.findMany({
       where: {
         dessertId: id,

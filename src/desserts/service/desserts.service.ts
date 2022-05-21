@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { Dessert, Prisma, Status } from '@prisma/client';
 import { plainToClass } from 'class-transformer';
-import { FilesService } from 'src/files/service/files.service';
+import { FilesService } from '../../files/service/files.service';
 import { PrismaService } from '../../prisma.service';
 import { PrismaErrorEnum } from '../../utils/enums';
 import { CreateDessertDto } from '../models/create-dessert.dto';
@@ -57,8 +57,11 @@ export class DessertsService {
         where: {
           id: dessertId,
         },
-        rejectOnNotFound: true,
+        rejectOnNotFound: false,
       });
+      if (!dessert) {
+        throw new NotFoundException('No Dessert found');
+      }
       return dessert;
     } catch (error) {
       throw error;
