@@ -86,7 +86,7 @@ export class CartController {
   }
 
   @Delete('/cart-item/:id')
-  @Roles(Role.ADMIN)
+  @Roles(Role.USER)
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiUnauthorizedResponse({
@@ -103,5 +103,26 @@ export class CartController {
   })
   async delete(@GetUser() user: User, @Param('id') id: number): Promise<void> {
     await this.cartService.delete(user.id, id);
+  }
+
+  @Patch('/purchase')
+  @Roles(Role.USER)
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Purchase a cart' })
+  @ApiUnauthorizedResponse({
+    schema: {
+      example: new UnauthorizedException().getResponse(),
+    },
+    description: 'User is not logged in',
+  })
+  @ApiForbiddenResponse({
+    description: 'User is not authorized to delete this dessert',
+    schema: {
+      example: new ForbiddenException().getResponse(),
+    },
+  })
+  async purchasedCart(@GetUser() user: User): Promise<void> {
+    await this.cartService.purchaseCart(user.id);
   }
 }

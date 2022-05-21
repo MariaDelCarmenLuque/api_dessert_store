@@ -6,6 +6,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { plainToClass, plainToInstance } from 'class-transformer';
+import { OrdersService } from 'src/orders/service/orders.service';
 import { DessertDto } from '../../desserts/models/dessert.dto';
 import { PrismaService } from '../../prisma.service';
 import { CartItemsDto } from '../models/cart-item.dto';
@@ -14,7 +15,10 @@ import { CreateCartItemDto } from '../models/create-cart-item.dto';
 
 @Injectable()
 export class CartService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private orderService: OrdersService,
+  ) {}
 
   async getItems(userId: number) {
     try {
@@ -183,6 +187,39 @@ export class CartService {
       ]);
 
       return true;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async purchaseCart(userId: number) {
+    try {
+      const user = await this.prisma.user.findUnique({
+        where: {
+          id: userId,
+        },
+        select: {
+          cart: true,
+          id: true,
+        },
+        rejectOnNotFound: true,
+      });
+      const cart = await this.prisma.cart.findUnique({
+        where: {
+          userId: userId,
+        },
+        select: { amount: true },
+        rejectOnNotFound: true,
+      });
+
+      if (cart.amount != 0) {
+        this.prisma.cart.update({
+          where: { id: user.cart.id },
+          data: { purchasedAt: new Date() },
+        });
+
+        return this.orderService.create(userId);
+      }
     } catch (error) {
       throw error;
     }
