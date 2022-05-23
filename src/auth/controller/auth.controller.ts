@@ -9,7 +9,9 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { CreateUserDto } from 'src/users/models/create-user.dto';
+import { ForgotPasswordDto } from '../models/forgot-password.dto';
 import { LoginDto } from '../models/login.dto';
+import { ResetPasswordDto } from '../models/reset-password.dto';
 import { TokenDto } from '../models/token.dto';
 import { AuthService } from '../service/auth.service';
 
@@ -113,5 +115,15 @@ export class AuthController {
   @ApiBadRequestResponse({ description: 'Token is invalid' })
   async logout(@Query('token') token: string): Promise<void> {
     return await this.authService.logout(token);
+  }
+
+  @Post('forgot-password')
+  async forgotPassword(@Body() data: ForgotPasswordDto) {
+    await this.authService.sendEmailForgotPassword(data);
+  }
+
+  @Post('/reset-password')
+  async resetPassword(@Body() data: ResetPasswordDto) {
+    await this.authService.resetPassword(data);
   }
 }
