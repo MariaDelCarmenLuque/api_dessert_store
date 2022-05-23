@@ -9,6 +9,8 @@ import { CartModule } from './cart/cart.module';
 import { OrdersModule } from './orders/orders.module';
 import { LikesModule } from './likes/likes.module';
 import { FilesModule } from './files/files.module';
+import { EmailModule } from './email/email.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -20,6 +22,10 @@ import { FilesModule } from './files/files.module';
     OrdersModule,
     LikesModule,
     FilesModule,
+    EmailModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
   ],
   controllers: [AppController],
   providers: [AppService],
