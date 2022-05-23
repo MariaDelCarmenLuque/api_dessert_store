@@ -1,24 +1,23 @@
+import faker from '@faker-js/faker';
 import { ApiProperty } from '@nestjs/swagger';
 import {
-  IsEmail,
   IsNotEmpty,
   IsString,
+  Length,
   Matches,
   MaxLength,
   MinLength,
 } from 'class-validator';
 
-export class LoginDto {
-  @ApiProperty({
-    description: 'Email of user',
-    type: String,
-  })
-  @IsEmail()
-  readonly email: string;
+export class ResetPasswordDto {
+  @ApiProperty({ description: 'token to verify user', example: 'TOKEN' })
+  @IsString()
+  @IsNotEmpty()
+  token: string;
 
   @ApiProperty({
-    description: 'Password of user',
-    example: 'MyP@55W0rD',
+    description: 'New password of user',
+    example: faker.internet.password(),
   })
   @MinLength(8, {
     message: 'PASSWORD_MIN_LENGTH: 8',
@@ -38,7 +37,8 @@ export class LoginDto {
   @Matches(/[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/, {
     message: 'PASSWORDS_MISSING: SPECIAL_CHARACTER',
   })
-  @IsNotEmpty()
   @IsString()
-  readonly password: string;
+  @IsNotEmpty()
+  @Length(8, 16)
+  password: string;
 }
