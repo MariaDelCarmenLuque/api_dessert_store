@@ -5,6 +5,7 @@ import {
   Injectable,
   NotFoundException,
   UnauthorizedException,
+  UnprocessableEntityException,
 } from '@nestjs/common';
 import { compareSync, hashSync } from 'bcryptjs';
 import { Prisma, Token } from '@prisma/client';
@@ -14,11 +15,17 @@ import { CreateUserDto } from '../../users/models/create-user.dto';
 import { TokenDto } from '../models/token.dto';
 import { LoginDto } from '../models/login.dto';
 import { sign, verify } from 'jsonwebtoken';
+import { ForgotPasswordDto } from '../models/forgot-password.dto';
+import { EmailService } from 'src/email/service/email.service';
+import { ResetPasswordDto } from '../models/reset-password.dto';
 
 @Injectable()
 export class AuthService {
   static prisma: any;
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private emailService: EmailService,
+  ) {}
 
   async createUser(user: CreateUserDto): Promise<TokenDto> {
     await this.checkEmail(user);
@@ -167,6 +174,34 @@ export class AuthService {
       });
     } catch (error) {
       throw new BadRequestException('Token is invalid');
+    }
+  }
+  async sendEmailForgotPassword(data: ForgotPasswordDto) {
+    try {
+      const user = await this.prisma.user.findUnique({
+        where: { email: data.email },
+        rejectOnNotFound: false,
+      });
+      if (!user) throw new NotFoundException("Email doesn't exist ");
+
+      const newAccessToken = this.generateAccessToken(user.uuid);
+      const mail = {
+        to: data.email,
+        subject: 'Change your password',
+        text: 'This email was sent to change your password',
+        html: `New access Tokes in <strong>${newAccessToken}</strong>`,
+      };
+
+      await this.emailService.sendMail(mail);
+    } catch (error) {
+      throw error;
+    }
+  }
+  async resetPassword(input: ResetPasswordDto) {
+    const { token, password } = input;
+    try {
+    } catch (error) {
+      throw new UnprocessableEntityException('Invalid token');
     }
   }
 }
