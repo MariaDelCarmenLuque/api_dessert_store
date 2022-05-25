@@ -2,8 +2,8 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { plainToInstance } from 'class-transformer';
 import { PrismaService } from '../../prisma.service';
-import { OrderItemsDto } from '../models/order-item.dto';
-import { OrderDto } from '../models/order.dto';
+import { OrderItemsDto } from '../dtos/order-item.dto';
+import { OrderDto } from '../dtos/order.dto';
 
 @Injectable()
 export class OrdersService {

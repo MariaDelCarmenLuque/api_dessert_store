@@ -24,7 +24,7 @@ import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Public } from 'src/auth/decorators/public.decorator';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { Role } from 'src/auth/roles.enum';
-import { CategoryDto } from '../models/category.dto';
+import { CategoryDto } from '../dtos/category.dto';
 import { CategoriesService } from '../service/categories.service';
 
 @ApiTags('Categories')

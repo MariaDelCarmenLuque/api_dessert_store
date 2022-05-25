@@ -35,14 +35,14 @@ import { RolesGuard } from '../../auth/guards/roles.guard';
 import { Public } from '../../auth/decorators/public.decorator';
 import { Roles } from '../../auth/decorators/roles.decorator';
 import { Role } from '../../auth/roles.enum';
-import { CreateDessertDto } from '../models/create-dessert.dto';
-import { DessertDto } from '../models/dessert.dto';
-import { UpdateDessertDto } from '../models/update-dessert.dto';
+import { CreateDessertDto } from '../dtos/create-dessert.dto';
+import { DessertDto } from '../dtos/dessert.dto';
+import { UpdateDessertDto } from '../dtos/update-dessert.dto';
 import { DessertsService } from '../service/desserts.service';
 import { LikesService } from '../../likes/service/likes.service';
 import { GetUser } from 'src/auth/decorators/user.decorator';
-import { LikeDto } from 'src/likes/models/like.dto';
-import { ImageDto } from '../models/image.dto';
+import { LikeDto } from 'src/likes/dtos/like.dto';
+import { ImageDto } from '../dtos/image.dto';
 
 @ApiTags('Desserts')
 @Controller('desserts')

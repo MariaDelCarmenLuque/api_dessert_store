@@ -10,10 +10,10 @@ import { plainToClass } from 'class-transformer';
 import { FilesService } from '../../files/service/files.service';
 import { PrismaService } from '../../prisma.service';
 import { PrismaErrorEnum } from '../../utils/enums';
-import { CreateDessertDto } from '../models/create-dessert.dto';
-import { DessertDto } from '../models/dessert.dto';
-import { ImageDto } from '../models/image.dto';
-import { UpdateDessertDto } from '../models/update-dessert.dto';
+import { CreateDessertDto } from '../dtos/create-dessert.dto';
+import { DessertDto } from '../dtos/dessert.dto';
+import { ImageDto } from '../dtos/image.dto';
+import { UpdateDessertDto } from '../dtos/update-dessert.dto';
 
 @Injectable()
 export class DessertsService {

@@ -1,7 +1,7 @@
 import { BadRequestException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma.service';
-import { UpdateUserDto } from '../models/update-user.dto';
-import { User } from '../models/user.dto';
+import { UpdateUserDto } from '../dtos/update-user.dto';
+import { User } from '../dtos/user.dto';
 
 @Injectable()
 export class UsersService {

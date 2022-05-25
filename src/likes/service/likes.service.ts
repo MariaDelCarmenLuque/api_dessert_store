@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { Like, Prisma } from '@prisma/client';
 import { PrismaService } from '../../prisma.service';
 import { PrismaErrorEnum } from '../../utils/enums';
-import { LikeDto } from '../models/like.dto';
+import { LikeDto } from '../dtos/like.dto';
 
 @Injectable()
 export class LikesService {

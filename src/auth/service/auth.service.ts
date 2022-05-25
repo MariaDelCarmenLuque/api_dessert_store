@@ -10,9 +10,9 @@ import { compareSync, hashSync } from 'bcryptjs';
 import { Prisma, Token } from '@prisma/client';
 import { PrismaService } from '../../prisma.service';
 import { PrismaErrorEnum } from '../../utils/enums';
-import { CreateUserDto } from '../../users/models/create-user.dto';
-import { TokenDto } from '../models/token.dto';
-import { LoginDto } from '../models/login.dto';
+import { CreateUserDto } from '../../users/dtos/create-user.dto';
+import { TokenDto } from '../dtos/token.dto';
+import { LoginDto } from '../dtos/login.dto';
 import { sign, verify } from 'jsonwebtoken';
 
 @Injectable()

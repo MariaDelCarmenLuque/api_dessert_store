@@ -7,11 +7,11 @@ import {
 } from '@nestjs/common';
 import { plainToClass, plainToInstance } from 'class-transformer';
 import { OrdersService } from 'src/orders/service/orders.service';
-import { DessertDto } from '../../desserts/models/dessert.dto';
+import { DessertDto } from '../../desserts/dtos/dessert.dto';
 import { PrismaService } from '../../prisma.service';
-import { CartItemsDto } from '../models/cart-item.dto';
-import { CartDto } from '../models/cart.dto';
-import { CreateCartItemDto } from '../models/create-cart-item.dto';
+import { CartItemsDto } from '../dtos/cart-item.dto';
+import { CartDto } from '../dtos/cart.dto';
+import { CreateCartItemDto } from '../dtos/create-cart-item.dto';
 
 @Injectable()
 export class CartService {

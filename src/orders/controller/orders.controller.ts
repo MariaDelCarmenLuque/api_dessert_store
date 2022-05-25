@@ -18,7 +18,7 @@ import { Roles } from 'src/auth/decorators/roles.decorator';
 import { GetUser } from 'src/auth/decorators/user.decorator';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-guard';
 import { Role } from 'src/auth/roles.enum';
-import { OrderDto } from '../models/order.dto';
+import { OrderDto } from '../dtos/order.dto';
 import { OrdersService } from '../service/orders.service';
 
 @ApiTags('Orders')

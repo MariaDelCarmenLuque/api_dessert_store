@@ -22,9 +22,9 @@ import { Roles } from '../../auth/decorators/roles.decorator';
 import { GetUser } from '../../auth/decorators/user.decorator';
 import { JwtAuthGuard } from '../../auth/guards/jwt-guard';
 import { Role } from '../../auth/roles.enum';
-import { CartItemsDto } from '../models/cart-item.dto';
-import { CartDto } from '../models/cart.dto';
-import { CreateCartItemDto } from '../models/create-cart-item.dto';
+import { CartItemsDto } from '../dtos/cart-item.dto';
+import { CartDto } from '../dtos/cart.dto';
+import { CreateCartItemDto } from '../dtos/create-cart-item.dto';
 import { CartService } from '../service/cart.service';
 
 @ApiTags('Cart')
