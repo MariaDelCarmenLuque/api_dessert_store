@@ -12,5 +12,5 @@ export class CategoryDto {
   @IsNotEmpty()
   @IsString()
   @Length(1, 40)
-  name: string;
+  readonly name: string;
 }

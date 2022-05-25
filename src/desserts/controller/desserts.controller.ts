@@ -48,8 +48,8 @@ import { ImageDto } from '../dtos/image.dto';
 @Controller('desserts')
 export class DessertsController {
   constructor(
-    private dessertsService: DessertsService,
-    private likesService: LikesService,
+    private readonly dessertsService: DessertsService,
+    private readonly likesService: LikesService,
   ) {}
 
   @Get()

@@ -10,25 +10,25 @@ export class OrderDto {
     example: faker.datatype.uuid(),
   })
   @Expose()
-  uuid: string;
+  readonly uuid: string;
 
   @ApiProperty({
     description: 'total Price of a order',
     example: faker.datatype.number(),
   })
   @Expose()
-  totalPrice: number;
+  readonly totalPrice: number;
 
   @ApiProperty({
     description: 'Date of create a order',
     example: faker.datatype.datetime(),
   })
   @Expose()
-  createdAt: Date;
+  readonly createdAt: Date;
 
   @ApiProperty({
     description: 'List od OrderItems',
   })
   @Expose()
-  items: OrderItem[];
+  readonly items: OrderItem[];
 }

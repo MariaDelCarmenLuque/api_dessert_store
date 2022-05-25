@@ -9,5 +9,5 @@ export class LikeDto {
   })
   @Expose()
   @IsBoolean()
-  isLike: boolean;
+  readonly isLike: boolean;
 }

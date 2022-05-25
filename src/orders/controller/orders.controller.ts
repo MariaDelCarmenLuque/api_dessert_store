@@ -24,7 +24,7 @@ import { OrdersService } from '../service/orders.service';
 @ApiTags('Orders')
 @Controller('orders')
 export class OrdersController {
-  constructor(private ordersService: OrdersService) {}
+  constructor(private readonly ordersService: OrdersService) {}
 
   @Get()
   @Roles(Role.USER)

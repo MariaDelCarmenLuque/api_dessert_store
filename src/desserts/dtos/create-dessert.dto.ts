@@ -16,7 +16,7 @@ export class CreateDessertDto {
     description: 'Dessert name',
   })
   @Length(1, 40)
-  name: string;
+  readonly name: string;
 
   @IsNotEmpty()
   @IsString()
@@ -25,7 +25,7 @@ export class CreateDessertDto {
     example: 'Chocolate cake contains a variety of dried fruits',
     description: 'Dessert description',
   })
-  description: string;
+  readonly description: string;
 
   @IsNotEmpty()
   @IsNumber()
@@ -35,7 +35,7 @@ export class CreateDessertDto {
     example: 1050.5,
     description: 'Dessert Price',
   })
-  price: number;
+  readonly price: number;
 
   @IsNotEmpty()
   @IsNumber()
@@ -45,7 +45,7 @@ export class CreateDessertDto {
     example: 10,
     description: 'Dessert Stock',
   })
-  stock: number;
+  readonly stock: number;
 
   @IsNotEmpty()
   @IsNumber()
@@ -53,5 +53,5 @@ export class CreateDessertDto {
     description: 'Id of the Dessert category',
     example: 1,
   })
-  categoryId: number;
+  readonly categoryId: number;
 }

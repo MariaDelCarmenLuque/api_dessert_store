@@ -1,10 +1,10 @@
-import { IsInt, IsNumber, IsPositive, IsString } from 'class-validator';
+import { IsInt, IsNumber, IsPositive } from 'class-validator';
 
 export class CreateCartItemDto {
   @IsNumber()
-  dessertId: number;
+  readonly dessertId: number;
 
   @IsPositive()
   @IsInt()
-  quantity: number;
+  readonly quantity: number;
 }

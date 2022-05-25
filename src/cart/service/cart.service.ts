@@ -16,8 +16,8 @@ import { CreateCartItemDto } from '../dtos/create-cart-item.dto';
 @Injectable()
 export class CartService {
   constructor(
-    private prisma: PrismaService,
-    private orderService: OrdersService,
+    private readonly prisma: PrismaService,
+    private readonly orderService: OrdersService,
   ) {}
 
   async getItems(userId: number) {

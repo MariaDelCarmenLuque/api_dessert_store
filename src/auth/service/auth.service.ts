@@ -18,7 +18,7 @@ import { sign, verify } from 'jsonwebtoken';
 @Injectable()
 export class AuthService {
   static prisma: any;
-  constructor(private prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   async createUser(user: CreateUserDto): Promise<TokenDto> {
     await this.checkEmail(user);

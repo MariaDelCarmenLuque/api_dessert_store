@@ -5,7 +5,7 @@ import { CategoryDto } from '../dtos/category.dto';
 
 @Injectable()
 export class CategoriesService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   async getAll(): Promise<Category[]> {
     return this.prisma.category.findMany({

@@ -40,5 +40,5 @@ export class ResetPasswordDto {
   @IsString()
   @IsNotEmpty()
   @Length(8, 16)
-  password: string;
+  readonly password: string;
 }

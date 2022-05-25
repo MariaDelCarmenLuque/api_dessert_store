@@ -4,16 +4,16 @@ import { Exclude, Expose, Transform } from 'class-transformer';
 @Exclude()
 export class OrderItemsDto {
   @Expose()
-  quantity: number;
+  readonly quantity: number;
 
   @Expose()
-  unitPrice: number;
+  readonly unitPrice: number;
 
   @Expose()
-  totalPrice: number;
+  readonly totalPrice: number;
 
   @Expose()
-  dessert: Dessert;
+  readonly dessert: Dessert;
 
   @Expose()
   @Transform(({ value }) => value?.toISOString())

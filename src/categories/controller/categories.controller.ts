@@ -30,7 +30,7 @@ import { CategoriesService } from '../service/categories.service';
 @ApiTags('Categories')
 @Controller('categories')
 export class CategoriesController {
-  constructor(private categoriesService: CategoriesService) {}
+  constructor(private readonly categoriesService: CategoriesService) {}
 
   @Get('all')
   @Public()

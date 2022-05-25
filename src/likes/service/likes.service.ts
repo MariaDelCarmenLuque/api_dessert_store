@@ -6,7 +6,7 @@ import { LikeDto } from '../dtos/like.dto';
 
 @Injectable()
 export class LikesService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   async findLikes(id: number): Promise<Like[]> {
     const dessert = await this.prisma.dessert.findUnique({

@@ -7,7 +7,7 @@ import { OrderDto } from '../dtos/order.dto';
 
 @Injectable()
 export class OrdersService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   async getMany(userId: number) {
     try {

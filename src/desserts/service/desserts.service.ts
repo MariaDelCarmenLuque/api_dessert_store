@@ -18,8 +18,8 @@ import { UpdateDessertDto } from '../dtos/update-dessert.dto';
 @Injectable()
 export class DessertsService {
   constructor(
-    private prisma: PrismaService,
-    private filesService: FilesService,
+    private readonly prisma: PrismaService,
+    private readonly filesService: FilesService,
   ) {}
 
   async getAllDesserts(): Promise<Dessert[]> {
