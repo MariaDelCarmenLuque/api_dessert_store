@@ -105,9 +105,9 @@ export class AuthService {
       throw error;
     }
   }
-  async generateToken(sub: string): Promise<TokenDto> {
-    const accessToken = await this.generateAccessToken(sub);
-    const refreshToken = await this.generateRefreshToken(sub);
+  generateToken(sub: string) {
+    const accessToken = this.generateAccessToken(sub);
+    const refreshToken = this.generateRefreshToken(sub);
     const exp = parseInt(process.env.ACCESS_TOKEN_EXPIRATION);
     return {
       accessToken,
@@ -115,7 +115,7 @@ export class AuthService {
       exp,
     };
   }
-  async generateAccessToken(sub: string) {
+  generateAccessToken(sub: string) {
     const now = new Date().getTime();
     const exp = Math.floor(
       new Date(now).setSeconds(
@@ -133,7 +133,7 @@ export class AuthService {
     );
     return accessToken;
   }
-  async generateRefreshToken(sub: string) {
+  generateRefreshToken(sub: string) {
     const now = new Date().getTime();
     const exp = Math.floor(
       new Date(now).setSeconds(
