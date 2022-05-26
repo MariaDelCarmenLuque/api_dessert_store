@@ -29,7 +29,7 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { Dessert, Like, User } from '@prisma/client';
+import { Like, User } from '@prisma/client';
 import { JwtAuthGuard } from '../../auth/guards/jwt-guard';
 import { RolesGuard } from '../../auth/guards/roles.guard';
 import { Public } from '../../auth/decorators/public.decorator';
@@ -104,7 +104,7 @@ export class DessertsController {
     @Query('skip', new DefaultValuePipe(1), ParseIntPipe) skip,
     @Query('category', new DefaultValuePipe(null), ParseIntPipe)
     category?: number,
-  ): Promise<Dessert[]> {
+  ): Promise<DessertDto[]> {
     const params = { take, skip, category };
     return await this.dessertsService.getPaginationList(params);
   }
@@ -150,7 +150,7 @@ export class DessertsController {
       },
     },
   })
-  async findDessertById(@Param('id') id: number): Promise<Dessert> {
+  async findDessertById(@Param('id') id: number): Promise<DessertDto> {
     return await this.dessertsService.findOne(id);
   }
 
@@ -404,7 +404,7 @@ export class DessertsController {
       example: new ForbiddenException().getResponse(),
     },
   })
-  async enableStatus(@Param('id') id: number) {
+  async enableStatus(@Param('id') id: number): Promise<any> {
     return await this.dessertsService.updateStatus(id);
   }
 
