@@ -29,7 +29,8 @@ export class AuthController {
         firstName: 'Maria',
         userName: 'mari',
         email: 'mari@gmail.com',
-        password: 'mypassword',
+        password: 'myPa$$w0rd',
+        role: 'ADMIN',
       },
     },
   })
