@@ -60,7 +60,7 @@ export class DessertsService {
         rejectOnNotFound: false,
       });
       if (!dessert) {
-        throw new NotFoundException('No Dessert found');
+        throw new NotFoundException(`Dessert with id ${dessertId} Not found`);
       }
       return dessert;
     } catch (error) {
