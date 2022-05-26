@@ -27,7 +27,7 @@ import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { Role } from 'src/auth/roles.enum';
 import { UpdateUserDto } from '../dtos/update-user.dto';
-import { User } from '../dtos/user.dto';
+import { UserDto } from '../dtos/user.dto';
 import { UsersService } from '../service/users.service';
 
 @ApiTags('Users')
@@ -82,7 +82,7 @@ export class UsersController {
       },
     },
   })
-  async getAll(): Promise<User[]> {
+  async getAll(): Promise<UserDto[]> {
     return await this.userService.getAll();
   }
 
@@ -144,7 +144,7 @@ export class UsersController {
       },
     },
   })
-  async findOne(@Param('id') id: number) {
+  async findOne(@Param('id') id: number): Promise<UserDto> {
     return await this.userService.findOne(id);
   }
 
@@ -221,7 +221,10 @@ export class UsersController {
     required: true,
     example: 1,
   })
-  async updateUser(@Param('id') id: number, @Body() data: UpdateUserDto) {
+  async updateUser(
+    @Param('id') id: number,
+    @Body() data: UpdateUserDto,
+  ): Promise<UserDto> {
     return await this.userService.updateUser(id, data);
   }
 

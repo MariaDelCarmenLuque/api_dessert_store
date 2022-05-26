@@ -1,13 +1,14 @@
 import { BadRequestException, HttpStatus, Injectable } from '@nestjs/common';
+import { plainToInstance } from 'class-transformer';
 import { PrismaService } from '../../prisma.service';
 import { UpdateUserDto } from '../dtos/update-user.dto';
-import { User } from '../dtos/user.dto';
+import { UserDto } from '../dtos/user.dto';
 
 @Injectable()
 export class UsersService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getAll(): Promise<User[]> {
+  async getAll(): Promise<UserDto[]> {
     return this.prisma.user.findMany({
       select: {
         id: true,
@@ -24,7 +25,7 @@ export class UsersService {
     });
   }
 
-  async findOne(id: number): Promise<User | null> {
+  async findOne(id: number): Promise<UserDto | null> {
     const user = await this.prisma.user.findUnique({
       where: {
         id,
@@ -35,7 +36,7 @@ export class UsersService {
     return user;
   }
 
-  async updateUser(id: number, data: UpdateUserDto) {
+  async updateUser(id: number, data: UpdateUserDto): Promise<UserDto> {
     try {
       await this.prisma.user.findUnique({
         where: {
@@ -49,7 +50,7 @@ export class UsersService {
         },
         where: { id },
       });
-      return user;
+      return plainToInstance(UserDto, user);
     } catch (error) {
       throw error;
     }

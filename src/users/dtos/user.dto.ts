@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Role } from '@prisma/client';
 import { Exclude, Expose, Transform } from 'class-transformer';
 @Exclude()
-export class User {
+export class UserDto {
   @ApiProperty({
     readOnly: true,
     type: Number,
