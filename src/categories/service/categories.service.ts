@@ -1,19 +1,20 @@
 import { Injectable } from '@nestjs/common';
-import { Category } from '@prisma/client';
+import { plainToInstance } from 'class-transformer';
 import { PrismaService } from '../../prisma.service';
 import { CategoryDto } from '../dtos/category.dto';
+import { CreateCategoryDto } from '../dtos/create-category.dto';
 
 @Injectable()
 export class CategoriesService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getAll(): Promise<Category[]> {
+  async getAll(): Promise<CategoryDto[]> {
     return this.prisma.category.findMany({
       orderBy: { createdAt: 'desc' },
     });
   }
 
-  async findOne(id: number): Promise<Category | null> {
+  async findOne(id: number): Promise<CategoryDto | null> {
     try {
       return await this.prisma.category.findUnique({
         where: {
@@ -26,15 +27,19 @@ export class CategoriesService {
     }
   }
 
-  async create(data: CategoryDto) {
+  async create(data: CreateCategoryDto): Promise<CategoryDto> {
     try {
-      return await this.prisma.category.create({ data: data });
+      const category = await this.prisma.category.create({ data: data });
+      return plainToInstance(CategoryDto, category);
     } catch (error) {
       throw error;
     }
   }
 
-  async updateCategory(categoryId: number, data: CategoryDto) {
+  async updateCategory(
+    categoryId: number,
+    data: CreateCategoryDto,
+  ): Promise<CategoryDto> {
     try {
       await this.prisma.category.findUnique({
         where: {
@@ -42,10 +47,11 @@ export class CategoriesService {
         },
         rejectOnNotFound: true,
       });
-      return await this.prisma.category.update({
+      const category = await this.prisma.category.update({
         data: data,
         where: { id: categoryId },
       });
+      return plainToInstance(CategoryDto, category);
     } catch (error) {
       throw error;
     }

@@ -18,7 +18,6 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { Category } from '@prisma/client';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Public } from 'src/auth/decorators/public.decorator';
@@ -26,6 +25,7 @@ import { Roles } from 'src/auth/decorators/roles.decorator';
 import { Role } from 'src/auth/roles.enum';
 import { CategoryDto } from '../dtos/category.dto';
 import { CategoriesService } from '../service/categories.service';
+import { CreateCategoryDto } from '../dtos/create-category.dto';
 
 @ApiTags('Categories')
 @Controller('categories')
@@ -68,7 +68,7 @@ export class CategoriesController {
       },
     },
   })
-  async getAll() {
+  async getAll(): Promise<CategoryDto[]> {
     return await this.categoriesService.getAll();
   }
 
@@ -78,12 +78,13 @@ export class CategoriesController {
   @ApiResponse({
     status: 200,
     description: 'Category found by ID',
-    schema: {
-      example: {
-        id: 5,
-        name: 'Brownies',
-      },
-    },
+    type: CategoryDto,
+    // schema: {
+    //   example: {
+    //     id: 5,
+    //     name: 'Brownies',
+    //   },
+    // },
   })
   @ApiNotFoundResponse({
     description: 'Product Not Found',
@@ -95,7 +96,7 @@ export class CategoriesController {
       },
     },
   })
-  async findOne(@Param('id') id: number) {
+  async findOne(@Param('id') id: number): Promise<CategoryDto> {
     const user = await this.categoriesService.findOne(id);
     if (!user) {
       throw new HttpException('Category Not Found', HttpStatus.NOT_FOUND);
@@ -119,7 +120,9 @@ export class CategoriesController {
     },
     description: 'User is not logged in as Manager',
   })
-  async createCategory(@Body() createCategory: CategoryDto): Promise<Category> {
+  async createCategory(
+    @Body() createCategory: CreateCategoryDto,
+  ): Promise<CategoryDto> {
     return await this.categoriesService.create(createCategory);
   }
 
@@ -128,7 +131,10 @@ export class CategoriesController {
   @Roles(Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: 'Update a new Category' })
-  async updateUser(@Param('id') id: number, @Body() data: CategoryDto) {
+  async updateUser(
+    @Param('id') id: number,
+    @Body() data: CreateCategoryDto,
+  ): Promise<CategoryDto> {
     return await this.categoriesService.updateCategory(id, data);
   }
 }
