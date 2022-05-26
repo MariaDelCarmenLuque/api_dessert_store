@@ -1,5 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Status } from '@prisma/client';
 import { Exclude, Expose, Transform } from 'class-transformer';
 
 @Exclude()
@@ -61,11 +60,11 @@ export class DessertDto {
 
   @ApiProperty({
     description: 'Status of dessert',
-    default: 'ACTIVE',
-    example: 'DISABLE',
+    default: 'true',
+    example: 'false',
   })
   @Expose()
-  readonly status: Status;
+  readonly status: boolean;
 
   @ApiProperty({
     description: 'Images of Dessert',
@@ -126,7 +125,7 @@ export class DessertDto {
    */
 
   public isActive(): boolean {
-    return this.status == Status.ACTIVE;
+    return this.status == true;
   }
 
   /**
