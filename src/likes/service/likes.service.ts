@@ -1,14 +1,16 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Like, Prisma } from '@prisma/client';
+import { Prisma } from '@prisma/client';
+import { plainToClass, plainToInstance } from 'class-transformer';
 import { PrismaService } from '../../prisma.service';
 import { PrismaErrorEnum } from '../../utils/enums';
+import { CreateLikeDto } from '../dtos/create-like.dto';
 import { LikeDto } from '../dtos/like.dto';
 
 @Injectable()
 export class LikesService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findLikes(id: number): Promise<Like[]> {
+  async findLikes(id: number): Promise<LikeDto[]> {
     const dessert = await this.prisma.dessert.findUnique({
       where: { id: id },
       select: { id: true },
@@ -25,10 +27,14 @@ export class LikesService {
         createdAt: 'asc',
       },
     });
-    return likes;
+    return plainToInstance(LikeDto, likes);
   }
 
-  async upsertLike(userId: number, id: number, data: LikeDto): Promise<Like> {
+  async upsertLike(
+    userId: number,
+    id: number,
+    data: CreateLikeDto,
+  ): Promise<LikeDto> {
     try {
       const [user, dessert] = await Promise.all([
         this.prisma.user.findUnique({
@@ -67,7 +73,7 @@ export class LikesService {
         },
       });
 
-      return like;
+      return plainToClass(LikeDto, like);
     } catch (error) {
       throw error;
     }

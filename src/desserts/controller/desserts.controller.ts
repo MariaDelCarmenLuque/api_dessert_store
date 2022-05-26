@@ -29,7 +29,7 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { Like, User } from '@prisma/client';
+import { User } from '@prisma/client';
 import { JwtAuthGuard } from '../../auth/guards/jwt-guard';
 import { RolesGuard } from '../../auth/guards/roles.guard';
 import { Public } from '../../auth/decorators/public.decorator';
@@ -43,6 +43,7 @@ import { LikesService } from '../../likes/service/likes.service';
 import { GetUser } from 'src/auth/decorators/user.decorator';
 import { LikeDto } from 'src/likes/dtos/like.dto';
 import { ImageDto } from '../dtos/image.dto';
+import { CreateLikeDto } from 'src/likes/dtos/create-like.dto';
 
 @ApiTags('Desserts')
 @Controller('desserts')
@@ -466,7 +467,7 @@ export class DessertsController {
       },
     },
   })
-  async findAllLikes(@Param('id') id: number): Promise<Like[]> {
+  async findAllLikes(@Param('id') id: number): Promise<LikeDto[]> {
     return await this.likesService.findLikes(id);
   }
   @Patch('/:id/likes')
@@ -516,8 +517,8 @@ export class DessertsController {
   async upsertLike(
     @GetUser() user: User,
     @Param('id') id: number,
-    @Body() likeDto: LikeDto,
-  ): Promise<Like> {
+    @Body() likeDto: CreateLikeDto,
+  ): Promise<LikeDto> {
     return await this.likesService.upsertLike(user.id, id, likeDto);
   }
   @Delete('/:id/likes')
