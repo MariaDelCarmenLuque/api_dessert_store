@@ -3,10 +3,10 @@ import { Role } from '@prisma/client';
 import {
   IsEmail,
   IsIn,
-  IsLowercase,
   IsNotEmpty,
   IsOptional,
   IsString,
+  IsUppercase,
   Matches,
   MaxLength,
   MinLength,
@@ -77,6 +77,6 @@ export class CreateUserDto {
 
   @IsIn([Role.ADMIN, Role.USER])
   @IsNotEmpty()
-  @IsLowercase()
+  @IsUppercase()
   readonly role: Role;
 }
