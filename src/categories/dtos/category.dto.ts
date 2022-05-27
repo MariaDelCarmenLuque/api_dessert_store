@@ -1,6 +1,5 @@
 export class CategoryDto {
   readonly id: number;
-  readonly uuid: string;
   /**
    * Name of category
    * @example 'cake'
