@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
 import { PrismaService } from '../../prisma.service';
 import { CategoryDto } from '../dtos/category.dto';
@@ -14,14 +14,18 @@ export class CategoriesService {
     });
   }
 
-  async findOne(id: number): Promise<CategoryDto | null> {
+  async findOne(categoryId: number): Promise<CategoryDto | null> {
     try {
-      return await this.prisma.category.findUnique({
+      const category = await this.prisma.category.findUnique({
         where: {
-          id,
+          id: categoryId,
         },
-        rejectOnNotFound: true,
+        rejectOnNotFound: false,
       });
+      if (!category) {
+        throw new NotFoundException(`Category with id ${categoryId} Not found`);
+      }
+      return category;
     } catch (error) {
       throw error;
     }
@@ -41,17 +45,20 @@ export class CategoriesService {
     data: CreateCategoryDto,
   ): Promise<CategoryDto> {
     try {
-      await this.prisma.category.findUnique({
+      const category = await this.prisma.category.findUnique({
         where: {
           id: categoryId,
         },
-        rejectOnNotFound: true,
+        rejectOnNotFound: false,
       });
-      const category = await this.prisma.category.update({
+      if (!category) {
+        throw new NotFoundException(`Category with id ${categoryId} Not found`);
+      }
+      const categoryUpdate = await this.prisma.category.update({
         data: data,
         where: { id: categoryId },
       });
-      return plainToInstance(CategoryDto, category);
+      return plainToInstance(CategoryDto, categoryUpdate);
     } catch (error) {
       throw error;
     }
