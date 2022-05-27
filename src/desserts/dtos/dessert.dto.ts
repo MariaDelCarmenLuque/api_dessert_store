@@ -1,113 +1,93 @@
-import { ApiProperty } from '@nestjs/swagger';
 import { Exclude, Expose, Transform } from 'class-transformer';
 
 @Exclude()
 export class DessertDto {
-  @ApiProperty({
-    readOnly: true,
-    type: Number,
-    example: 1,
-    description: 'Dessert ID',
-  })
+  /**
+   * Id of Dessert
+   * @example 1
+   */
   @Expose()
   readonly id: number;
-
+  /**
+   * UUID of Dessert
+   */
   @Expose()
   readonly uuid: string;
 
-  @ApiProperty({
-    example: 'Chocolate cake',
-    description: 'Dessert name',
-    nullable: false,
-    maxLength: 40,
-  })
+  /**
+   * Name of Dessert
+   * @example 'Chocolate cake'
+   */
   @Expose()
   readonly name: string;
 
-  @ApiProperty({
-    example: 'Chocolate cake contains a variety of dried fruits',
-    description: 'Dessert description',
-    nullable: false,
-    maxLength: 255,
-  })
+  /**
+   * Description of Dessert
+   * @example 'Chocolate cake contains a variety of dried fruits'
+   */
   @Expose()
   readonly description: string;
 
-  @ApiProperty({
-    example: 1050.5,
-    description: 'Dessert Price',
-    nullable: false,
-  })
+  /**
+   * Price of Dessert
+   * @example 1050.5
+   */
   @Expose()
   readonly price: number;
 
-  @ApiProperty({
-    example: 10,
-    description: 'Dessert Stock',
-    nullable: false,
-    maxLength: 1000000,
-  })
+  /**
+   * Stock of Dessert
+   * @example 10
+   */
   @Expose()
   readonly stock: number;
 
-  @ApiProperty({
-    description: 'Id of the Dessert category',
-    example: 1,
-    nullable: false,
-  })
+  /**
+   * Id of Category
+   * @example 5
+   */
   @Expose()
   readonly categoryId: number;
 
-  @ApiProperty({
-    description: 'Status of dessert',
-    default: 'true',
-    example: 'false',
-  })
+  /**
+   * Status of Desert
+   * TRUE Active
+   * FALSE Disable
+   */
   @Expose()
   readonly status: boolean;
 
-  @ApiProperty({
-    description: 'Images of Dessert',
-    nullable: true,
-    example:
-      '[{https://empresas.blogthinkbig.com//Imagen3-245003649.jpg?w=800},{ttps://empresas.blogthinkbig.com//Imagen3-245003649.jpg?w=800}]',
-  })
+  /**
+   * Images of a Dessert
+   * @Example '[{https://empresas.blogthinkbig.com//Imagen3-245003649.jpg?w=800},{ttps://empresas.blogthinkbig.com//Imagen3-245003649.jpg?w=800}]',
+   */
   @Expose()
-  readonly images: string;
+  readonly images?: string;
 
-  @ApiProperty({
-    example: '2016-03-26 10:10:10-05:00',
-    description: "Dessert's delete date",
-    default: null,
-    type: Date,
-    format: 'date-time',
-    nullable: true,
-  })
+  /**
+   * Dessert's delete date
+   * @example '2016-03-26 10:10:10-05:00'
+   * @default null
+   */
   @Expose()
   @Transform(({ value }) => value?.toISOString())
-  readonly deletedAt: Date;
+  readonly deletedAt?: Date = null;
 
-  @ApiProperty({
-    example: '2016-03-26 10:10:10-05:00',
-    description: "Dessert's last update date",
-    default: 'CURRENT_TIMESTAMP',
-    type: Date,
-    format: 'date-time',
-  })
+  /**
+   * Dessert's update date
+   * @example '2016-03-26 10:10:10-05:00'
+   */
   @Expose()
   @Transform(({ value }) => value?.toISOString())
-  readonly updatedAt: string;
+  readonly updatedAt: string = 'CURRENT_TIMESTAMP';
 
-  @ApiProperty({
-    example: '2016-03-26 10:10:10-05:00',
-    description: "Dessert's creation date",
-    default: 'CURRENT_TIMESTAMP',
-    type: Date,
-    format: 'date-time',
-  })
+  /**
+   * Dessert's creation date
+   * @example '2016-03-26 10:10:10-05:00'
+   */
   @Expose()
   @Transform(({ value }) => value?.toISOString())
-  readonly createdAt: string;
+  readonly createdAt: string = 'CURRENT_TIMESTAMP';
 
   /**
    * Check if product has availability
