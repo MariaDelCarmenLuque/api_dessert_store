@@ -1,96 +1,69 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { Role } from '@prisma/client';
+import { Role } from 'src/auth/roles.enum';
 import { Exclude, Expose, Transform } from 'class-transformer';
 @Exclude()
 export class UserDto {
-  @ApiProperty({
-    readOnly: true,
-    type: Number,
-    example: 1,
-    description: 'User ID',
-  })
+  /**
+   * Id of User
+   * @example 1
+   */
   @Expose()
   readonly id: number;
 
-  @ApiProperty({
-    example: 'admin',
-    description: 'User Role (user or admin)',
-    nullable: false,
-    type: Role,
-  })
+  /**
+   * Role of User
+   * @example 'USER or ADMIN'
+   */
   @Expose()
   readonly role: Role;
 
-  @ApiProperty({
-    name: 'firstName',
-    description: 'Firstname of User',
-    type: String,
-    nullable: true,
-    example: 'Maria',
-  })
+  /**
+   * First name of user
+   * @example 'Maria'
+   */
   @Expose()
   readonly firstName: string;
 
-  @ApiProperty({
-    name: 'lastName',
-    description: 'Firstname of User',
-    type: String,
-    nullable: true,
-    example: 'Luque',
-  })
+  /**
+   * Last name of user
+   * @example 'Luque'
+   */
   @Expose()
   readonly lastName: string;
 
-  @ApiProperty({
-    name: 'userName',
-    description: 'Username of User',
-    type: String,
-    nullable: true,
-    example: 'mariCarmen',
-  })
+  /**
+   * Username of User
+   * @example maricarmen123
+   */
   @Expose()
   readonly userName: string;
 
-  @ApiProperty({
-    name: 'email',
-    description: 'Email of User',
-    type: String,
-    nullable: false,
-    example: 'maria@dessertstore.com',
-  })
+  /**
+   * Email of user
+   * @example 'miEmail@gmail.com'
+   */
   @Expose()
   readonly email: string;
 
-  @ApiProperty({
-    example: '2016-03-26 10:10:10-05:00',
-    description: "User's creation date",
-    default: 'CURRENT_TIMESTAMP',
-    type: Date,
-    format: 'date-time',
-  })
+  /**
+   * User's creation date
+   * @example '2016-03-26 10:10:10-05:00'
+   */
   @Expose()
   @Transform(({ value }) => value?.toISOString())
-  readonly createdAt: Date;
+  readonly createdAt: string = 'CURRENT_TIMESTAMP';
 
-  @ApiProperty({
-    example: '2016-03-26 10:10:10-05:00',
-    description: "User's last update date",
-    default: 'CURRENT_TIMESTAMP',
-    type: Date,
-    format: 'date-time',
-  })
+  /**
+   * User's update date
+   * @example '2016-03-26 10:10:10-05:00'
+   */
   @Expose()
   @Transform(({ value }) => value?.toISOString())
-  readonly updatedAt: Date;
+  readonly updatedAt: string = 'CURRENT_TIMESTAMP';
 
-  @ApiProperty({
-    example: '2016-03-26 10:10:10-05:00',
-    description: "User's delete date",
-    default: null,
-    type: Date,
-    format: 'date-time',
-    nullable: true,
-  })
+  /**
+   * User's delete date
+   * @example '2016-03-26 10:10:10-05:00'
+   */
   @Expose()
   @Transform(({ value }) => value?.toISOString())
   readonly deletedAt?: Date;
