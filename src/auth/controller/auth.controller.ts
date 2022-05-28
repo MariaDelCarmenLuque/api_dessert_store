@@ -9,8 +9,8 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { CreateUserDto } from 'src/users/dtos/create-user.dto';
-import { LoginDto } from '../dtos/login.dto';
-import { TokenDto } from '../dtos/token.dto';
+import { LoginDto } from '../dtos/request/login.dto';
+import { TokenDto } from '../dtos/response/token.dto';
 import { AuthService } from '../service/auth.service';
 
 @ApiTags('Auth')
