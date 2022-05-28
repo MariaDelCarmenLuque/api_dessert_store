@@ -45,9 +45,7 @@ export class CategoriesController {
   @ApiNotFoundResponse({
     description: 'Category Not Found',
     schema: {
-      example: new NotFoundException(
-        'Category with id xxx Not found',
-      ).getResponse(),
+      example: new NotFoundException('No Category found').getResponse(),
     },
   })
   async findOne(@Param('id') id: number): Promise<CategoryDto> {
@@ -62,9 +60,7 @@ export class CategoriesController {
   @ApiNotFoundResponse({
     description: 'Category Not Found',
     schema: {
-      example: new NotFoundException(
-        'Category with id xxx Not found',
-      ).getResponse(),
+      example: new NotFoundException('No Category found').getResponse(),
     },
   })
   @ApiUnauthorizedResponse({
@@ -93,9 +89,7 @@ export class CategoriesController {
   @ApiNotFoundResponse({
     description: 'Category Not Found',
     schema: {
-      example: new NotFoundException(
-        'Category with id xxx Not found',
-      ).getResponse(),
+      example: new NotFoundException('No Category found').getResponse(),
     },
   })
   @ApiUnauthorizedResponse({

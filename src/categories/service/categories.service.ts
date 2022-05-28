@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
 import { PrismaService } from '../../prisma.service';
 import { CategoryDto } from '../dtos/response/category.dto';
@@ -20,11 +20,7 @@ export class CategoriesService {
         where: {
           id: categoryId,
         },
-        rejectOnNotFound: false,
       });
-      if (!category) {
-        throw new NotFoundException(`Category with id ${categoryId} Not found`);
-      }
       return category;
     } catch (error) {
       throw error;
@@ -45,15 +41,11 @@ export class CategoriesService {
     data: CreateCategoryDto,
   ): Promise<CategoryDto> {
     try {
-      const category = await this.prisma.category.findUnique({
+      await this.prisma.category.findUnique({
         where: {
           id: categoryId,
         },
-        rejectOnNotFound: false,
       });
-      if (!category) {
-        throw new NotFoundException(`Category with id ${categoryId} Not found`);
-      }
       const categoryUpdate = await this.prisma.category.update({
         data: data,
         where: { id: categoryId },
