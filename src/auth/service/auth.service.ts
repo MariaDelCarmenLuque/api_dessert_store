@@ -10,7 +10,7 @@ import { compareSync, hashSync } from 'bcryptjs';
 import { Prisma, Token } from '@prisma/client';
 import { PrismaService } from '../../prisma.service';
 import { PrismaErrorEnum } from '../../utils/enums';
-import { CreateUserDto } from '../../users/dtos/create-user.dto';
+import { CreateUserDto } from '../../users/dtos/request/create-user.dto';
 import { TokenDto } from '../dtos/response/token.dto';
 import { LoginDto } from '../dtos/request/login.dto';
 import { sign, verify } from 'jsonwebtoken';

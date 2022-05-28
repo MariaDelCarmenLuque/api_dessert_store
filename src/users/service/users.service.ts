@@ -1,8 +1,8 @@
 import { BadRequestException, HttpStatus, Injectable } from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
 import { PrismaService } from '../../prisma.service';
-import { UpdateUserDto } from '../dtos/update-user.dto';
-import { UserDto } from '../dtos/user.dto';
+import { UpdateUserDto } from '../dtos/request/update-user.dto';
+import { UserDto } from '../dtos/response/user.dto';
 
 @Injectable()
 export class UsersService {

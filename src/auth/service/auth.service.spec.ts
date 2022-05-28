@@ -3,7 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { Role } from '@prisma/client';
 import { hashSync } from 'bcryptjs';
 import { plainToInstance } from 'class-transformer';
-import { CreateUserDto } from '../../users/dtos/create-user.dto';
+import { CreateUserDto } from '../../users/dtos/request/create-user.dto';
 import { PrismaService } from '../../prisma.service';
 import { UserFactory } from '../../users/factories/user.factory';
 import { AuthService } from './auth.service';

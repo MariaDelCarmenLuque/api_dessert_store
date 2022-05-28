@@ -10,8 +10,8 @@ import { hashSync } from 'bcryptjs';
 import { plainToClass, plainToInstance } from 'class-transformer';
 import { PrismaService } from '../../prisma.service';
 import { UserFactory } from '../factories/user.factory';
-import { CreateUserDto } from '../dtos/create-user.dto';
-import { UpdateUserDto } from '../dtos/update-user.dto';
+import { CreateUserDto } from '../dtos/request/create-user.dto';
+import { UpdateUserDto } from '../dtos/request/update-user.dto';
 import { UsersService } from './users.service';
 
 describe('UsersService', () => {
