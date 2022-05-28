@@ -15,7 +15,6 @@ import {
   ApiForbiddenResponse,
   ApiNotFoundResponse,
   ApiOperation,
-  ApiResponse,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
@@ -36,7 +35,6 @@ export class CategoriesController {
   @Get('all')
   @Public()
   @ApiOperation({ summary: 'Get all categories' })
-  @ApiResponse({ description: 'Return a list of all dessert orderBy asc' })
   async getAll(): Promise<CategoryDto[]> {
     return await this.categoriesService.getAll();
   }
@@ -44,7 +42,6 @@ export class CategoriesController {
   @Get('/:id')
   @Public()
   @ApiOperation({ summary: 'Get a category filter by Id' })
-  @ApiResponse({ description: 'Category found by ID' })
   @ApiNotFoundResponse({
     description: 'Category Not Found',
     schema: {
@@ -62,7 +59,6 @@ export class CategoriesController {
   @Roles(Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: 'Create a new Category' })
-  @ApiResponse({ description: 'Category created successfully' })
   @ApiNotFoundResponse({
     description: 'Category Not Found',
     schema: {
@@ -94,7 +90,6 @@ export class CategoriesController {
   @Roles(Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: 'Update a new Category' })
-  @ApiResponse({ description: 'Category update successfully' })
   @ApiNotFoundResponse({
     description: 'Category Not Found',
     schema: {
