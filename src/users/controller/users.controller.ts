@@ -1,9 +1,12 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
   ForbiddenException,
   Get,
+  InternalServerErrorException,
+  NotFoundException,
   Param,
   Patch,
   UnauthorizedException,
@@ -12,13 +15,10 @@ import {
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
-  ApiBody,
   ApiForbiddenResponse,
   ApiInternalServerErrorResponse,
   ApiNotFoundResponse,
-  ApiOkResponse,
   ApiOperation,
-  ApiParam,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
@@ -38,50 +38,7 @@ export class UsersController {
   @Get('all')
   @ApiBearerAuth()
   @Roles(Role.ADMIN)
-  @ApiOperation({
-    summary: 'Get data of all Users',
-  })
-  @ApiOkResponse({
-    schema: {
-      example: {
-        items: [
-          {
-            id: 1,
-            lastName: 'luque',
-            firstName: 'maria',
-            userName: 'maritcarmn',
-            role: 'ADMIN',
-            email: 'mari@gmail.com',
-            deletedAt: '2022-05-16T13:46:02.287Z',
-            createdAt: '2022-05-13T02:07:49.123Z',
-            updatedAt: '2022-05-16T13:46:02.289Z',
-          },
-          {
-            id: 2,
-            lastName: 'My lastName',
-            firstName: 'My firstName',
-            userName: 'My userName',
-            role: 'USER',
-            email: 'email@gmail.com',
-            deletedAt: null,
-            createdAt: '2022-05-16T01:21:22.600Z',
-            updatedAt: '2022-05-16T01:21:22.606Z',
-          },
-          {
-            id: 3,
-            lastName: 'My lastName2',
-            firstName: 'My firstName2',
-            userName: 'My userName2',
-            role: 'ADMIN',
-            email: 'email@gmail.com',
-            deletedAt: null,
-            createdAt: '2022-05-16T01:23:40.324Z',
-            updatedAt: '2022-05-16T01:23:40.325Z',
-          },
-        ],
-      },
-    },
-  })
+  @ApiOperation({ summary: 'Get data of all Users' })
   async getAll(): Promise<UserDto[]> {
     return await this.userService.getAll();
   }
@@ -92,56 +49,28 @@ export class UsersController {
   @ApiOperation({
     summary: 'Get user by Id',
   })
-  @ApiOkResponse({
-    schema: {
-      example: {
-        id: 1,
-        lastName: 'luque',
-        firstName: 'maria',
-        userName: 'maritcarmn',
-        role: 'ADMIN',
-        email: 'mari@gmail.com',
-        deletedAt: '2022-05-16T13:46:02.287Z',
-        createdAt: '2022-05-13T02:07:49.123Z',
-        updatedAt: '2022-05-16T13:46:02.289Z',
-      },
-    },
-  })
   @ApiNotFoundResponse({
     description: 'User Not Found',
     schema: {
-      example: {
-        statusCode: 404,
-        message: 'User Not Found',
-      },
+      example: new NotFoundException('No User found').getResponse(),
     },
   })
   @ApiUnauthorizedResponse({
     schema: {
       example: new UnauthorizedException().getResponse(),
     },
-    description: 'User is not logged in',
+    description: 'User is not logged in as Admin',
   })
   @ApiForbiddenResponse({
-    description: 'User is not authorized to delete this product',
+    description: 'User is not authorized',
     schema: {
       example: new ForbiddenException().getResponse(),
     },
   })
-  @ApiParam({
-    name: 'id',
-    description: 'User ID',
-    type: Number,
-    required: true,
-    example: 1,
-  })
   @ApiInternalServerErrorResponse({
     description: 'Internal Server Error',
     schema: {
-      example: {
-        statusCode: 500,
-        message: 'Internal server error',
-      },
+      example: new InternalServerErrorException().getResponse(),
     },
   })
   async findOne(@Param('id') id: number): Promise<UserDto> {
@@ -152,29 +81,7 @@ export class UsersController {
   @ApiBearerAuth()
   @Roles(Role.USER, Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOperation({
-    summary: 'Update data user',
-  })
-  @ApiOkResponse({
-    status: 200,
-    description: 'Data of User Logged',
-    schema: {
-      example: {
-        id: 3,
-        uuid: 'c4730bd4-d995-49ee-8b69-0b5474ab44c5',
-        firstName: 'My firstName',
-        lastName: 'My lastName',
-        userName: ' My username',
-        email: 'email@gmail.com',
-        password:
-          '$2a$10$dPDvwAijLW3Km6d5H4l7nOcrb3o6RJpS0g2aZja8NDzX.J.aAsmeq',
-        role: 'ADMIN',
-        deletedAt: null,
-        updatedAt: '2022-05-17T21:47:50.878Z',
-        createdAt: '2022-05-16T01:23:40.324Z',
-      },
-    },
-  })
+  @ApiOperation({ summary: 'Update data user' })
   @ApiBadRequestResponse({
     description: 'One or more properties are missing or ar wrong',
     schema: {
@@ -194,32 +101,13 @@ export class UsersController {
     schema: {
       example: new UnauthorizedException().getResponse(),
     },
-    description: 'User is not logged in',
+    description: 'User is not logged in ',
   })
   @ApiForbiddenResponse({
-    description: 'User is not authorized to delete this product',
+    description: 'User is not authorized to update data for this user',
     schema: {
       example: new ForbiddenException().getResponse(),
     },
-  })
-  @ApiBody({
-    schema: {
-      example: {
-        firstName: 'My firstName',
-        lastName: 'My lastName',
-        userName: ' My username',
-        email: 'mi-email@gmail.com',
-        role: 'ADMIN',
-      },
-    },
-    type: UpdateUserDto,
-  })
-  @ApiParam({
-    name: 'id',
-    description: 'User ID',
-    type: Number,
-    required: true,
-    example: 1,
   })
   async updateUser(
     @Param('id') id: number,
@@ -232,27 +120,17 @@ export class UsersController {
   @ApiBearerAuth()
   @Roles(Role.USER, Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOperation({
-    summary: 'Delete a user',
-  })
-  @ApiOkResponse({
-    status: 200,
-    description: 'Delete a user sucessfully',
+  @ApiOperation({ summary: 'Delete a user' })
+  @ApiNotFoundResponse({
+    description: 'User Not Found',
     schema: {
-      example: {
-        message: 'Delete sucessfully',
-        status: 200,
-      },
+      example: new NotFoundException('No User found').getResponse(),
     },
   })
   @ApiBadRequestResponse({
-    description: 'One or more properties are missing or ar wrong',
+    description: 'User was deleted',
     schema: {
-      example: {
-        statusCode: 400,
-        message: 'Users was deleted',
-        error: 'Bad Request',
-      },
+      example: new BadRequestException('User was deleted').getResponse(),
     },
   })
   @ApiUnauthorizedResponse({
@@ -266,23 +144,6 @@ export class UsersController {
     schema: {
       example: new ForbiddenException().getResponse(),
     },
-  })
-  @ApiNotFoundResponse({
-    description: 'User Not Found',
-    schema: {
-      example: {
-        statusCode: 404,
-        message: 'User with id 555555 Not found',
-        error: 'Not Found',
-      },
-    },
-  })
-  @ApiParam({
-    name: 'id',
-    description: 'User ID',
-    type: Number,
-    required: true,
-    example: 1,
   })
   async delete(@Param('id') id: number) {
     return await this.userService.delete(id);
