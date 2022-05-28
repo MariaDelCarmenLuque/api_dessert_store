@@ -9,20 +9,10 @@ export class UsersService {
   constructor(private readonly prisma: PrismaService) {}
 
   async getAll(): Promise<UserDto[]> {
-    return this.prisma.user.findMany({
-      select: {
-        id: true,
-        lastName: true,
-        firstName: true,
-        userName: true,
-        role: true,
-        email: true,
-        deletedAt: true,
-        createdAt: true,
-        updatedAt: true,
-      },
+    const users = await this.prisma.user.findMany({
       orderBy: { createdAt: 'asc' },
     });
+    return plainToInstance(UserDto, users);
   }
 
   async findOne(id: number): Promise<UserDto | null> {
@@ -30,10 +20,9 @@ export class UsersService {
       where: {
         id,
       },
-      rejectOnNotFound: true,
     });
 
-    return user;
+    return plainToInstance(UserDto, user);
   }
 
   async updateUser(id: number, data: UpdateUserDto): Promise<UserDto> {
@@ -42,7 +31,6 @@ export class UsersService {
         where: {
           id,
         },
-        rejectOnNotFound: true,
       });
       const user = await this.prisma.user.update({
         data: {
@@ -62,7 +50,6 @@ export class UsersService {
         where: {
           id,
         },
-        rejectOnNotFound: true,
       });
       if (user.deletedAt != null) {
         return new BadRequestException('User is deleted');
