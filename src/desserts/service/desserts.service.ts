@@ -60,14 +60,9 @@ export class DessertsService {
         where: {
           id: dessertId,
         },
-        rejectOnNotFound: false,
       });
-      if (!dessert) {
-        throw new NotFoundException(`Dessert with id ${dessertId} Not found`);
-      }
       return plainToClass(DessertDto, dessert);
     } catch (error) {
-      console.log(error.constructor.name);
       throw error;
     }
   }
@@ -108,7 +103,6 @@ export class DessertsService {
         where: {
           id: dessertId,
         },
-        rejectOnNotFound: true,
       });
 
       if (oldDessert.deletedAt) {
@@ -134,7 +128,6 @@ export class DessertsService {
         where: {
           id: dessertId,
         },
-        rejectOnNotFound: true,
       });
       if (dessert.deletedAt != null)
         return new BadRequestException('Dessert is deleted');
@@ -156,7 +149,6 @@ export class DessertsService {
         where: {
           id,
         },
-        rejectOnNotFound: true,
       });
       if (dessert.deletedAt != null) {
         return new BadRequestException('Dessert is deleted');
@@ -183,7 +175,6 @@ export class DessertsService {
           id: true,
           name: true,
         },
-        rejectOnNotFound: true,
       });
       const createImage = await this.prisma.image.create({
         data: { name: imageDto.name, dessertId: dessertId },
@@ -201,7 +192,6 @@ export class DessertsService {
           category: { select: { name: true } },
           images: { select: { uuid: true, name: true } },
         },
-        rejectOnNotFound: true,
       });
     } catch (error) {
       throw error;
