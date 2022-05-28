@@ -3,8 +3,8 @@ import { Prisma } from '@prisma/client';
 import { plainToClass, plainToInstance } from 'class-transformer';
 import { PrismaService } from '../../prisma.service';
 import { PrismaErrorEnum } from '../../utils/enums';
-import { CreateLikeDto } from '../dtos/create-like.dto';
-import { LikeDto } from '../dtos/like.dto';
+import { CreateLikeDto } from '../dtos/request/create-like.dto';
+import { LikeDto } from '../dtos/response/like.dto';
 
 @Injectable()
 export class LikesService {

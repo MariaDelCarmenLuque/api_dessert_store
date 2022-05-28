@@ -40,9 +40,9 @@ import { UpdateDessertDto } from '../dtos/request/update-dessert.dto';
 import { DessertsService } from '../service/desserts.service';
 import { LikesService } from '../../likes/service/likes.service';
 import { GetUser } from 'src/auth/decorators/user.decorator';
-import { LikeDto } from 'src/likes/dtos/like.dto';
+import { LikeDto } from 'src/likes/dtos/response/like.dto';
 import { ImageDto } from '../dtos/response/image.dto';
-import { CreateLikeDto } from 'src/likes/dtos/create-like.dto';
+import { CreateLikeDto } from 'src/likes/dtos/request/create-like.dto';
 
 @ApiTags('Desserts')
 @Controller('desserts')
