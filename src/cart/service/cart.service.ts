@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { plainToClass, plainToInstance } from 'class-transformer';
 import { OrdersService } from 'src/orders/service/orders.service';
-import { DessertDto } from '../../desserts/dtos/dessert.dto';
+import { DessertDto } from '../../desserts/dtos/response/dessert.dto';
 import { PrismaService } from '../../prisma.service';
 import { CartItemsDto } from '../dtos/cart-item.dto';
 import { CartDto } from '../dtos/cart.dto';
