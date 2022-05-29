@@ -1,5 +1,3 @@
-import faker from '@faker-js/faker';
-import { ApiProperty } from '@nestjs/swagger';
 import {
   IsNotEmpty,
   IsString,
@@ -10,15 +8,17 @@ import {
 } from 'class-validator';
 
 export class ResetPasswordDto {
-  @ApiProperty({ description: 'token to verify user', example: 'TOKEN' })
+  /**
+   * Token to verify user
+   */
   @IsString()
   @IsNotEmpty()
   token: string;
 
-  @ApiProperty({
-    description: 'New password of user',
-    example: faker.internet.password(),
-  })
+  /**
+   * New password of User
+   * @example myNewPassw0rd*
+   */
   @MinLength(8, {
     message: 'PASSWORD_MIN_LENGTH: 8',
   })
