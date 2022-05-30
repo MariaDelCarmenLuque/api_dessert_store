@@ -58,10 +58,10 @@ export class CartService {
       if (!dessert) throw new BadRequestException('No Dessert found');
       const newDessert = plainToClass(DessertDto, dessert);
 
-      if (!newDessert.isActive())
+      if (newDessert.status == false)
         throw new ConflictException('This dessert has been disable');
 
-      if (!newDessert.isAvailable(createCartItem.quantity)) {
+      if (!(newDessert.stock >= createCartItem.quantity)) {
         throw new BadRequestException('Required quantity not available');
       }
 
@@ -85,9 +85,8 @@ export class CartService {
         rejectOnNotFound: false,
       });
 
-      const productTotalPrice = newDessert.getFinalPrice(
-        createCartItem.quantity,
-      );
+      const productTotalPrice = newDessert.price * createCartItem.quantity;
+
       const previousProductTotalPrice = !cartItem ? 0 : cartItem.totalPrice;
       const totalPrice =
         user.cart.amount + productTotalPrice - previousProductTotalPrice;
