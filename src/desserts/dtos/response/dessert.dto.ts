@@ -30,7 +30,7 @@ export class DessertDto {
 
   /**
    * Price of Dessert
-   * @example 1050.5
+   * @example 15.5
    */
   @Expose()
   readonly price: number;
