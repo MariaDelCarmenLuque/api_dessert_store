@@ -18,7 +18,6 @@ import {
   ApiConflictResponse,
   ApiForbiddenResponse,
   ApiNotFoundResponse,
-  ApiOkResponse,
   ApiOperation,
   ApiTags,
   ApiUnauthorizedResponse,
@@ -43,9 +42,6 @@ export class CartController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get all item in Cart' })
-  @ApiOkResponse({
-    description: 'Return a list of items',
-  })
   @ApiNotFoundResponse({
     description: 'Cart Not Found',
     schema: {
@@ -73,7 +69,6 @@ export class CartController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Added cart items in Cart' })
-  @ApiOkResponse({ description: 'Create or updated a item in a Cart' })
   @ApiNotFoundResponse({
     description: 'Dessert Not Found',
     schema: {
@@ -119,7 +114,7 @@ export class CartController {
   @Roles(Role.USER)
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOkResponse({ description: 'Item delete successfully' })
+  @ApiOperation({ summary: 'Item delete successfully' })
   @ApiUnauthorizedResponse({
     schema: {
       example: new UnauthorizedException().getResponse(),
@@ -144,7 +139,6 @@ export class CartController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Purchase a cart' })
-  @ApiOkResponse({ description: 'Purchased a cart' })
   @ApiUnauthorizedResponse({
     schema: {
       example: new UnauthorizedException().getResponse(),
