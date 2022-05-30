@@ -28,9 +28,9 @@ import { Roles } from '../../auth/decorators/roles.decorator';
 import { GetUser } from '../../auth/decorators/user.decorator';
 import { JwtAuthGuard } from '../../auth/guards/jwt-guard';
 import { Role } from '../../auth/roles.enum';
-import { CartItemsDto } from '../dtos/cart-item.dto';
-import { CartDto } from '../dtos/cart.dto';
-import { CreateCartItemDto } from '../dtos/create-cart-item.dto';
+import { CartItemsDto } from '../dtos/response/cart-item.dto';
+import { CartDto } from '../dtos/response/cart.dto';
+import { CreateCartItemDto } from '../dtos/request/create-cart-item.dto';
 import { CartService } from '../service/cart.service';
 
 @ApiTags('Cart')

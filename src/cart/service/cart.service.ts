@@ -9,9 +9,9 @@ import { plainToClass, plainToInstance } from 'class-transformer';
 import { OrdersService } from 'src/orders/service/orders.service';
 import { DessertDto } from '../../desserts/dtos/response/dessert.dto';
 import { PrismaService } from '../../prisma.service';
-import { CartItemsDto } from '../dtos/cart-item.dto';
-import { CartDto } from '../dtos/cart.dto';
-import { CreateCartItemDto } from '../dtos/create-cart-item.dto';
+import { CartItemsDto } from '../dtos/response/cart-item.dto';
+import { CartDto } from '../dtos/response/cart.dto';
+import { CreateCartItemDto } from '../dtos/request/create-cart-item.dto';
 
 @Injectable()
 export class CartService {
