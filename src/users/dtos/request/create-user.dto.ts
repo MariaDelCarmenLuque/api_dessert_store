@@ -1,4 +1,4 @@
-import { Role } from 'src/auth/roles.enum';
+import { Role } from '@prisma/client';
 import {
   IsEmail,
   IsIn,

@@ -69,6 +69,7 @@ describe('AuthService', () => {
       expect(received).toHaveProperty('refreshToken', expect.any(String));
     });
   });
+
   describe('login', () => {
     it('should throw a error if email doesnt exist', async () => {
       await expect(authService.login(mockUser)).rejects.toThrow(
@@ -76,7 +77,7 @@ describe('AuthService', () => {
       );
     });
     it('should throw a error if password is incorrect', async () => {
-      await authService.createUser({ ...mockUser });
+      await authService.createUser(mockUser);
       await expect(
         authService.login({
           email: mockUser.email,
@@ -85,9 +86,7 @@ describe('AuthService', () => {
       ).rejects.toThrow(new UnauthorizedException('Password is incorrect'));
     });
     it('should return token if user login successfully', async () => {
-      await authService.createUser({
-        ...mockUser,
-      });
+      await authService.createUser(mockUser);
       const received = await authService.login({
         email: mockUser.email,
         password: mockUser.password,
@@ -96,10 +95,11 @@ describe('AuthService', () => {
       expect(received).toHaveProperty('refreshToken', expect.any(String));
     });
   });
+
   describe('createToken', () => {
     it('should return a token successfully', async () => {
-      const createdUser = userFactory.make();
-      const result = await authService.createToken((await createdUser).id);
+      const createdUser = await userFactory.make();
+      const result = await authService.createToken(createdUser.id);
       expect(result).toHaveProperty('jti');
     });
 
@@ -109,6 +109,7 @@ describe('AuthService', () => {
       ).rejects.toThrow(new NotFoundException('User not found'));
     });
   });
+
   describe('logout', () => {
     it('should logout successfully', async () => {
       const createdUser = await userFactory.make();
@@ -124,9 +125,10 @@ describe('AuthService', () => {
       );
     });
   });
+
   describe('validateUser', () => {
     it('should return data user if user found', async () => {
-      const createUser = await userFactory.make({ ...mockUser });
+      const createUser = await userFactory.make(mockUser);
       const received = await authService.validateUser(mockUser.email);
       expect(received).toHaveProperty('id', createUser.id);
       expect(received).toHaveProperty('email', createUser.email);
