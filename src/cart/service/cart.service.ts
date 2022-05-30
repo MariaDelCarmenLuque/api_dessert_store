@@ -1,9 +1,9 @@
 import {
   BadRequestException,
+  ConflictException,
   HttpException,
   HttpStatus,
   Injectable,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { plainToClass, plainToInstance } from 'class-transformer';
 import { OrdersService } from 'src/orders/service/orders.service';
@@ -20,13 +20,12 @@ export class CartService {
     private readonly orderService: OrdersService,
   ) {}
 
-  async getItems(userId: number) {
+  async getItems(userId: number): Promise<CartItemsDto[]> {
     try {
       const cart = await this.prisma.cart.findUnique({
         where: {
           userId: userId,
         },
-        rejectOnNotFound: true,
       });
       const cartItems = await this.prisma.cartItem.findMany({
         where: { cartId: cart.id },
@@ -43,7 +42,10 @@ export class CartService {
     }
   }
 
-  async upsertItem(userId: number, createCartItem: CreateCartItemDto) {
+  async upsertItem(
+    userId: number,
+    createCartItem: CreateCartItemDto,
+  ): Promise<CartDto> {
     try {
       const { dessertId, quantity } = createCartItem;
 
@@ -57,7 +59,7 @@ export class CartService {
       const newDessert = plainToClass(DessertDto, dessert);
 
       if (!newDessert.isActive())
-        throw new UnauthorizedException('This dessert has been disable');
+        throw new ConflictException('This dessert has been disable');
 
       if (!newDessert.isAvailable(createCartItem.quantity)) {
         throw new BadRequestException('Required quantity not available');
@@ -137,9 +139,7 @@ export class CartService {
     try {
       const dessert = await this.prisma.dessert.findUnique({
         where: { id: dessertId },
-        rejectOnNotFound: true,
       });
-
       const user = await this.prisma.user.findUnique({
         where: {
           id: userId,
@@ -148,7 +148,6 @@ export class CartService {
           cart: true,
           id: true,
         },
-        rejectOnNotFound: true,
       });
 
       const cartItem = await this.prisma.cartItem.findUnique({
