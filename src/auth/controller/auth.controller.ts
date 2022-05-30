@@ -1,10 +1,18 @@
-import { Body, Controller, HttpCode, Post, Query } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  ConflictException,
+  Controller,
+  HttpCode,
+  Post,
+  Query,
+  UnauthorizedException,
+} from '@nestjs/common';
 import {
   ApiBadRequestResponse,
-  ApiBody,
   ApiConflictResponse,
+  ApiOkResponse,
   ApiOperation,
-  ApiResponse,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
@@ -22,30 +30,12 @@ export class AuthController {
   @ApiOperation({
     summary: 'Register a new user',
   })
-  @ApiBody({
-    schema: {
-      example: {
-        lastName: 'Luque',
-        firstName: 'Maria',
-        userName: 'mari',
-        email: 'mari@gmail.com',
-        password: 'myPa$$w0rd',
-        role: 'ADMIN',
-      },
-    },
-  })
-  @ApiResponse({
-    status: 201,
-    description: 'Created a account successfully',
-    type: TokenDto,
-  })
   @ApiConflictResponse({
     description: 'User is already registered with email',
     schema: {
-      example: {
-        statusCode: 409,
-        message: 'User is already registered with email',
-      },
+      example: new ConflictException(
+        'User is already registered with email',
+      ).getResponse(),
     },
   })
   async register(@Body() user: CreateUserDto) {
@@ -57,45 +47,18 @@ export class AuthController {
   @ApiOperation({
     summary: 'Log in',
   })
-  @ApiBody({
-    schema: {
-      example: {
-        email: 'mari@gmail.com',
-        password: 'mypassword',
-      },
-    },
-  })
-  @ApiResponse({
-    status: 201,
-    description: 'Login successfully',
-    schema: {
-      example: {
-        accessToken:
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0MDgxMTM4Zi00ZjQ0LTQwNWQtYTc5OC0xNDY4YWI2MDM5MjUiLCJpYXQiOjE2NTI4MDEyMjEsImV4cCI6MTY1MjgwMjEyMH0.zaTUtg1D7e9CCqaP3P1xhtmOJzqhP4_L9Z2NmD0zBLg',
-        refreshToken:
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0MDgxMTM4Zi00ZjQ0LTQwNWQtYTc5OC0xNDY4YWI2MDM5MjUiLCJpYXQiOjE2NTI4MDEyMjEsImV4cCI6MTY1MjgwMTIyMX0.RIX4Zuuj--jAjFwb5BTedxTVDA9ZQZmdVCojUOfPUFQ',
-        exp: 900,
-      },
-    },
-  })
   @ApiUnauthorizedResponse({
     description: "Email doesn't exist or Password is incorrect ",
     schema: {
-      example: {
-        statusCode: 401,
-        message: "Email doesn't exist | Password is incorrect ",
-        error: 'Unauthorized',
-      },
+      example: new UnauthorizedException().getResponse(),
     },
   })
   @ApiBadRequestResponse({
     description: 'One or more properties are missing or are wrong',
     schema: {
-      example: {
-        statusCode: 400,
-        message: 'Unexpected token m in JSON at position 18',
-        error: 'Bad Request',
-      },
+      example: new BadRequestException(
+        'Unexpected token m in JSON at position 18',
+      ).getResponse(),
     },
   })
   async login(@Body() input: LoginDto): Promise<TokenDto> {
@@ -107,11 +70,13 @@ export class AuthController {
   @ApiOperation({
     summary: 'Log out',
   })
-  @ApiResponse({
-    status: 204,
-    description: 'log out successfully',
+  @ApiOkResponse({
+    description: 'Log out sucessfully',
   })
-  @ApiBadRequestResponse({ description: 'Token is invalid' })
+  @ApiBadRequestResponse({
+    description: 'Token is invalid',
+    schema: { example: new BadRequestException().getResponse() },
+  })
   async logout(@Query('token') token: string): Promise<void> {
     return await this.authService.logout(token);
   }
