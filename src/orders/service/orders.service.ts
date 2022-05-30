@@ -65,7 +65,6 @@ export class OrdersService {
             },
           },
         },
-        rejectOnNotFound: true,
       });
 
       if (!cart.cartItems?.length) {
@@ -92,6 +91,7 @@ export class OrdersService {
             skipDuplicates: true,
           };
         };
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const [order, _, __] = await this.prisma.$transaction([
         this.prisma.order.create({
           data: {
