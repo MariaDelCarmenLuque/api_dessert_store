@@ -31,6 +31,7 @@ import { CartItemsDto } from '../dtos/response/cart-item.dto';
 import { CartDto } from '../dtos/response/cart.dto';
 import { CreateCartItemDto } from '../dtos/request/create-cart-item.dto';
 import { CartService } from '../service/cart.service';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
 
 @ApiTags('Cart')
 @Controller('cart')
@@ -39,7 +40,7 @@ export class CartController {
 
   @Get('')
   @Roles(Role.USER)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get all item in Cart' })
   @ApiNotFoundResponse({
@@ -66,7 +67,7 @@ export class CartController {
 
   @Patch('/cart-item')
   @Roles(Role.USER)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Added cart items in Cart' })
   @ApiNotFoundResponse({
@@ -112,7 +113,7 @@ export class CartController {
 
   @Delete('/cart-item/:id')
   @Roles(Role.USER)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Item delete successfully' })
   @ApiUnauthorizedResponse({
@@ -136,7 +137,7 @@ export class CartController {
 
   @Patch('/purchase')
   @Roles(Role.USER)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Purchase a cart' })
   @ApiUnauthorizedResponse({

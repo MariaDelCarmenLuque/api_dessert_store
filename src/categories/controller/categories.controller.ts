@@ -20,7 +20,6 @@ import {
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
-import { Public } from 'src/auth/decorators/public.decorator';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { Role } from 'src/auth/roles.enum';
 import { CategoryDto } from '../dtos/response/category.dto';
@@ -33,14 +32,12 @@ export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
   @Get('all')
-  @Public()
   @ApiOperation({ summary: 'Get all categories' })
   async getAll(): Promise<CategoryDto[]> {
     return await this.categoriesService.getAll();
   }
 
   @Get('/:id')
-  @Public()
   @ApiOperation({ summary: 'Get a category filter by Id' })
   @ApiNotFoundResponse({
     description: 'Category Not Found',

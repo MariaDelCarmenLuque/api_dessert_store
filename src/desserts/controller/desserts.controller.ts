@@ -31,7 +31,6 @@ import {
 import { User } from '@prisma/client';
 import { JwtAuthGuard } from '../../auth/guards/jwt-guard';
 import { RolesGuard } from '../../auth/guards/roles.guard';
-import { Public } from '../../auth/decorators/public.decorator';
 import { Roles } from '../../auth/decorators/roles.decorator';
 import { Role } from '../../auth/roles.enum';
 import { CreateDessertDto } from '../dtos/request/create-dessert.dto';
@@ -53,7 +52,6 @@ export class DessertsController {
   ) {}
 
   @Get()
-  @Public()
   @ApiOperation({ summary: 'Get all Desserts with optional filters' })
   async getAllDesserts(
     @Query('take', new DefaultValuePipe(10), ParseIntPipe) take,
@@ -66,7 +64,6 @@ export class DessertsController {
   }
 
   @Get('/:id')
-  @Public()
   @HttpCode(200)
   @ApiOperation({ summary: 'Get a dessert by ID' })
   @ApiNotFoundResponse({
@@ -238,7 +235,6 @@ export class DessertsController {
   }
 
   @Get('/:id/likes')
-  @Public()
   @ApiOperation({ summary: 'Get all likes in a dessert' })
   @ApiNotFoundResponse({
     description: 'Dessert not found',
