@@ -1,34 +1,30 @@
-import faker from '@faker-js/faker';
-import { ApiProperty } from '@nestjs/swagger';
 import { OrderItem } from '@prisma/client';
 import { Exclude, Expose } from 'class-transformer';
 
 @Exclude()
 export class OrderDto {
-  @ApiProperty({
-    description: 'uuid order',
-    example: faker.datatype.uuid(),
-  })
+  /**
+   * Uuid order
+   */
   @Expose()
   readonly uuid: string;
 
-  @ApiProperty({
-    description: 'total Price of a order',
-    example: faker.datatype.number(),
-  })
+  /**
+   * Total price of a Order
+   */
   @Expose()
   readonly totalPrice: number;
 
-  @ApiProperty({
-    description: 'Date of create a order',
-    example: faker.datatype.datetime(),
-  })
+  /**
+   * Date of created a order
+   * @example '2016-03-26 10:10:10-05:00'
+   */
   @Expose()
   readonly createdAt: Date;
 
-  @ApiProperty({
-    description: 'List od OrderItems',
-  })
+  /**
+   * List of Order items
+   */
   @Expose()
   readonly items: OrderItem[];
 }
