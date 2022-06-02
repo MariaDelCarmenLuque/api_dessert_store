@@ -108,7 +108,7 @@ export class DessertsService {
       if (oldDessert.deletedAt) {
         throw new NotFoundException('Dessert is deleted ');
       }
-      if (oldDessert.status == false) {
+      if (!oldDessert.status) {
         throw new UnauthorizedException('Dessert is disable ');
       }
       const dessert = await this.prisma.dessert.update({
@@ -129,7 +129,7 @@ export class DessertsService {
           id: dessertId,
         },
       });
-      if (dessert.deletedAt != null)
+      if (dessert.deletedAt)
         return new BadRequestException('Dessert is deleted');
 
       await this.prisma.dessert.update({

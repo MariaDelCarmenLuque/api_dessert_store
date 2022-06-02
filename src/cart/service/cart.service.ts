@@ -58,7 +58,7 @@ export class CartService {
       if (!dessert) throw new BadRequestException('No Dessert found');
       const newDessert = plainToClass(DessertDto, dessert);
 
-      if (newDessert.status == false)
+      if (!newDessert.status)
         throw new ConflictException('This dessert has been disable');
 
       if (!(newDessert.stock >= createCartItem.quantity)) {
