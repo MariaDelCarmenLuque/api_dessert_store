@@ -1,34 +1,25 @@
 import { Injectable } from '@nestjs/common';
-import { Category } from '@prisma/client';
+import { plainToInstance } from 'class-transformer';
 import { PrismaService } from '../../prisma.service';
-import { CategoryDto } from '../models/category.dto';
+import { CategoryDto } from '../dtos/response/category.dto';
+import { CreateCategoryDto } from '../dtos/request/create-category.dto';
 
 @Injectable()
 export class CategoriesService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) {}
 
-  async getAll(): Promise<Category[]> {
+  async getAll(): Promise<CategoryDto[]> {
     return this.prisma.category.findMany({
       orderBy: { createdAt: 'desc' },
     });
   }
 
-  async findOne(id: number): Promise<Category | null> {
-    const category = await this.prisma.category.findUnique({
-      where: {
-        id,
-      },
-      rejectOnNotFound: true,
-    });
-
-    return category;
-  }
-
-  async create(data: CategoryDto) {
+  async findOne(categoryId: number): Promise<CategoryDto | null> {
     try {
-      const { name, ...input } = data;
-      const category = await this.prisma.category.create({
-        data: { ...input, name: name },
+      const category = await this.prisma.category.findUnique({
+        where: {
+          id: categoryId,
+        },
       });
       return category;
     } catch (error) {
@@ -36,21 +27,30 @@ export class CategoriesService {
     }
   }
 
-  async updateCategory(id: number, data: CategoryDto) {
+  async create(data: CreateCategoryDto): Promise<CategoryDto> {
+    try {
+      const category = await this.prisma.category.create({ data: data });
+      return plainToInstance(CategoryDto, category);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async updateCategory(
+    categoryId: number,
+    data: CreateCategoryDto,
+  ): Promise<CategoryDto> {
     try {
       await this.prisma.category.findUnique({
         where: {
-          id,
+          id: categoryId,
         },
-        rejectOnNotFound: true,
       });
-      const category = await this.prisma.category.update({
-        data: {
-          ...data,
-        },
-        where: { id },
+      const categoryUpdate = await this.prisma.category.update({
+        data: data,
+        where: { id: categoryId },
       });
-      return category;
+      return plainToInstance(CategoryDto, categoryUpdate);
     } catch (error) {
       throw error;
     }

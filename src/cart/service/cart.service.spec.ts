@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { CartItem, Category, Dessert, User } from '@prisma/client';
+import { OrdersService } from '../../orders/service/orders.service';
 import { CategoryFactory } from '../../categories/factories/category.factory';
 import { DessertFactory } from '../../desserts/factories/dessert.factory';
 import { PrismaService } from '../../prisma.service';
@@ -29,7 +30,7 @@ describe('CartService', () => {
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [CartService, PrismaService],
+      providers: [CartService, PrismaService, OrdersService],
     }).compile();
 
     cartService = module.get<CartService>(CartService);
@@ -139,7 +140,7 @@ describe('CartService', () => {
 
     it('should return a error if dessert is disable', async () => {
       const newDessert = await dessertFactory.make({
-        status: 'DISABLE',
+        status: false,
         category: { connect: { id: categories[1].id } },
       });
 

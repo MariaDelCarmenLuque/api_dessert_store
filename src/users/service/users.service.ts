@@ -1,47 +1,36 @@
 import { BadRequestException, HttpStatus, Injectable } from '@nestjs/common';
+import { plainToInstance } from 'class-transformer';
 import { PrismaService } from '../../prisma.service';
-import { UpdateUserDto } from '../models/update-user.dto';
-import { User } from '../models/user.dto';
+import { UpdateUserDto } from '../dtos/request/update-user.dto';
+import { UserDto } from '../dtos/response/user.dto';
 
 @Injectable()
 export class UsersService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) {}
 
-  async getAll(): Promise<User[]> {
-    return this.prisma.user.findMany({
-      select: {
-        id: true,
-        lastName: true,
-        firstName: true,
-        userName: true,
-        role: true,
-        email: true,
-        deletedAt: true,
-        createdAt: true,
-        updatedAt: true,
-      },
+  async getAll(): Promise<UserDto[]> {
+    const users = await this.prisma.user.findMany({
       orderBy: { createdAt: 'asc' },
     });
+    return plainToInstance(UserDto, users);
   }
 
-  async findOne(id: number): Promise<User | null> {
+  async findOne(id: number): Promise<UserDto | null> {
     const user = await this.prisma.user.findUnique({
       where: {
         id,
       },
-      rejectOnNotFound: true,
     });
 
-    return user;
+    return plainToInstance(UserDto, user);
   }
 
-  async updateUser(id: number, data: UpdateUserDto) {
+  async updateUser(id: number, data: UpdateUserDto): Promise<UserDto> {
     try {
       await this.prisma.user.findUnique({
         where: {
           id,
         },
-        rejectOnNotFound: true,
       });
       const user = await this.prisma.user.update({
         data: {
@@ -49,7 +38,7 @@ export class UsersService {
         },
         where: { id },
       });
-      return user;
+      return plainToInstance(UserDto, user);
     } catch (error) {
       throw error;
     }
@@ -61,7 +50,6 @@ export class UsersService {
         where: {
           id,
         },
-        rejectOnNotFound: true,
       });
       if (user.deletedAt != null) {
         return new BadRequestException('User is deleted');

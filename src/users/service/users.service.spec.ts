@@ -10,15 +10,14 @@ import { hashSync } from 'bcryptjs';
 import { plainToClass, plainToInstance } from 'class-transformer';
 import { PrismaService } from '../../prisma.service';
 import { UserFactory } from '../factories/user.factory';
-import { CreateUserDto } from '../models/create-user.dto';
-import { UpdateUserDto } from '../models/update-user.dto';
+import { CreateUserDto } from '../dtos/request/create-user.dto';
+import { UpdateUserDto } from '../dtos/request/update-user.dto';
 import { UsersService } from './users.service';
 
 describe('UsersService', () => {
   let usersService: UsersService;
   let prisma: PrismaService;
   let userFactory: UserFactory;
-
   let mockUser;
   let users: User[];
 
@@ -32,6 +31,7 @@ describe('UsersService', () => {
     userFactory = new UserFactory(prisma);
     users = await userFactory.makeMany(5);
   });
+
   beforeEach(() => {
     mockUser = plainToInstance(CreateUserDto, {
       firstName: faker.name.firstName(),
@@ -52,6 +52,7 @@ describe('UsersService', () => {
       expect(received.length).toEqual(users.length);
     });
   });
+
   describe('findOne', () => {
     it('should return a user find by Id', async () => {
       const createdUser = await prisma.user.create({
@@ -64,7 +65,6 @@ describe('UsersService', () => {
       const result = await usersService.findOne(createdUser.id);
 
       expect(result).toHaveProperty('id', createdUser.id);
-      expect(result).toHaveProperty('uuid', createdUser.uuid);
       expect(result).toHaveProperty('firstName', createdUser.firstName);
       expect(result).toHaveProperty('lastName', createdUser.lastName);
       expect(result).toHaveProperty('email', createdUser.email);
@@ -77,17 +77,14 @@ describe('UsersService', () => {
       );
     });
   });
+
   describe('updateUser', () => {
     it('should update data user and return a user properties  ', async () => {
-      const createdUser = await prisma.user.create({
-        data: {
-          ...mockUser,
-        },
-      });
+      const createdUser = await prisma.user.create({ data: mockUser });
       const data = {
-        firstName: 'newFirstName',
-        lastName: 'newLastName',
-        userName: 'newUserName',
+        firstName: faker.name.firstName(),
+        lastName: faker.name.lastName(),
+        userName: faker.internet.userName(),
       };
       const received = await usersService.updateUser(
         createdUser.id,
@@ -100,9 +97,9 @@ describe('UsersService', () => {
 
     it('should throw a error if the user doesnt exist', async () => {
       const data = {
-        firstName: 'newFirstName',
-        lastName: 'newLastName',
-        userName: 'newUserName',
+        firstName: faker.name.firstName(),
+        lastName: faker.name.lastName(),
+        userName: faker.internet.userName(),
       };
       await expect(
         usersService.updateUser(
@@ -112,6 +109,7 @@ describe('UsersService', () => {
       ).rejects.toThrow(new NotFoundException('No User found'));
     });
   });
+
   describe('delete', () => {
     it('should delete user successfully', async () => {
       const createdUser = await prisma.user.create({

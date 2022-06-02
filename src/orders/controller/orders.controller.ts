@@ -2,6 +2,7 @@ import {
   Controller,
   ForbiddenException,
   Get,
+  NotFoundException,
   Post,
   UnauthorizedException,
   UseGuards,
@@ -9,22 +10,23 @@ import {
 import {
   ApiBearerAuth,
   ApiForbiddenResponse,
+  ApiNotFoundResponse,
   ApiOperation,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { User } from '@prisma/client';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { GetUser } from 'src/auth/decorators/user.decorator';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-guard';
 import { Role } from 'src/auth/roles.enum';
-import { OrderDto } from '../models/order.dto';
+import { UserDto } from 'src/users/dtos/response/user.dto';
+import { OrderDto } from '../dtos/order.dto';
 import { OrdersService } from '../service/orders.service';
 
 @ApiTags('Orders')
 @Controller('orders')
 export class OrdersController {
-  constructor(private ordersService: OrdersService) {}
+  constructor(private readonly ordersService: OrdersService) {}
 
   @Get()
   @Roles(Role.USER)
@@ -43,7 +45,7 @@ export class OrdersController {
       example: new ForbiddenException().getResponse(),
     },
   })
-  async getOrders(@GetUser() user: User): Promise<OrderDto[]> {
+  async getOrders(@GetUser() user: UserDto): Promise<OrderDto[]> {
     return await this.ordersService.getMany(user.id);
   }
 
@@ -52,6 +54,12 @@ export class OrdersController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Create a order' })
+  @ApiNotFoundResponse({
+    description: 'Cart Not Found',
+    schema: {
+      example: new NotFoundException('No Cart found').getResponse(),
+    },
+  })
   @ApiUnauthorizedResponse({
     schema: {
       example: new UnauthorizedException().getResponse(),
@@ -64,7 +72,7 @@ export class OrdersController {
       example: new ForbiddenException().getResponse(),
     },
   })
-  async createOrder(@GetUser() user: User): Promise<OrderDto> {
+  async createOrder(@GetUser() user: UserDto): Promise<OrderDto> {
     return await this.ordersService.create(user.id);
   }
 }

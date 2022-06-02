@@ -1,13 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Exclude, Expose } from 'class-transformer';
 import { IsBoolean } from 'class-validator';
 
-@Exclude()
-export class LikeDto {
+export class CreateLikeDto {
   @ApiProperty({
     example: 'true',
   })
-  @Expose()
   @IsBoolean()
-  isLike: boolean;
+  readonly isLike: boolean;
 }

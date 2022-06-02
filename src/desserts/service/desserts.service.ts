@@ -5,42 +5,44 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { Dessert, Prisma, Status } from '@prisma/client';
-import { plainToClass } from 'class-transformer';
+import { Prisma } from '@prisma/client';
+import { plainToClass, plainToInstance } from 'class-transformer';
 import { FilesService } from '../../files/service/files.service';
 import { PrismaService } from '../../prisma.service';
 import { PrismaErrorEnum } from '../../utils/enums';
-import { CreateDessertDto } from '../models/create-dessert.dto';
-import { DessertDto } from '../models/dessert.dto';
-import { ImageDto } from '../models/image.dto';
-import { UpdateDessertDto } from '../models/update-dessert.dto';
+import { CreateDessertDto } from '../dtos/request/create-dessert.dto';
+import { DessertDto } from '../dtos/response/dessert.dto';
+import { ImageDto } from '../dtos/response/image.dto';
+import { UpdateDessertDto } from '../dtos/request/update-dessert.dto';
 
 @Injectable()
 export class DessertsService {
   constructor(
-    private prisma: PrismaService,
-    private filesService: FilesService,
+    private readonly prisma: PrismaService,
+    private readonly filesService: FilesService,
   ) {}
 
-  async getAllDesserts(): Promise<Dessert[]> {
+  async getAllDesserts(): Promise<DessertDto[]> {
     const desserts = await this.prisma.dessert.findMany({
       orderBy: { id: 'desc' },
     });
-    return desserts;
+    return plainToInstance(DessertDto, desserts);
   }
   async getPaginationList(params: {
     skip?: number;
     take?: number;
     category?: number;
-  }): Promise<Dessert[]> {
+  }): Promise<DessertDto[]> {
     const { skip, take, category } = params;
+    let desserts;
     if (isNaN(skip)) {
-      return this.prisma.dessert.findMany({
+      desserts = await this.prisma.dessert.findMany({
         take,
         where: { categoryId: category },
       });
+      return desserts;
     } else {
-      return this.prisma.dessert.findMany({
+      desserts = this.prisma.dessert.findMany({
         skip,
         take,
         where: { categoryId: category },
@@ -48,21 +50,18 @@ export class DessertsService {
           id: 'asc',
         },
       });
+      return desserts;
     }
   }
 
-  async findOne(dessertId: number): Promise<Dessert> {
+  async findOne(dessertId: number): Promise<DessertDto> {
     try {
       const dessert = await this.prisma.dessert.findUnique({
         where: {
           id: dessertId,
         },
-        rejectOnNotFound: false,
       });
-      if (!dessert) {
-        throw new NotFoundException('No Dessert found');
-      }
-      return dessert;
+      return plainToClass(DessertDto, dessert);
     } catch (error) {
       throw error;
     }
@@ -104,13 +103,12 @@ export class DessertsService {
         where: {
           id: dessertId,
         },
-        rejectOnNotFound: true,
       });
 
       if (oldDessert.deletedAt) {
         throw new NotFoundException('Dessert is deleted ');
       }
-      if (oldDessert.status == 'DISABLE') {
+      if (!oldDessert.status) {
         throw new UnauthorizedException('Dessert is disable ');
       }
       const dessert = await this.prisma.dessert.update({
@@ -130,9 +128,8 @@ export class DessertsService {
         where: {
           id: dessertId,
         },
-        rejectOnNotFound: true,
       });
-      if (dessert.deletedAt != null)
+      if (dessert.deletedAt)
         return new BadRequestException('Dessert is deleted');
 
       await this.prisma.dessert.update({
@@ -146,30 +143,22 @@ export class DessertsService {
       throw error;
     }
   }
-  async updateStatus(id: number) {
+  async updateStatus(id: number): Promise<any> {
     try {
       const dessert = await this.prisma.dessert.findUnique({
         where: {
           id,
         },
-        rejectOnNotFound: true,
       });
-      if (dessert.deletedAt != null)
+      if (dessert.deletedAt != null) {
         return new BadRequestException('Dessert is deleted');
-      let newDessert;
-      if (dessert.status == Status.ACTIVE) {
-        newDessert = await this.prisma.dessert.update({
-          data: { ...dessert, status: 'DISABLE' },
-          select: { id: true, name: true, status: true, updatedAt: true },
-          where: { id: dessert.id },
-        });
       }
-      if (dessert.status == Status.DISABLE) {
-        newDessert = await this.prisma.dessert.update({
-          data: { ...dessert, status: 'ACTIVE' },
-          where: { id: dessert.id },
-        });
-      }
+      const previewStatus = dessert.status;
+      const newDessert = await this.prisma.dessert.update({
+        data: { ...dessert, status: !previewStatus },
+        select: { id: true, name: true, status: true, updatedAt: true },
+        where: { id: dessert.id },
+      });
       return newDessert;
     } catch (error) {
       throw error;
@@ -186,7 +175,6 @@ export class DessertsService {
           id: true,
           name: true,
         },
-        rejectOnNotFound: true,
       });
       const createImage = await this.prisma.image.create({
         data: { name: imageDto.name, dessertId: dessertId },
@@ -204,7 +192,6 @@ export class DessertsService {
           category: { select: { name: true } },
           images: { select: { uuid: true, name: true } },
         },
-        rejectOnNotFound: false,
       });
     } catch (error) {
       throw error;

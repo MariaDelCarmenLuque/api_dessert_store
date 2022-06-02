@@ -5,7 +5,7 @@ import { Category } from '@prisma/client';
 import { plainToClass } from 'class-transformer';
 import { PrismaService } from '../../prisma.service';
 import { CategoryFactory } from '../factories/category.factory';
-import { CategoryDto } from '../models/category.dto';
+import { CategoryDto } from '../dtos/response/category.dto';
 import { CategoriesService } from './categories.service';
 
 jest.spyOn(console, 'error').mockImplementation(jest.fn());

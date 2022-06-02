@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { DessertsModule } from './desserts/desserts.module';
@@ -9,6 +8,8 @@ import { CartModule } from './cart/cart.module';
 import { OrdersModule } from './orders/orders.module';
 import { LikesModule } from './likes/likes.module';
 import { FilesModule } from './files/files.module';
+import { TerminusModule } from '@nestjs/terminus';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
   imports: [
@@ -20,8 +21,9 @@ import { FilesModule } from './files/files.module';
     OrdersModule,
     LikesModule,
     FilesModule,
+    TerminusModule,
+    HttpModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {}

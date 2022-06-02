@@ -1,22 +1,20 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Like, Prisma } from '@prisma/client';
+import { Prisma } from '@prisma/client';
+import { plainToClass, plainToInstance } from 'class-transformer';
 import { PrismaService } from '../../prisma.service';
 import { PrismaErrorEnum } from '../../utils/enums';
-import { LikeDto } from '../models/like.dto';
+import { CreateLikeDto } from '../dtos/request/create-like.dto';
+import { LikeDto } from '../dtos/response/like.dto';
 
 @Injectable()
 export class LikesService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) {}
 
-  async findLikes(id: number): Promise<Like[]> {
-    const dessert = await this.prisma.dessert.findUnique({
+  async findLikes(id: number): Promise<LikeDto[]> {
+    await this.prisma.dessert.findUnique({
       where: { id: id },
       select: { id: true },
-      rejectOnNotFound: false,
     });
-    if (!dessert) {
-      throw new NotFoundException('No dessert found');
-    }
     const likes = await this.prisma.like.findMany({
       where: {
         dessertId: id,
@@ -25,21 +23,23 @@ export class LikesService {
         createdAt: 'asc',
       },
     });
-    return likes;
+    return plainToInstance(LikeDto, likes);
   }
 
-  async upsertLike(userId: number, id: number, data: LikeDto): Promise<Like> {
+  async upsertLike(
+    userId: number,
+    id: number,
+    data: CreateLikeDto,
+  ): Promise<LikeDto> {
     try {
       const [user, dessert] = await Promise.all([
         this.prisma.user.findUnique({
           where: { id: userId },
           select: { id: true },
-          rejectOnNotFound: true,
         }),
         this.prisma.dessert.findUnique({
           where: { id: id },
           select: { id: true },
-          rejectOnNotFound: true,
         }),
       ]);
       const like = await this.prisma.like.upsert({
@@ -67,7 +67,7 @@ export class LikesService {
         },
       });
 
-      return like;
+      return plainToClass(LikeDto, like);
     } catch (error) {
       throw error;
     }
@@ -78,15 +78,12 @@ export class LikesService {
         this.prisma.user.findUnique({
           where: { id: userId },
           select: { id: true },
-          rejectOnNotFound: true,
         }),
         this.prisma.dessert.findUnique({
           where: { id: id },
           select: { id: true },
-          rejectOnNotFound: true,
         }),
       ]);
-
       await this.prisma.like.delete({
         where: {
           userId_dessertId: {
@@ -95,7 +92,6 @@ export class LikesService {
           },
         },
       });
-
       return true;
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
