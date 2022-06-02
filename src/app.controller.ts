@@ -18,8 +18,7 @@ export class AppController {
   @HealthCheck()
   check() {
     return this.health.check([
-      () =>
-        this.http.pingCheck('Basic Check', 'http://localhost:3000/api/docs'),
+      () => this.http.pingCheck('Google', 'https://www.google.com/'),
     ]);
   }
 }
