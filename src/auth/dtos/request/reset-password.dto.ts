@@ -1,25 +1,24 @@
-import { ApiProperty } from '@nestjs/swagger';
 import {
-  IsEmail,
   IsNotEmpty,
   IsString,
+  Length,
   Matches,
   MaxLength,
   MinLength,
 } from 'class-validator';
 
-export class LoginDto {
-  @ApiProperty({
-    description: 'Email of user',
-    type: String,
-  })
-  @IsEmail()
-  readonly email: string;
+export class ResetPasswordDto {
+  /**
+   * Token to verify user
+   */
+  @IsString()
+  @IsNotEmpty()
+  token: string;
 
-  @ApiProperty({
-    description: 'Password of user',
-    example: 'MyP@55W0rD',
-  })
+  /**
+   * New password of User
+   * @example myNewPassw0rd*
+   */
   @MinLength(8, {
     message: 'PASSWORD_MIN_LENGTH: 8',
   })
@@ -38,7 +37,8 @@ export class LoginDto {
   @Matches(/[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/, {
     message: 'PASSWORDS_MISSING: SPECIAL_CHARACTER',
   })
-  @IsNotEmpty()
   @IsString()
+  @IsNotEmpty()
+  @Length(8, 16)
   readonly password: string;
 }

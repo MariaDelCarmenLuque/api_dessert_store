@@ -11,7 +11,7 @@ import { AuthService } from '../../auth/service/auth.service';
 import { CategoryFactory } from '../../categories/factories/category.factory';
 import { PrismaService } from '../../prisma.service';
 import { DessertFactory } from '../factories/dessert.factory';
-import { CreateDessertDto } from '../models/create-dessert.dto';
+import { CreateDessertDto } from '../dtos/request/create-dessert.dto';
 import { DessertsService } from './desserts.service';
 
 jest.spyOn(console, 'error').mockImplementation(jest.fn());

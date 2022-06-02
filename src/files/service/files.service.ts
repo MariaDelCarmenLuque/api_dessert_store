@@ -4,7 +4,7 @@ import { S3 } from 'aws-sdk';
 
 @Injectable()
 export class FilesService {
-  constructor(private configService: ConfigService) {}
+  constructor(private readonly configService: ConfigService) {}
 
   async uploadPublicFile(filename: string, uuid: string) {
     const s3 = new S3();

@@ -2,12 +2,12 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { plainToInstance } from 'class-transformer';
 import { PrismaService } from '../../prisma.service';
-import { OrderItemsDto } from '../models/order-item.dto';
-import { OrderDto } from '../models/order.dto';
+import { OrderItemsDto } from '../dtos/order-item.dto';
+import { OrderDto } from '../dtos/order.dto';
 
 @Injectable()
 export class OrdersService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   async getMany(userId: number) {
     try {
@@ -65,7 +65,6 @@ export class OrdersService {
             },
           },
         },
-        rejectOnNotFound: true,
       });
 
       if (!cart.cartItems?.length) {
@@ -92,6 +91,7 @@ export class OrdersService {
             skipDuplicates: true,
           };
         };
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const [order, _, __] = await this.prisma.$transaction([
         this.prisma.order.create({
           data: {

@@ -1,58 +1,54 @@
-import { ApiProperty } from '@nestjs/swagger';
 import { Role } from '@prisma/client';
 import {
   IsEmail,
   IsIn,
-  IsLowercase,
   IsNotEmpty,
   IsOptional,
   IsString,
+  IsUppercase,
   Matches,
   MaxLength,
   MinLength,
 } from 'class-validator';
 
 export class CreateUserDto {
-  @ApiProperty({
-    name: 'firstName',
-    description: 'Firstname of User',
-    example: 'Maria',
-  })
+  /**
+   * First name of user
+   * @example 'Maria'
+   */
   @IsNotEmpty()
   @IsString()
   @IsOptional()
   readonly firstName: string;
 
-  @ApiProperty({
-    name: 'lastName',
-    description: 'Firstname of User',
-    example: 'Luque',
-  })
+  /**
+   * Last name of user
+   * @example 'Luque'
+   */
   @IsNotEmpty()
   @IsString()
   @IsOptional()
   readonly lastName: string;
 
-  @ApiProperty({
-    name: 'userNAme',
-    description: 'Username of User',
-    example: 'mariCarmen',
-  })
+  /**
+   * Username of User
+   * @example maricarmen123
+   */
   @IsNotEmpty()
   @IsString()
   readonly userName: string;
 
-  @ApiProperty({
-    description: 'Email of user',
-    type: String,
-  })
+  /**
+   * Email of user
+   * @example 'miEmail@gmail.com'
+   */
   @IsEmail()
   readonly email: string;
 
-  @ApiProperty({
-    description: 'Password of user',
-    example: 'MyP@55W0rD',
-  })
+  /**
+   * Password
+   * @example 'my*Passw0rd'
+   */
   @IsString()
   @MinLength(8, {
     message: 'PASSWORD_MIN_LENGTH: 8',
@@ -75,8 +71,12 @@ export class CreateUserDto {
   @IsString()
   readonly password: string;
 
+  /**
+   * Role of User
+   * @example 'USER or ADMIN'
+   */
   @IsIn([Role.ADMIN, Role.USER])
   @IsNotEmpty()
-  @IsLowercase()
+  @IsUppercase()
   readonly role: Role;
 }

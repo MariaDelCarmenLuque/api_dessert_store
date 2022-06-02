@@ -11,9 +11,9 @@ import { compareSync, hashSync } from 'bcryptjs';
 import { Prisma, Token } from '@prisma/client';
 import { PrismaService } from '../../prisma.service';
 import { PrismaErrorEnum } from '../../utils/enums';
-import { CreateUserDto } from '../../users/models/create-user.dto';
-import { TokenDto } from '../models/token.dto';
-import { LoginDto } from '../models/login.dto';
+import { CreateUserDto } from '../../users/dtos/request/create-user.dto';
+import { TokenDto } from '../dtos/response/token.dto';
+import { LoginDto } from '../dtos/request/login.dto';
 import { sign, verify } from 'jsonwebtoken';
 import { ForgotPasswordDto } from '../models/forgot-password.dto';
 import { EmailService } from 'src/email/service/email.service';
@@ -23,8 +23,8 @@ import { ResetPasswordDto } from '../models/reset-password.dto';
 export class AuthService {
   static prisma: any;
   constructor(
-    private prisma: PrismaService,
-    private emailService: EmailService,
+    private readonly prisma: PrismaService,
+    private readonly emailService: EmailService,
   ) {}
 
   async createUser(user: CreateUserDto): Promise<TokenDto> {
@@ -112,9 +112,9 @@ export class AuthService {
       throw error;
     }
   }
-  async generateToken(sub: string): Promise<TokenDto> {
-    const accessToken = await this.generateAccessToken(sub);
-    const refreshToken = await this.generateRefreshToken(sub);
+  generateToken(sub: string) {
+    const accessToken = this.generateAccessToken(sub);
+    const refreshToken = this.generateRefreshToken(sub);
     const exp = parseInt(process.env.ACCESS_TOKEN_EXPIRATION);
     return {
       accessToken,
@@ -122,7 +122,7 @@ export class AuthService {
       exp,
     };
   }
-  async generateAccessToken(sub: string) {
+  generateAccessToken(sub: string) {
     const now = new Date().getTime();
     const exp = Math.floor(
       new Date(now).setSeconds(
@@ -140,7 +140,7 @@ export class AuthService {
     );
     return accessToken;
   }
-  async generateRefreshToken(sub: string) {
+  generateRefreshToken(sub: string) {
     const now = new Date().getTime();
     const exp = Math.floor(
       new Date(now).setSeconds(
