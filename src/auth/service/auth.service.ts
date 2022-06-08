@@ -18,6 +18,7 @@ import { sign, verify } from 'jsonwebtoken';
 import { ForgotPasswordDto } from '../models/forgot-password.dto';
 import { EmailService } from 'src/email/service/email.service';
 import { ResetPasswordDto } from '../models/reset-password.dto';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
@@ -25,6 +26,7 @@ export class AuthService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly emailService: EmailService,
+    private readonly jwtService: JwtService,
   ) {}
 
   async createUser(user: CreateUserDto): Promise<TokenDto> {
@@ -186,6 +188,7 @@ export class AuthService {
 
       const newAccessToken = this.generateAccessToken(user.uuid);
       const mail = {
+        from: process.env.EMAIL_USER,
         to: data.email,
         subject: 'Change your password',
         text: 'This email was sent to change your password',
@@ -199,9 +202,42 @@ export class AuthService {
   }
   async resetPassword(input: ResetPasswordDto) {
     const { token, password } = input;
+    let data;
+    console.log(data);
     try {
+      data = this.jwtService.verify(token, { ignoreExpiration: false });
     } catch (error) {
       throw new UnprocessableEntityException('Invalid token');
+    }
+    await this.updatePassword(data.sub, password);
+  }
+  async updatePassword(id: number, password: string) {
+    try {
+      const user = await this.prisma.user.update({
+        data: {
+          password: hashSync(password, 10),
+        },
+        where: {
+          id,
+        },
+      });
+
+      const mail = {
+        to: user.email,
+        subject: 'Reset Password',
+        text: 'Reset Password',
+        html: `<p>Recently, your password has been changed.</p>`,
+      };
+
+      this.emailService.sendMail(mail);
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        switch (error.code) {
+          case PrismaErrorEnum.NOT_FOUND:
+            throw new NotFoundException('User no found');
+        }
+      }
+      throw error;
     }
   }
 }
