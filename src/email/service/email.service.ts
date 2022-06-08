@@ -9,17 +9,22 @@ export class EmailService {
   private nodemailerTransport: Mail;
   constructor(private readonly configService: ConfigService) {
     this.nodemailerTransport = createTransport({
-      service: configService.get('EMAIL_SERVICE'),
+      // service: configService.get(process.env.EMAIL_SERVICE),
+      secure: true,
+      port: 2525,
+      service: 'gmail',
       auth: {
-        user: configService.get('EMAIL_USER'),
-        pass: configService.get('EMAIL_PASSWORD'),
+        // user: configService.get(process.env.EMAIL_USER),
+        // pass: configService.get(process.env.EMAIL_PASSWORD),
+        user: 'api.dessert.store@gmail.com',
+        pass: '976431api*',
       },
     });
   }
   async sendMail(mail) {
     const data = {
       ...mail,
-      from: this.configService.get<string>('EMAIL_USER'),
+      from: mail,
     };
     return this.nodemailerTransport.sendMail(data);
   }
