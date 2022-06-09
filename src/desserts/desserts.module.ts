@@ -8,6 +8,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt-guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { PrismaService } from '../prisma.service';
 import { DessertsController } from './controller/desserts.controller';
+import { DessertsResolver } from './resolvers/dessert.resolver';
 import { DessertsService } from './service/desserts.service';
 
 @Module({
@@ -20,6 +21,7 @@ import { DessertsService } from './service/desserts.service';
     RolesGuard,
     LikesService,
     FilesService,
+    DessertsResolver,
   ],
   exports: [DessertsService],
 })
