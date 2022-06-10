@@ -11,7 +11,7 @@ import {
 @InputType({
   description: 'Dessert information to create a dessert',
 })
-export class DessertInput {
+export class CreateDessertInput {
   @Field({ description: "Dessert's name" })
   @IsNotEmpty()
   @IsString()
