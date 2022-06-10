@@ -1,4 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql';
+import { Role } from '@prisma/client';
 
 @ObjectType()
 export class User {
@@ -6,7 +7,7 @@ export class User {
   id: number;
 
   @Field({ description: "User's email" })
-  role: string;
+  role: Role;
 
   @Field({ description: "User's first name" })
   firstName: string;
