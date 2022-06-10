@@ -4,29 +4,29 @@ import { Role } from '@prisma/client';
 @ObjectType()
 export class User {
   @Field({ description: 'User id' })
-  id: number;
+  readonly id: number;
 
   @Field({ description: "User's email" })
-  role: Role;
+  readonly role: Role;
 
   @Field({ description: "User's first name" })
-  firstName: string;
+  readonly firstName: string;
 
   @Field({ description: "User's last name" })
-  lastName: string;
+  readonly lastName: string;
 
   @Field({ description: "User's username" })
-  userName: string;
+  readonly userName: string;
 
   @Field({ description: "User's email" })
-  email: string;
+  readonly email: string;
 
   @Field({ nullable: true, description: "User's deleted date" })
-  deletedAt: Date;
+  readonly deletedAt: Date;
 
   @Field({ description: "User's updated date " })
-  updatedAt: Date;
+  readonly updatedAt: Date;
 
   @Field({ description: "User's created date " })
-  createdAt: Date;
+  readonly createdAt: Date;
 }

@@ -5,41 +5,38 @@ import { Image } from './image.model';
 @ObjectType()
 export class Dessert {
   @Field({ description: 'Dessert id' })
-  id: number;
+  readonly id: number;
 
   @Field({ description: 'Dessert uuid' })
-  uuid: number;
+  readonly uuid: number;
 
   @Field({ description: "Dessert's name" })
-  name: string;
+  readonly name: string;
 
   @Field({ description: "Dessert's description" })
-  description: string;
+  readonly description: string;
 
   @Field(() => Float, { description: "Dessert's price" })
-  price: number;
+  readonly price: number;
 
   @Field(() => Int, { description: "Dessert's stock" })
-  stock: number;
+  readonly stock: number;
 
   @Field(() => Category, { description: "Dessert's category" })
-  category: Category;
+  readonly category: Category;
 
-  @Field(() => [Image], {
-    nullable: 'items',
-    description: "Dessert's images",
-  })
-  images: Image[];
+  @Field(() => [Image], { nullable: true, description: "Dessert's images" })
+  readonly mages: Image[];
 
   @Field({ description: "Dessert's status" })
-  status: boolean;
+  readonly status: boolean;
 
   @Field({ nullable: true, description: "Dessert's deleted date" })
-  deletedAt: Date;
+  readonly deletedAt: Date;
 
   @Field({ description: "Dessert's updated date " })
-  updatedAt: Date;
+  readonly updatedAt: Date;
 
   @Field({ description: "Dessert's created date " })
-  createdAt: Date;
+  readonly createdAt: Date;
 }

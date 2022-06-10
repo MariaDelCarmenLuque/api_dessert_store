@@ -3,14 +3,14 @@ import { Field, ObjectType } from '@nestjs/graphql';
 @ObjectType()
 export class Category {
   @Field({ description: 'Dessert id' })
-  id: string;
+  readonly id: string;
 
   @Field({ description: 'Dessert name' })
-  name: string;
+  readonly name: string;
 
   @Field({ description: "Dessert's updated date " })
-  updatedAt: Date;
+  readonly updatedAt: Date;
 
   @Field({ description: "Dessert's created date " })
-  createdAt: Date;
+  readonly createdAt: Date;
 }

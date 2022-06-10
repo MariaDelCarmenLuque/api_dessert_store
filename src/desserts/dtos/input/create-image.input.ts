@@ -5,5 +5,5 @@ import { IsString } from 'class-validator';
 export class ImageInput {
   @Field({ description: "Image's name" })
   @IsString()
-  name: string;
+  readonly name: string;
 }

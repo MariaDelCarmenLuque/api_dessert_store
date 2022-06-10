@@ -16,30 +16,30 @@ export class CreateDessertInput {
   @IsNotEmpty()
   @IsString()
   @Length(1, 40)
-  name: string;
+  readonly name: string;
 
   @Field({ description: "Dessert's description" })
   @IsNotEmpty()
   @IsString()
   @Length(1, 255)
-  description: string;
+  readonly description: string;
 
   @Field(() => Float, { description: "Dessert's price" })
   @IsNotEmpty()
   @IsNumber()
   @Min(0)
   @Max(1000000)
-  price: number;
+  readonly price: number;
 
   @Field(() => Int, { description: "Dessert's stock" })
   @IsNotEmpty()
   @IsNumber()
   @Min(0)
   @Max(1000000)
-  stock: number;
+  readonly stock: number;
 
   @Field({ description: "Dessert's category id" })
   @IsNotEmpty()
   @IsNumber()
-  categoryId: number;
+  readonly categoryId: number;
 }
