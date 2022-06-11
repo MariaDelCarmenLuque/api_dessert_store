@@ -17,7 +17,7 @@ import {
 } from '@nestjs/swagger';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { GetUser } from 'src/auth/decorators/user.decorator';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-guard';
+import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 import { Role } from 'src/auth/roles.enum';
 import { UserDto } from 'src/users/dtos/response/user.dto';
 import { OrderDto } from '../dtos/order.dto';
