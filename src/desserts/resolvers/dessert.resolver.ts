@@ -7,7 +7,7 @@ import { DessertsService } from '../service/desserts.service';
 
 @Resolver(() => Dessert)
 export class DessertsResolver {
-  constructor(private dessertService: DessertsService) {}
+  constructor(private readonly dessertService: DessertsService) {}
 
   @Query(() => Dessert, { description: 'Query: Return a dessert by ID' })
   async dessertGetOne(@Args('id') id: number) {
