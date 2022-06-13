@@ -22,12 +22,12 @@ export class DessertsResolver {
   }
 
   @Mutation(() => Dessert, { description: 'Mutation: Create a Dessert' })
-  async createDessert(@Args('dessertInput') dessertInput: CreateDessertInput) {
+  async dessertCreate(@Args('dessertInput') dessertInput: CreateDessertInput) {
     return await this.dessertService.create(dessertInput);
   }
 
   @Mutation(() => Dessert, { description: 'Mutation: Update a Dessert' })
-  async updateDessert(
+  async dessertUpdate(
     @Args('id') id: number,
     @Args('updateDessertInput') updateDessertInput: UpdateDessertInput,
   ) {
@@ -35,12 +35,12 @@ export class DessertsResolver {
   }
 
   @Mutation(() => Dessert, { description: 'Mutation: Update status Dessert' })
-  async updateStatusDessert(@Args('id') id: number) {
+  async dessertUpdateStatus(@Args('id') id: number) {
     return await this.dessertService.updateStatus(id);
   }
 
   @Mutation(() => Dessert, { description: 'Mutation: Create a Image' })
-  async createImage(
+  async imageCreate(
     @Args('id') id: number,
     @Args('imageInput') imageInput: ImageInput,
   ) {
@@ -48,14 +48,14 @@ export class DessertsResolver {
   }
 
   @Mutation(() => Dessert, { description: 'Mutation: Delete a Dessert' })
-  async deleteDessert(@Args('id') id: number) {
+  async dessertDelete(@Args('id') id: number) {
     return await this.dessertService.deleteDessert(id);
   }
 
   @Mutation(() => Like, {
     description: 'Mutation: Create or update a like in a dessert',
   })
-  async createLike(
+  async likeCreate(
     @GqlGetUser() user,
     @Args('id') id: number,
     @Args('likeInput') likeInput: CreateLikeInput,
@@ -66,7 +66,7 @@ export class DessertsResolver {
   @Mutation(() => Like, {
     description: 'Mutation: Delete a like in a dessert',
   })
-  async deleteLike(@GqlGetUser() user, @Args('id') id: number) {
+  async likeDelete(@GqlGetUser() user, @Args('id') id: number) {
     return await this.likesService.delete(user.id, id);
   }
 }
