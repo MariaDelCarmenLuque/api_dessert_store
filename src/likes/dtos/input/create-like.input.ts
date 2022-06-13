@@ -4,7 +4,7 @@ import { IsBoolean } from 'class-validator';
 @InputType({
   description: 'Like information to create a Like',
 })
-export class CreateCategoryInput {
+export class CreateLikeInput {
   @Field({ description: 'True (Like) or False (Dislike)' })
   @IsBoolean()
   readonly isLike: boolean;
