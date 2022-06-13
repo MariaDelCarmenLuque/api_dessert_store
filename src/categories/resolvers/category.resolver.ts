@@ -26,7 +26,7 @@ export class CategoriesResolver {
   }
 
   @Mutation(() => Category, { description: 'Mutation: Update a Category' })
-  async updateCategory(
+  async categoryUpdate(
     @Args('id') id: number,
     @Args('updateCategoryInput') updateCategoryInput: UpdateCategoryInput,
   ) {
