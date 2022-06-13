@@ -1,4 +1,8 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { GqlGetUser } from 'src/auth/decorators/gql-user.decorator';
+import { CreateLikeInput } from 'src/likes/dtos/input/create-like.input';
+import { Like } from 'src/likes/models/like.model';
+import { LikesService } from 'src/likes/service/likes.service';
 import { CreateDessertInput } from '../dtos/input/create-dessert.input';
 import { ImageInput } from '../dtos/input/create-image.input';
 import { UpdateDessertInput } from '../dtos/input/update-dessert.input';
@@ -7,7 +11,10 @@ import { DessertsService } from '../service/desserts.service';
 
 @Resolver(() => Dessert)
 export class DessertsResolver {
-  constructor(private readonly dessertService: DessertsService) {}
+  constructor(
+    private readonly dessertService: DessertsService,
+    private readonly likesService: LikesService,
+  ) {}
 
   @Query(() => Dessert, { description: 'Query: Return a dessert by ID' })
   async dessertGetOne(@Args('id') id: number) {
@@ -43,5 +50,23 @@ export class DessertsResolver {
   @Mutation(() => Dessert, { description: 'Mutation: Delete a Dessert' })
   async deleteDessert(@Args('id') id: number) {
     return await this.dessertService.deleteDessert(id);
+  }
+
+  @Mutation(() => Like, {
+    description: 'Mutation: Create or update a like in a dessert',
+  })
+  async createLike(
+    @GqlGetUser() user,
+    @Args('id') id: number,
+    @Args('likeInput') likeInput: CreateLikeInput,
+  ) {
+    return await this.likesService.upsertLike(user.id, id, likeInput);
+  }
+
+  @Mutation(() => Like, {
+    description: 'Mutation: Delete a like in a dessert',
+  })
+  async deleteLike(@GqlGetUser() user, @Args('id') id: number) {
+    return await this.likesService.delete(user.id, id);
   }
 }
