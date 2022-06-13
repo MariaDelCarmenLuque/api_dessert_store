@@ -9,7 +9,7 @@ export class CategoriesResolver {
   constructor(private readonly categoriesService: CategoriesService) {}
 
   @Query(() => [Category], { description: 'Query: Return all categories' })
-  async categoriesGetAll() {
+  async categoryGetAll() {
     return await this.categoriesService.getAll();
   }
 
@@ -19,7 +19,7 @@ export class CategoriesResolver {
   }
 
   @Mutation(() => Category, { description: 'Mutation: Create a Category' })
-  async createCategory(
+  async categoryCreate(
     @Args('createCategoryInput') createCategoryInput: CreateCategoryInput,
   ) {
     return await this.categoriesService.create(createCategoryInput);
