@@ -39,4 +39,9 @@ export class DessertsResolver {
   ) {
     return await this.dessertService.createImage(id, imageInput);
   }
+
+  @Mutation(() => Dessert, { description: 'Mutation: Delete a Dessert' })
+  async deleteDessert(@Args('id') id: number) {
+    return await this.dessertService.deleteDessert(id);
+  }
 }
