@@ -16,46 +16,65 @@ export class DessertsResolver {
     private readonly likesService: LikesService,
   ) {}
 
-  @Query(() => Dessert, { description: 'Query: Return a dessert by ID' })
-  async dessertGetOne(@Args('id') id: number) {
+  @Query(() => Dessert, {
+    description: 'Query: Return a dessert by ID',
+    name: 'DessertGetOne',
+  })
+  async getOneDessert(@Args('id') id: number) {
     return await this.dessertService.findOne(id);
   }
 
-  @Mutation(() => Dessert, { description: 'Mutation: Create a Dessert' })
-  async dessertCreate(@Args('dessertInput') dessertInput: CreateDessertInput) {
+  @Mutation(() => Dessert, {
+    description: 'Mutation: Create a Dessert',
+    name: 'DessertCreate',
+  })
+  async createDessert(@Args('dessertInput') dessertInput: CreateDessertInput) {
     return await this.dessertService.create(dessertInput);
   }
 
-  @Mutation(() => Dessert, { description: 'Mutation: Update a Dessert' })
-  async dessertUpdate(
+  @Mutation(() => Dessert, {
+    description: 'Mutation: Update a Dessert',
+    name: 'DessertUpdate',
+  })
+  async updateDessert(
     @Args('id') id: number,
     @Args('updateDessertInput') updateDessertInput: UpdateDessertInput,
   ) {
     return await this.dessertService.updateDessert(id, updateDessertInput);
   }
 
-  @Mutation(() => Dessert, { description: 'Mutation: Update status Dessert' })
-  async dessertUpdateStatus(@Args('id') id: number) {
+  @Mutation(() => Dessert, {
+    description: 'Mutation: Update status Dessert',
+    name: 'DessertUpdateStatus',
+  })
+  async updateStatusDessert(@Args('id') id: number) {
     return await this.dessertService.updateStatus(id);
   }
 
-  @Mutation(() => Dessert, { description: 'Mutation: Create a Image' })
-  async imageCreate(
+  @Mutation(() => Dessert, {
+    description: 'Mutation: Create a Image',
+    name: 'ImageCreate',
+  })
+  async createImage(
     @Args('id') id: number,
     @Args('imageInput') imageInput: ImageInput,
   ) {
     return await this.dessertService.createImage(id, imageInput);
   }
 
-  @Mutation(() => Dessert, { description: 'Mutation: Delete a Dessert' })
-  async dessertDelete(@Args('id') id: number) {
+  @Mutation(() => Dessert, {
+    description: 'Mutation: Delete a Dessert',
+    name: 'DessertDelete',
+  })
+  async deleteDessert(@Args('id') id: number) {
     return await this.dessertService.deleteDessert(id);
   }
 
   @Mutation(() => Like, {
     description: 'Mutation: Create or update a like in a dessert',
+    name: 'LikeCreate',
   })
-  async likeCreate(
+  async createLike(
     @GqlGetUser() user,
     @Args('id') id: number,
     @Args('likeInput') likeInput: CreateLikeInput,
@@ -65,8 +84,9 @@ export class DessertsResolver {
 
   @Mutation(() => Like, {
     description: 'Mutation: Delete a like in a dessert',
+    name: 'LikeDelete',
   })
-  async likeDelete(@GqlGetUser() user, @Args('id') id: number) {
+  async deleteLike(@GqlGetUser() user, @Args('id') id: number) {
     return await this.likesService.delete(user.id, id);
   }
 }
