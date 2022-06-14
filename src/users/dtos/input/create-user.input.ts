@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, InputType } from '@nestjs/graphql';
 import {
   IsEmail,
   IsNotEmpty,
@@ -9,7 +9,7 @@ import {
 } from 'class-validator';
 import { Role } from 'src/auth/roles.enum';
 
-@ObjectType({ description: 'User information to create a User' })
+@InputType({ description: 'User information to create a User' })
 export class CreateUserInput {
   @Field(() => Role, { description: "User's Role" })
   @IsNotEmpty()
