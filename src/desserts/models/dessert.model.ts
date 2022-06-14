@@ -8,7 +8,7 @@ export class Dessert {
   readonly id: number;
 
   @Field({ description: 'Dessert uuid' })
-  readonly uuid: number;
+  readonly uuid: string;
 
   @Field({ description: "Dessert's name" })
   readonly name: string;
@@ -23,10 +23,10 @@ export class Dessert {
   readonly stock: number;
 
   @Field(() => Category, { description: "Dessert's category" })
-  readonly category: Category;
+  readonly category?: Category;
 
   @Field(() => [Image], { nullable: true, description: "Dessert's images" })
-  readonly mages: Image[];
+  readonly images?: Image[];
 
   @Field({ description: "Dessert's status" })
   readonly status: boolean;
