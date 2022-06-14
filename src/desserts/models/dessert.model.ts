@@ -1,4 +1,5 @@
 import { Field, Float, Int, ObjectType } from '@nestjs/graphql';
+import { Transform } from 'class-transformer';
 import { Category } from 'src/categories/models/category.model';
 import { Image } from './image.model';
 
@@ -32,11 +33,13 @@ export class Dessert {
   readonly status: boolean;
 
   @Field({ nullable: true, description: "Dessert's deleted date" })
-  readonly deletedAt: Date;
+  readonly deletedAt?: Date;
 
   @Field({ description: "Dessert's updated date " })
-  readonly updatedAt: Date;
+  @Transform(({ value }) => value?.toISOString())
+  readonly updatedAt: string;
 
   @Field({ description: "Dessert's created date " })
-  readonly createdAt: Date;
+  @Transform(({ value }) => value?.toISOString())
+  readonly createdAt: string;
 }

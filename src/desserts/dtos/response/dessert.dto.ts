@@ -1,3 +1,4 @@
+import { Image } from '@prisma/client';
 import { Exclude, Expose, Transform } from 'class-transformer';
 
 @Exclude()
@@ -62,7 +63,7 @@ export class DessertDto {
    * @Example '[{https://empresas.blogthinkbig.com//Imagen3-245003649.jpg?w=800},{ttps://empresas.blogthinkbig.com//Imagen3-245003649.jpg?w=800}]',
    */
   @Expose()
-  readonly images?: string;
+  readonly images?: Image[];
 
   /**
    * Dessert's delete date
