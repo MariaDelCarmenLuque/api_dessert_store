@@ -24,6 +24,9 @@
     "prisma:generate": "prisma generate",
     "prisma:migrate:test:save": "dotenv -e .env.test -- prisma migrate dev"
   },
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
+  },
   "dependencies": {
     "@faker-js/faker": "^6.3.1",
     "@nestjs/apollo": "^10.0.14",
