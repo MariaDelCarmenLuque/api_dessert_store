@@ -1,4 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql';
+import { Transform } from 'class-transformer';
 
 @ObjectType()
 export class Like {
@@ -12,5 +13,6 @@ export class Like {
   readonly isLike: boolean;
 
   @Field({ description: "Like's created date " })
-  readonly createdAt: Date;
+  @Transform(({ value }) => value?.toISOString())
+  readonly createdAt: string;
 }
