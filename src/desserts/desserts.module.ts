@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { CategoriesService } from 'src/categories/service/categories.service';
 import { FilesService } from 'src/files/service/files.service';
 import { LikesModule } from 'src/likes/likes.module';
 import { LikesService } from 'src/likes/service/likes.service';
@@ -15,6 +16,7 @@ import { DessertsService } from './service/desserts.service';
   imports: [AuthModule, ConfigModule, LikesModule],
   controllers: [DessertsController],
   providers: [
+    CategoriesService,
     DessertsService,
     PrismaService,
     JwtAuthGuard,

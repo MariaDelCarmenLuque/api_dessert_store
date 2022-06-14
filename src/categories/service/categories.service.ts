@@ -15,6 +15,12 @@ export class CategoriesService {
     });
   }
 
+  async getCategoryByDessert(dessertId: number) {
+    return this.prisma.category.findFirst({
+      where: { desserts: { some: { id: dessertId } } },
+    });
+  }
+
   async findOne(categoryId: number): Promise<CategoryDto | null> {
     try {
       const category = await this.prisma.category.findUnique({
