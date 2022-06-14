@@ -80,7 +80,7 @@ export class DessertDto {
    */
   @Expose()
   @Transform(({ value }) => value?.toISOString())
-  readonly updatedAt: string = 'CURRENT_TIMESTAMP';
+  readonly updatedAt: Date;
 
   /**
    * Dessert's creation date
@@ -88,5 +88,5 @@ export class DessertDto {
    */
   @Expose()
   @Transform(({ value }) => value?.toISOString())
-  readonly createdAt: string = 'CURRENT_TIMESTAMP';
+  readonly createdAt: Date;
 }
