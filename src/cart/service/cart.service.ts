@@ -91,7 +91,8 @@ export class CartService {
       const totalPrice =
         user.cart.amount + productTotalPrice - previousProductTotalPrice;
 
-      const [newCartItem] = await this.prisma.$transaction([
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const [_, newCartItem] = await this.prisma.$transaction([
         this.prisma.cart.update({
           where: { id: user.cart.id },
           data: { amount: totalPrice },
