@@ -1,5 +1,14 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import {
+  Args,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
+} from '@nestjs/graphql';
 import { GqlGetUser } from 'src/auth/decorators/gql-user.decorator';
+import { Category } from 'src/categories/models/category.model';
+import { CategoriesService } from 'src/categories/service/categories.service';
 import { CreateLikeInput } from 'src/likes/dtos/input/create-like.input';
 import { Like } from 'src/likes/models/like.model';
 import { LikesService } from 'src/likes/service/likes.service';
@@ -14,21 +23,32 @@ export class DessertsResolver {
   constructor(
     private readonly dessertService: DessertsService,
     private readonly likesService: LikesService,
+    private readonly categoryService: CategoriesService,
   ) {}
 
   @Query(() => Dessert, {
     description: 'Query: Return a dessert by ID',
     name: 'DessertGetOne',
   })
-  async getOneDessert(@Args('id') id: number) {
+  async getOneDessert(@Args('id') id: number): Promise<Dessert> {
     return await this.dessertService.findOne(id);
+  }
+
+  @Query(() => [Dessert], {
+    description: 'Query: Return all Dessertss',
+    name: 'DessertGetAll',
+  })
+  async getAllDessert(): Promise<Dessert[]> {
+    return await this.dessertService.getAllDesserts();
   }
 
   @Mutation(() => Dessert, {
     description: 'Mutation: Create a Dessert',
     name: 'DessertCreate',
   })
-  async createDessert(@Args('dessertInput') dessertInput: CreateDessertInput) {
+  async createDessert(
+    @Args('dessertInput') dessertInput: CreateDessertInput,
+  ): Promise<Dessert> {
     return await this.dessertService.create(dessertInput);
   }
 
@@ -39,7 +59,7 @@ export class DessertsResolver {
   async updateDessert(
     @Args('id') id: number,
     @Args('updateDessertInput') updateDessertInput: UpdateDessertInput,
-  ) {
+  ): Promise<Dessert> {
     return await this.dessertService.updateDessert(id, updateDessertInput);
   }
 
@@ -47,7 +67,7 @@ export class DessertsResolver {
     description: 'Mutation: Update status Dessert',
     name: 'DessertUpdateStatus',
   })
-  async updateStatusDessert(@Args('id') id: number) {
+  async updateStatusDessert(@Args('id') id: number): Promise<Dessert> {
     return await this.dessertService.updateStatus(id);
   }
 
@@ -78,7 +98,7 @@ export class DessertsResolver {
     @GqlGetUser() user,
     @Args('id') id: number,
     @Args('likeInput') likeInput: CreateLikeInput,
-  ) {
+  ): Promise<Like> {
     return await this.likesService.upsertLike(user.id, id, likeInput);
   }
 
@@ -88,5 +108,10 @@ export class DessertsResolver {
   })
   async deleteLike(@GqlGetUser() user, @Args('id') id: number) {
     return await this.likesService.delete(user.id, id);
+  }
+
+  @ResolveField('category', () => Category)
+  async category(@Parent() dessert: Dessert): Promise<Category> {
+    return this.categoryService.getCategoryByDessert(dessert.id);
   }
 }
