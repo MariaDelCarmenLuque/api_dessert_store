@@ -2,8 +2,7 @@ import { Field, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
 export class Category {
-  @Field({ description: 'Dessert id' })
-  readonly id: string;
+  readonly id: number;
 
   @Field({ description: 'Dessert name' })
   readonly name: string;
