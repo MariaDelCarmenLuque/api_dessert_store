@@ -63,6 +63,8 @@ export class DessertsResolver {
     description: 'Mutation: Update a Dessert',
     name: 'dessertUpdate',
   })
+  @Roles(Role.ADMIN)
+  @UseGuards(GqlJwtGuard, GqlRolesGuard)
   async updateDessert(
     @Args('id') id: number,
     @Args('updateDessertInput') updateDessertInput: UpdateDessertInput,
@@ -74,6 +76,8 @@ export class DessertsResolver {
     description: 'Mutation: Update status Dessert',
     name: 'dessertUpdateStatus',
   })
+  @Roles(Role.ADMIN)
+  @UseGuards(GqlJwtGuard, GqlRolesGuard)
   async updateStatusDessert(@Args('id') id: number): Promise<Dessert> {
     return await this.dessertService.updateStatus(id);
   }
@@ -82,6 +86,8 @@ export class DessertsResolver {
     description: 'Mutation: Create a Image',
     name: 'imageCreate',
   })
+  @Roles(Role.ADMIN)
+  @UseGuards(GqlJwtGuard, GqlRolesGuard)
   async createImage(
     @Args('id') id: number,
     @Args('imageInput') imageInput: ImageInput,
@@ -93,6 +99,8 @@ export class DessertsResolver {
     description: 'Mutation: Delete a Dessert',
     name: 'dessertDelete',
   })
+  @Roles(Role.ADMIN)
+  @UseGuards(GqlJwtGuard, GqlRolesGuard)
   async deleteDessert(@Args('id') id: number) {
     return await this.dessertService.deleteDessert(id);
   }
@@ -101,6 +109,8 @@ export class DessertsResolver {
     description: 'Mutation: Create or update a like in a dessert',
     name: 'likeCreate',
   })
+  @Roles(Role.ADMIN, Role.USER)
+  @UseGuards(GqlJwtGuard, GqlRolesGuard)
   async createLike(
     @GqlGetUser() user,
     @Args('id') id: number,
@@ -113,6 +123,8 @@ export class DessertsResolver {
     description: 'Mutation: Delete a like in a dessert',
     name: 'likeDelete',
   })
+  @Roles(Role.ADMIN, Role.USER)
+  @UseGuards(GqlJwtGuard, GqlRolesGuard)
   async deleteLike(@GqlGetUser() user, @Args('id') id: number) {
     return await this.likesService.delete(user.id, id);
   }
