@@ -21,6 +21,7 @@ import { CreateDessertInput } from '../dtos/input/create-dessert.input';
 import { ImageInput } from '../dtos/input/create-image.input';
 import { UpdateDessertInput } from '../dtos/input/update-dessert.input';
 import { Dessert } from '../models/dessert.model';
+import { Image } from '../models/image.model';
 import { DessertsService } from '../service/desserts.service';
 
 @Resolver(() => Dessert)
@@ -132,5 +133,10 @@ export class DessertsResolver {
   @ResolveField('category', () => Category)
   async category(@Parent() dessert: Dessert): Promise<Category> {
     return this.categoryService.getCategoryByDessert(dessert.id);
+  }
+
+  @ResolveField('images', () => [Image])
+  async images(@Parent() dessert: Dessert): Promise<Image[]> {
+    return this.dessertService.getImagesByDessertId(dessert.id);
   }
 }

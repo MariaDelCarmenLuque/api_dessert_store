@@ -197,9 +197,15 @@ export class DessertsService {
       throw error;
     }
   }
-  async getDessertByOrderItemId(orderItemId: number) {
+  async getDessertByOrderItemId(orderItemId: number): Promise<DessertDto> {
     return await this.prisma.dessert.findFirst({
       where: { orderItems: { some: { id: orderItemId } } },
+    });
+  }
+
+  async getImagesByDessertId(dessertId: number) {
+    return await this.prisma.dessert.findMany({
+      where: { images: { some: { dessertId } } },
     });
   }
 }
