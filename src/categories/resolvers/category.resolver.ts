@@ -1,4 +1,9 @@
+import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { GqlJwtGuard } from 'src/auth/guards/gql-jwt.guard';
+import { GqlRolesGuard } from 'src/auth/guards/gql-roles.guard';
+import { Role } from 'src/auth/roles.enum';
 import { CreateCategoryInput } from '../dtos/input/create-category.input';
 import { UpdateCategoryInput } from '../dtos/input/update-category.input';
 import { Category } from '../models/category.model';
@@ -28,6 +33,8 @@ export class CategoriesResolver {
     description: 'Mutation: Create a Category',
     name: 'categoryCreate',
   })
+  @Roles(Role.ADMIN)
+  @UseGuards(GqlJwtGuard, GqlRolesGuard)
   async createCategory(
     @Args('createCategoryInput') createCategoryInput: CreateCategoryInput,
   ) {
@@ -38,6 +45,8 @@ export class CategoriesResolver {
     description: 'Mutation: Update a Category',
     name: 'categoryUpdate',
   })
+  @Roles(Role.ADMIN)
+  @UseGuards(GqlJwtGuard, GqlRolesGuard)
   async updateCategory(
     @Args('id') id: number,
     @Args('updateCategoryInput') updateCategoryInput: UpdateCategoryInput,
