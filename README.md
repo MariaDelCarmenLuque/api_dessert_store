@@ -10,11 +10,11 @@
 
 ## Description
 
-[This project is an API for a Dessert Store App where you can register & login users, create products,search products by category.
+This project is an API for a Dessert Store App where you can register & login users, create products,search products by category.
 
 As an *ADMIN* user, you can create, uodate, delete and disable products, upload images per product and, show client orders.
 
-As a *USER* user, you can see, buy and like products, see the product details, add products to cart and, show your orders.
+As a *USER* client, you can see, buy and like products, see the product details, add products to cart and, show your orders.
 
 ## Installation
 
@@ -28,7 +28,6 @@ $ npm install
 Create a `.env` file using the `.env.example` file:
 
 ```bash
-
 
 #DATABASE
 # Postgres
@@ -55,10 +54,13 @@ AWS_EXPIRE_TIME=
 
 ```bash
 # migrations
-$ npm run prisma:migrate:run
+$ npx run prisma:migrate:run
 
 # generate client prisma
-$ npm run prisma:generate
+$ npx run prisma:generate
+
+# generate test data
+$ npx prisma db seed
 
 # development
 $ npm run start
@@ -80,10 +82,15 @@ $ npm run test
 $ npm run test:cov
 ```
 
-#### Documentation:
+### Documentation:
 
 `HOST:PORT/api/docs`
+### Deploy on Heroku:
 
+#### - Playground GraphQL
+`https://api-dessert-store.herokuapp.com/graphql`
+#### - Swagger Documentation
+`https://api-dessert-store.herokuapp.com/api/docs`
 ## Technologies & Libraries
 - NestJs
 - Typescript
@@ -94,14 +101,15 @@ $ npm run test:cov
 - REST 
 - Swagger
 - Prisma
+- Apollo server
+- GraphQL
+- Code First
+
 
 ## Pending Features
 
-- Include Unit Testing in Order Service.
-- Include Unit Testing in createImage and uploadImage methods in dessert service.
-- Add forgot password functionality.
+- Add reset password functionality.
 - Send an email when the user changes the password
-
 
 ## Collaboration
 
