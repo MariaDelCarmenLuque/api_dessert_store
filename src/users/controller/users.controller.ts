@@ -22,13 +22,13 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { Role } from 'src/auth/roles.enum';
 import { UpdateUserDto } from '../dtos/request/update-user.dto';
 import { UserDto } from '../dtos/response/user.dto';
 import { UsersService } from '../service/users.service';
+import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 
 @ApiTags('Users')
 @Controller('users')
@@ -38,6 +38,7 @@ export class UsersController {
   @Get('all')
   @ApiBearerAuth()
   @Roles(Role.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: 'Get data of all Users' })
   async getAll(): Promise<UserDto[]> {
     return await this.userService.getAll();
@@ -46,6 +47,7 @@ export class UsersController {
   @Get(':id')
   @ApiBearerAuth()
   @Roles(Role.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({
     summary: 'Get user by Id',
   })
