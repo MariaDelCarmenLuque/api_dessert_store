@@ -31,6 +31,12 @@ import { join } from 'path';
       autoSchemaFile: join(process.cwd(), 'src/gql/schema.gql'),
       sortSchema: true,
       playground: true,
+      formatError: (error) => {
+        return {
+          name: error.name,
+          message: error.message,
+        };
+      },
     }),
   ],
   controllers: [AppController],
