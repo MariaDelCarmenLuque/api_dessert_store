@@ -88,9 +88,9 @@ $ npm run test:cov
 ### Deploy on Heroku:
 
 #### - Playground GraphQL
-`https://api-dessert-store.herokuapp.com/graphql`
+<https://api-dessert-store.herokuapp.com/graphql>
 #### - Swagger Documentation
-`https://api-dessert-store.herokuapp.com/api/docs`
+<https://api-dessert-store.herokuapp.com/api/docs>
 ## Technologies & Libraries
 - NestJs
 - Typescript
