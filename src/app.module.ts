@@ -10,6 +10,9 @@ import { LikesModule } from './likes/likes.module';
 import { FilesModule } from './files/files.module';
 import { TerminusModule } from '@nestjs/terminus';
 import { HttpModule } from '@nestjs/axios';
+import { GraphQLModule } from '@nestjs/graphql';
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+import { join } from 'path';
 
 @Module({
   imports: [
@@ -23,6 +26,19 @@ import { HttpModule } from '@nestjs/axios';
     FilesModule,
     TerminusModule,
     HttpModule,
+    GraphQLModule.forRoot<ApolloDriverConfig>({
+      context: ({ req }) => ({ req }),
+      driver: ApolloDriver,
+      autoSchemaFile: join(process.cwd(), 'src/gql/schema.gql'),
+      sortSchema: true,
+      playground: true,
+      formatError: (error) => {
+        return {
+          name: error.name,
+          message: error.message,
+        };
+      },
+    }),
   ],
   controllers: [AppController],
 })

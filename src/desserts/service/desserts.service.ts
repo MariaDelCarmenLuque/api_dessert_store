@@ -143,7 +143,7 @@ export class DessertsService {
       throw error;
     }
   }
-  async updateStatus(id: number): Promise<any> {
+  async updateStatus(id: number): Promise<DessertDto> {
     try {
       const dessert = await this.prisma.dessert.findUnique({
         where: {
@@ -151,7 +151,7 @@ export class DessertsService {
         },
       });
       if (dessert.deletedAt != null) {
-        return new BadRequestException('Dessert is deleted');
+        new BadRequestException('Dessert is deleted');
       }
       const previewStatus = dessert.status;
       const newDessert = await this.prisma.dessert.update({
@@ -159,7 +159,7 @@ export class DessertsService {
         select: { id: true, name: true, status: true, updatedAt: true },
         where: { id: dessert.id },
       });
-      return newDessert;
+      return plainToInstance(DessertDto, newDessert);
     } catch (error) {
       throw error;
     }
@@ -196,5 +196,16 @@ export class DessertsService {
     } catch (error) {
       throw error;
     }
+  }
+  async getDessertByOrderItemId(orderItemId: number): Promise<DessertDto> {
+    return await this.prisma.dessert.findFirst({
+      where: { orderItems: { some: { id: orderItemId } } },
+    });
+  }
+
+  async getImagesByDessertId(dessertId: number) {
+    return await this.prisma.dessert.findMany({
+      where: { images: { some: { dessertId } } },
+    });
   }
 }

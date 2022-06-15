@@ -4,6 +4,12 @@ import { Exclude, Expose } from 'class-transformer';
 @Exclude()
 export class OrderDto {
   /**
+   * Id order
+   */
+  @Expose()
+  readonly id: number;
+
+  /**
    * Uuid order
    */
   @Expose()
@@ -26,5 +32,5 @@ export class OrderDto {
    * List of Order items
    */
   @Expose()
-  readonly items: OrderItem[];
+  readonly orderItem: OrderItem[];
 }

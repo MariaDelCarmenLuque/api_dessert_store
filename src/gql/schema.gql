@@ -1,0 +1,309 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type CartItem {
+  """Car-item's Dessert information"""
+  dessert: Dessert!
+
+  """Car-item's quantity"""
+  quantity: Int!
+
+  """Car-item's total price"""
+  totalPrice: Float!
+
+  """Car-item's unit price"""
+  unitPrice: Float!
+}
+
+"""Item information to create or update a Cart-Item"""
+input CartItemInput {
+  """Id of the dessert to be added"""
+  dessertId: Float!
+
+  """Quantity of dessert to be added """
+  quantity: Int!
+}
+
+type Category {
+  """Dessert's created date """
+  createdAt: DateTime!
+
+  """Dessert name"""
+  name: String!
+
+  """Dessert's updated date """
+  updatedAt: DateTime!
+}
+
+"""Category information to create a Category"""
+input CreateCategoryInput {
+  """Category's name"""
+  name: String!
+}
+
+"""Dessert information to create a dessert"""
+input CreateDessertInput {
+  """Dessert's category id"""
+  categoryId: Float!
+
+  """Dessert's description"""
+  description: String!
+
+  """Dessert's name"""
+  name: String!
+
+  """Dessert's price"""
+  price: Float!
+
+  """Dessert's stock"""
+  stock: Int!
+}
+
+"""Like information to create a Like"""
+input CreateLikeInput {
+  """True (Like) or False (Dislike)"""
+  isLike: Boolean!
+}
+
+"""User information to create a User"""
+input CreateUserInput {
+  """User's email"""
+  email: String!
+
+  """User's first name"""
+  firstName: String!
+
+  """User's last name"""
+  lastName: String!
+
+  """User's password"""
+  password: String!
+
+  """User's Role"""
+  role: Role!
+
+  """User's username"""
+  userName: String!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type Dessert {
+  """Dessert's category"""
+  category: Category!
+
+  """Dessert's created date """
+  createdAt: DateTime!
+
+  """Dessert's deleted date"""
+  deletedAt: DateTime
+
+  """Dessert's description"""
+  description: String!
+
+  """Dessert id"""
+  id: Float!
+
+  """Dessert's images"""
+  images: [Image!]
+
+  """Dessert's name"""
+  name: String!
+
+  """Dessert's price"""
+  price: Float!
+
+  """Dessert's status"""
+  status: Boolean!
+
+  """Dessert's stock"""
+  stock: Int!
+
+  """Dessert's updated date """
+  updatedAt: DateTime!
+
+  """Dessert uuid"""
+  uuid: String!
+}
+
+type Image {
+  """Image's created date """
+  createdAt: DateTime!
+
+  """Image's name"""
+  name: String!
+
+  """Image's updated date """
+  updatedAt: DateTime!
+
+  """Image's uuid"""
+  uuid: String!
+}
+
+input ImageInput {
+  """Image's name"""
+  name: String!
+}
+
+type Like {
+  """Like's created date """
+  createdAt: String!
+
+  """Like's dessertId"""
+  dessertId: Float!
+
+  """Like or Dislike"""
+  isLike: Boolean!
+
+  """Like's userId"""
+  userId: Float!
+}
+
+"""User information to Login"""
+input LoginInput {
+  """User's email"""
+  email: String!
+
+  """User's password"""
+  password: String!
+}
+
+type Mutation {
+  """Mutation: Delete a Cart Item"""
+  cartItemsDelete(desertId: Float!): CartItem!
+
+  """Mutation: Create or Update a Cart Item"""
+  cartItemsUpsert(cartItemInput: CartItemInput!): CartItem!
+
+  """Mutation: Create a Category"""
+  categoryCreate(createCategoryInput: CreateCategoryInput!): Category!
+
+  """Mutation: Update a Category"""
+  categoryUpdate(id: Float!, updateCategoryInput: UpdateCategoryInput!): Category!
+
+  """Mutation: Create a Dessert"""
+  dessertCreate(dessertInput: CreateDessertInput!): Dessert!
+
+  """Mutation: Delete a Dessert"""
+  dessertDelete(id: Float!): Dessert!
+
+  """Mutation: Update a Dessert"""
+  dessertUpdate(id: Float!, updateDessertInput: UpdateDessertInput!): Dessert!
+
+  """Mutation: Update status Dessert"""
+  dessertUpdateStatus(id: Float!): Dessert!
+
+  """Mutation: Create a Image"""
+  imageCreate(id: Float!, imageInput: ImageInput!): Dessert!
+
+  """Mutation: Create or update a like in a dessert"""
+  likeCreate(id: Float!, likeInput: CreateLikeInput!): Like!
+
+  """Mutation: Delete a like in a dessert"""
+  likeDelete(id: Float!): Like!
+
+  """Mutation: Create a Order"""
+  orderCreate: Order!
+
+  """Mutation: Login a User"""
+  userLogin(loginInput: LoginInput!): Token!
+
+  """Mutation: Register a new User"""
+  userRegister(createUserInput: CreateUserInput!): Token!
+}
+
+type Order {
+  """Order's created date"""
+  createdAt: DateTime!
+  dessert: Dessert!
+
+  """Order's items"""
+  orderItem: [OrderItem!]
+
+  """Order's Total Price """
+  totalPrice: Float!
+
+  """Order id"""
+  uuid: String!
+}
+
+type OrderItem {
+  """Order-Item's created date"""
+  createdAt: DateTime!
+
+  """Id Dessert information"""
+  dessertId: Float!
+
+  """Order item's quantity"""
+  quantity: Int!
+
+  """Order item's total price"""
+  totalPrice: Float!
+
+  """Dessert unit price"""
+  unitPrice: Float!
+}
+
+type Query {
+  """ Query: Return all items in a Cart"""
+  cartGetAllItems: [CartItem!]!
+
+  """Query: Return all categories"""
+  categoryGetAll: [Category!]!
+
+  """Query: Return a category by Id"""
+  categoryGetOne(id: Float!): Category!
+
+  """Query: Return all Dessertss"""
+  dessertGetAll: [Dessert!]!
+
+  """Query: Return a dessert by ID"""
+  dessertGetOne(id: Float!): Dessert!
+
+  """Query; Return all Orders of a User"""
+  orderGetAll: [Order!]!
+}
+
+enum Role {
+  ADMIN
+  USER
+}
+
+type Token {
+  """Access Token"""
+  accessToken: String!
+
+  """Expiration information"""
+  exp: Float!
+
+  """Refresh Token"""
+  refreshToken: String!
+}
+
+"""Category information to update a Category"""
+input UpdateCategoryInput {
+  """Category's name"""
+  name: String
+}
+
+"""Dessert information to update a dessert"""
+input UpdateDessertInput {
+  """Dessert's category id"""
+  categoryId: Float
+
+  """Dessert's description"""
+  description: String
+
+  """Dessert's name"""
+  name: String
+
+  """Dessert's price"""
+  price: Float
+
+  """Dessert's stock"""
+  stock: Int
+}

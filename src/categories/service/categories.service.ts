@@ -3,6 +3,7 @@ import { plainToInstance } from 'class-transformer';
 import { PrismaService } from '../../prisma.service';
 import { CategoryDto } from '../dtos/response/category.dto';
 import { CreateCategoryDto } from '../dtos/request/create-category.dto';
+import { UpdateCategoryDto } from '../dtos/request/update-category.dto';
 
 @Injectable()
 export class CategoriesService {
@@ -11,6 +12,12 @@ export class CategoriesService {
   async getAll(): Promise<CategoryDto[]> {
     return this.prisma.category.findMany({
       orderBy: { createdAt: 'desc' },
+    });
+  }
+
+  async getCategoryByDessert(dessertId: number) {
+    return this.prisma.category.findFirst({
+      where: { desserts: { some: { id: dessertId } } },
     });
   }
 
@@ -38,7 +45,7 @@ export class CategoriesService {
 
   async updateCategory(
     categoryId: number,
-    data: CreateCategoryDto,
+    data: UpdateCategoryDto,
   ): Promise<CategoryDto> {
     try {
       await this.prisma.category.findUnique({

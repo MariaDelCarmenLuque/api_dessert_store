@@ -17,7 +17,8 @@ import {
 } from '@nestjs/swagger';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { GetUser } from 'src/auth/decorators/user.decorator';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-guard';
+import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Role } from 'src/auth/roles.enum';
 import { UserDto } from 'src/users/dtos/response/user.dto';
 import { OrderDto } from '../dtos/order.dto';
@@ -30,7 +31,7 @@ export class OrdersController {
 
   @Get()
   @Roles(Role.USER)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get all orders of a User' })
   @ApiUnauthorizedResponse({
@@ -51,7 +52,7 @@ export class OrdersController {
 
   @Post()
   @Roles(Role.USER)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Create a order' })
   @ApiNotFoundResponse({

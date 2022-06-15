@@ -1,5 +1,4 @@
-import { Dessert } from '@prisma/client';
-import { Exclude, Expose, Transform } from 'class-transformer';
+import { Exclude, Expose } from 'class-transformer';
 
 @Exclude()
 export class OrderItemsDto {
@@ -25,16 +24,15 @@ export class OrderItemsDto {
   readonly totalPrice: number;
 
   /**
-   * Dessert
+   * Id Dessert
    */
   @Expose()
-  readonly dessert: Dessert;
+  readonly dessertId: number;
 
   /**
    * OrderItem's created date
    * @example '2016-03-26 10:10:10-05:00'
    */
   @Expose()
-  @Transform(({ value }) => value?.toISOString())
-  readonly createdAt: string;
+  readonly createdAt: Date;
 }
