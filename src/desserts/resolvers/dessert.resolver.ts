@@ -1,3 +1,4 @@
+import { UseGuards } from '@nestjs/common';
 import {
   Args,
   Mutation,
@@ -7,6 +8,10 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 import { GqlGetUser } from 'src/auth/decorators/gql-user.decorator';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { GqlJwtGuard } from 'src/auth/guards/gql-jwt.guard';
+import { GqlRolesGuard } from 'src/auth/guards/gql-roles.guard';
+import { Role } from 'src/auth/roles.enum';
 import { Category } from 'src/categories/models/category.model';
 import { CategoriesService } from 'src/categories/service/categories.service';
 import { CreateLikeInput } from 'src/likes/dtos/input/create-like.input';
@@ -28,7 +33,7 @@ export class DessertsResolver {
 
   @Query(() => Dessert, {
     description: 'Query: Return a dessert by ID',
-    name: 'DessertGetOne',
+    name: 'dessertGetOne',
   })
   async getOneDessert(@Args('id') id: number): Promise<Dessert> {
     return await this.dessertService.findOne(id);
@@ -36,7 +41,7 @@ export class DessertsResolver {
 
   @Query(() => [Dessert], {
     description: 'Query: Return all Dessertss',
-    name: 'DessertGetAll',
+    name: 'dessertGetAll',
   })
   async getAllDessert(): Promise<Dessert[]> {
     return await this.dessertService.getAllDesserts();
@@ -44,8 +49,10 @@ export class DessertsResolver {
 
   @Mutation(() => Dessert, {
     description: 'Mutation: Create a Dessert',
-    name: 'DessertCreate',
+    name: 'dessertCreate',
   })
+  @Roles(Role.ADMIN)
+  @UseGuards(GqlJwtGuard, GqlRolesGuard)
   async createDessert(
     @Args('dessertInput') dessertInput: CreateDessertInput,
   ): Promise<Dessert> {
@@ -54,7 +61,7 @@ export class DessertsResolver {
 
   @Mutation(() => Dessert, {
     description: 'Mutation: Update a Dessert',
-    name: 'DessertUpdate',
+    name: 'dessertUpdate',
   })
   async updateDessert(
     @Args('id') id: number,
@@ -65,7 +72,7 @@ export class DessertsResolver {
 
   @Mutation(() => Dessert, {
     description: 'Mutation: Update status Dessert',
-    name: 'DessertUpdateStatus',
+    name: 'dessertUpdateStatus',
   })
   async updateStatusDessert(@Args('id') id: number): Promise<Dessert> {
     return await this.dessertService.updateStatus(id);
@@ -73,7 +80,7 @@ export class DessertsResolver {
 
   @Mutation(() => Dessert, {
     description: 'Mutation: Create a Image',
-    name: 'ImageCreate',
+    name: 'imageCreate',
   })
   async createImage(
     @Args('id') id: number,
@@ -84,7 +91,7 @@ export class DessertsResolver {
 
   @Mutation(() => Dessert, {
     description: 'Mutation: Delete a Dessert',
-    name: 'DessertDelete',
+    name: 'dessertDelete',
   })
   async deleteDessert(@Args('id') id: number) {
     return await this.dessertService.deleteDessert(id);
@@ -92,7 +99,7 @@ export class DessertsResolver {
 
   @Mutation(() => Like, {
     description: 'Mutation: Create or update a like in a dessert',
-    name: 'LikeCreate',
+    name: 'likeCreate',
   })
   async createLike(
     @GqlGetUser() user,
@@ -104,7 +111,7 @@ export class DessertsResolver {
 
   @Mutation(() => Like, {
     description: 'Mutation: Delete a like in a dessert',
-    name: 'LikeDelete',
+    name: 'likeDelete',
   })
   async deleteLike(@GqlGetUser() user, @Args('id') id: number) {
     return await this.likesService.delete(user.id, id);

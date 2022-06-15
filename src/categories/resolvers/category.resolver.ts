@@ -8,25 +8,37 @@ import { CategoriesService } from '../service/categories.service';
 export class CategoriesResolver {
   constructor(private readonly categoriesService: CategoriesService) {}
 
-  @Query(() => [Category], { description: 'Query: Return all categories' })
-  async categoryGetAll() {
+  @Query(() => [Category], {
+    description: 'Query: Return all categories',
+    name: 'categoryGetAll',
+  })
+  async getAllCategories() {
     return await this.categoriesService.getAll();
   }
 
-  @Query(() => Category, { description: 'Query: Return a category by Id' })
-  async categoryGetOne(@Args('id') id: number) {
+  @Query(() => Category, {
+    description: 'Query: Return a category by Id',
+    name: 'categoryGetOne',
+  })
+  async getOneCategory(@Args('id') id: number) {
     return await this.categoriesService.findOne(id);
   }
 
-  @Mutation(() => Category, { description: 'Mutation: Create a Category' })
-  async categoryCreate(
+  @Mutation(() => Category, {
+    description: 'Mutation: Create a Category',
+    name: 'categoryCreate',
+  })
+  async createCategory(
     @Args('createCategoryInput') createCategoryInput: CreateCategoryInput,
   ) {
     return await this.categoriesService.create(createCategoryInput);
   }
 
-  @Mutation(() => Category, { description: 'Mutation: Update a Category' })
-  async categoryUpdate(
+  @Mutation(() => Category, {
+    description: 'Mutation: Update a Category',
+    name: 'categoryUpdate',
+  })
+  async updateCategory(
     @Args('id') id: number,
     @Args('updateCategoryInput') updateCategoryInput: UpdateCategoryInput,
   ) {

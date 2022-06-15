@@ -21,7 +21,7 @@ export class OrdersResolver {
 
   @Query(() => [Order], {
     description: 'Query; Return all Orders of a User',
-    name: 'OrderGetAll',
+    name: 'orderGetAll',
   })
   async getAllOrder(@GqlGetUser() user) {
     return this.ordersService.getMany(user.id);
@@ -29,7 +29,7 @@ export class OrdersResolver {
 
   @Mutation(() => Order, {
     description: 'Mutation: Create a Order',
-    name: 'OrderCreate',
+    name: 'orderCreate',
   })
   async createOrder(@GqlGetUser() user): Promise<Order> {
     return this.ordersService.create(user.id);

@@ -11,7 +11,7 @@ export class CartResolver {
 
   @Query(() => [CartItem], {
     description: ' Query: Return all items in a Cart',
-    name: 'CartGetAllItems',
+    name: 'cartGetAllItems',
   })
   async getAllItems(@GqlGetUser() user) {
     return await this.cartsService.getItems(user.id);
@@ -19,7 +19,7 @@ export class CartResolver {
 
   @Mutation(() => CartItem, {
     description: 'Mutation: Create or Update a Cart Item',
-    name: 'CartItemsUpsert',
+    name: 'cartItemsUpsert',
   })
   async upsertCartItems(
     @GqlGetUser() user,
@@ -30,7 +30,7 @@ export class CartResolver {
 
   @Mutation(() => CartItem, {
     description: 'Mutation: Delete a Cart Item',
-    name: 'CartItemsDelete',
+    name: 'cartItemsDelete',
   })
   async deleteCartItems(
     @GqlGetUser() user,

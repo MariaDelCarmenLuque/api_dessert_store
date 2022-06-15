@@ -9,7 +9,7 @@ export class UsersResolver {
 
   @Query(() => User, {
     description: 'Query: Return a User by Id',
-    name: 'UserGetOne',
+    name: 'userGetOne',
   })
   async getOneUser(@Args('id') id: number) {
     return await this.usersService.findOne(id);
@@ -17,7 +17,7 @@ export class UsersResolver {
 
   @Query(() => [User], {
     description: 'Query: Return all users',
-    name: 'UserGetAll',
+    name: 'userGetAll',
   })
   async getAllUser() {
     return await this.usersService.getAll();
@@ -25,7 +25,7 @@ export class UsersResolver {
 
   @Mutation(() => User, {
     description: 'Mutation: Update a User',
-    name: 'UserUpdate',
+    name: 'userUpdate',
   })
   async updateUser(
     @Args('id') id: number,
@@ -36,7 +36,7 @@ export class UsersResolver {
 
   @Mutation(() => User, {
     description: 'Mutation: Delete a User',
-    name: 'UserDelete',
+    name: 'userDelete',
   })
   async deleteUser(@Args('id') id: number) {
     return await this.usersService.delete(id);

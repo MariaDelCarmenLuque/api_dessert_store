@@ -10,7 +10,7 @@ export class AuthResolver {
 
   @Mutation(() => Token, {
     description: 'Mutation: Register a new User',
-    name: 'UserRegister',
+    name: 'userRegister',
   })
   async createUser(@Args('createUserInput') createUserInput: CreateUserInput) {
     return await this.authService.createUser(createUserInput);
@@ -18,7 +18,7 @@ export class AuthResolver {
 
   @Mutation(() => Token, {
     description: 'Mutation: Login a User',
-    name: 'UserLogin',
+    name: 'userLogin',
   })
   async loginUser(@Args('loginInput') loginInput: LoginInput) {
     return await this.authService.login(loginInput);
