@@ -27,6 +27,7 @@ import { join } from 'path';
     TerminusModule,
     HttpModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({
+      context: ({ req }) => ({ req }),
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/gql/schema.gql'),
       sortSchema: true,
