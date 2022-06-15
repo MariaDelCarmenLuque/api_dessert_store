@@ -3,6 +3,8 @@ import { Dessert } from 'src/desserts/models/dessert.model';
 
 @ObjectType()
 export class OrderItem {
+  readonly id: number;
+
   @Field(() => Int, { description: "Order item's quantity" })
   readonly quantity: number;
 
