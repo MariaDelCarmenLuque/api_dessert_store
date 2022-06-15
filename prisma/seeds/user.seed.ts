@@ -3,25 +3,36 @@ import { hashSync } from 'bcryptjs';
 
 export async function userSeed(prisma): Promise<User[]> {
   const password = hashSync('Password123*', 10);
-  const users = await prisma.user.createMany({
-    data: [
-      {
-        role: Role.ADMIN,
-        email: 'marialuque@ravn.co',
-        userName: 'maritcarmn1',
-        firstName: 'Maria',
-        lastName: 'Luque',
-        password,
-      },
-      {
+  return Promise.all([
+    prisma.user.createMany({
+      data: [
+        {
+          role: Role.ADMIN,
+          email: 'alexisgomez@ravn.co',
+          userName: 'alexisgomez',
+          firstName: 'Alexis',
+          lastName: 'Gomez',
+          password,
+        },
+        {
+          role: Role.ADMIN,
+          email: 'kevinescoto@ravn.co',
+          userName: 'kevinescoto',
+          firstName: 'Kevin',
+          lastName: 'Rodríguez',
+          password,
+        },
+      ],
+    }),
+    prisma.user.create({
+      data: {
         role: Role.USER,
-        email: 'maritcarm.lq@gmail.com',
-        userName: 'maritcarmn2',
+        email: 'marialuque@gmail.com',
+        userName: 'marialuque',
         firstName: 'Maria del Carmen',
         lastName: 'Luque',
         password,
       },
-    ],
-  });
-  return users;
+    }),
+  ]);
 }

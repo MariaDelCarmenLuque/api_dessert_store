@@ -1,7 +1,7 @@
 import { Dessert } from '@prisma/client';
 
 export async function dessertSeed(prisma): Promise<Dessert[]> {
-  const categories = await prisma.category.createMany({
+  return await prisma.dessert.createMany({
     data: [
       {
         name: 'Chocolate Cupcake',
@@ -68,5 +68,4 @@ export async function dessertSeed(prisma): Promise<Dessert[]> {
       },
     ],
   });
-  return categories;
 }
