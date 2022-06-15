@@ -3,7 +3,6 @@ import {
   IsEmail,
   IsIn,
   IsNotEmpty,
-  IsOptional,
   IsString,
   IsUppercase,
   Matches,
@@ -18,7 +17,6 @@ export class CreateUserDto {
    */
   @IsNotEmpty()
   @IsString()
-  @IsOptional()
   readonly firstName: string;
 
   /**
@@ -27,7 +25,6 @@ export class CreateUserDto {
    */
   @IsNotEmpty()
   @IsString()
-  @IsOptional()
   readonly lastName: string;
 
   /**
