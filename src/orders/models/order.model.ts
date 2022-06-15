@@ -13,5 +13,5 @@ export class Order {
   createdAt: Date;
 
   @Field(() => [OrderItem], { nullable: true, description: "Order's items" })
-  items: OrderItem[];
+  orderItem: OrderItem[];
 }

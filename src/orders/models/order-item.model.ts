@@ -1,5 +1,4 @@
 import { ObjectType, Field, Int, Float } from '@nestjs/graphql';
-import { Dessert } from 'src/desserts/models/dessert.model';
 
 @ObjectType()
 export class OrderItem {
@@ -14,8 +13,8 @@ export class OrderItem {
   @Field(() => Float, { description: "Order item's total price" })
   readonly totalPrice: number;
 
-  @Field({ description: 'Dessert information' })
-  readonly dessert: Dessert;
+  @Field({ description: 'Id Dessert information' })
+  readonly dessertId: number;
 
   @Field({ description: "Order-Item's created date" })
   createdAt: Date;
