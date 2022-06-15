@@ -21,6 +21,7 @@ export class OrdersService {
         where: { userId: userId },
         select: {
           id: true,
+          uuid: true,
           totalPrice: true,
           createdAt: true,
           user: { select: { id: true, firstName: true, lastName: true } },
@@ -34,7 +35,7 @@ export class OrdersService {
         return {
           ...data,
           user: user,
-          items: plainToInstance(OrderItemsDto, orderItem),
+          orderItem: plainToInstance(OrderItemsDto, orderItem),
         };
       });
       return plainToInstance(OrderDto, dataOrders);

@@ -24,15 +24,15 @@ export class OrdersResolver {
     name: 'OrderGetAll',
   })
   async getAllOrder(@GqlGetUser() user) {
-    return await this.ordersService.getMany(user.id);
+    return this.ordersService.getMany(user.id);
   }
 
   @Mutation(() => Order, {
     description: 'Mutation: Create a Order',
     name: 'OrderCreate',
   })
-  async createOrder(@GqlGetUser() user) {
-    return await this.ordersService.create(user.id);
+  async createOrder(@GqlGetUser() user): Promise<Order> {
+    return this.ordersService.create(user.id);
   }
 
   @ResolveField('dessert', () => Dessert)
