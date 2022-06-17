@@ -143,16 +143,16 @@ export class DessertsService {
       throw error;
     }
   }
-  async updateStatus(id: number): Promise<DessertDto> {
+  async updateStatus(id: number) {
     try {
       const dessert = await this.prisma.dessert.findUnique({
         where: {
           id,
         },
       });
-      if (dessert.deletedAt != null) {
-        new BadRequestException('Dessert is deleted');
-      }
+      if (dessert.deletedAt != null)
+        throw new BadRequestException('Dessert is deleted');
+
       const previewStatus = dessert.status;
       const newDessert = await this.prisma.dessert.update({
         data: { ...dessert, status: !previewStatus },

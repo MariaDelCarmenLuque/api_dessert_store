@@ -13,13 +13,14 @@ import { PrismaService } from '../../prisma.service';
 import { DessertFactory } from '../factories/dessert.factory';
 import { CreateDessertDto } from '../dtos/request/create-dessert.dto';
 import { DessertsService } from './desserts.service';
+import { FilesService } from '../../files/service/files.service';
+import { ConfigService } from '@nestjs/config';
 
 jest.spyOn(console, 'error').mockImplementation(jest.fn());
 
 describe('DessertsService', () => {
   let dessertService: DessertsService;
   let prisma: PrismaService;
-
   let dessertFactory: DessertFactory;
   let categoryFactory: CategoryFactory;
   let dessertDto: CreateDessertDto;
@@ -27,7 +28,13 @@ describe('DessertsService', () => {
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [DessertsService, PrismaService, AuthService],
+      providers: [
+        DessertsService,
+        PrismaService,
+        AuthService,
+        FilesService,
+        ConfigService,
+      ],
     }).compile();
 
     prisma = module.get<PrismaService>(PrismaService);
@@ -144,11 +151,11 @@ describe('DessertsService', () => {
         dessertService.updateDessert(received.id, {
           ...dessertDto,
         }),
-      ).rejects.toThrow(new UnauthorizedException('Dessert is deleted '));
+      ).rejects.toThrow(new BadRequestException('Dessert is deleted '));
     });
     it('should throw a error if status dessert is disable', async () => {
       const received = await dessertFactory.make({
-        status: 'DISABLE',
+        status: false,
         category: {
           connect: {
             id: categories[2].id,
@@ -217,13 +224,13 @@ describe('DessertsService', () => {
           },
         },
       });
-      await expect(dessertService.updateStatus(received.id)).resolves.toThrow(
+      await expect(dessertService.updateStatus(received.id)).rejects.toThrow(
         new BadRequestException('Dessert is deleted'),
       );
     });
     it('should update status as ACTIVE when dessert status is DISABLE', async () => {
       const dessert = await dessertFactory.make({
-        status: 'DISABLE',
+        status: false,
         category: {
           connect: {
             id: categories[2].id,
@@ -231,11 +238,11 @@ describe('DessertsService', () => {
         },
       });
       const received = await dessertService.updateStatus(dessert.id);
-      expect(received).toHaveProperty('status', 'ACTIVE');
+      expect(received).toHaveProperty('status', true);
     });
     it('should update status as DISABLE when dessert status is ACTIVE', async () => {
       const dessert = await dessertFactory.make({
-        status: 'ACTIVE',
+        status: true,
         category: {
           connect: {
             id: categories[2].id,
@@ -243,7 +250,7 @@ describe('DessertsService', () => {
         },
       });
       const received = await dessertService.updateStatus(dessert.id);
-      expect(received).toHaveProperty('status', 'DISABLE');
+      expect(received).toHaveProperty('status', false);
     });
   });
 });
