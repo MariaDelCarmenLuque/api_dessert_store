@@ -115,6 +115,7 @@ describe('CartService', () => {
         dessertId: desserts[1].id,
         quantity: stock,
       });
+      console.log(desserts[1]);
       expect(received).toHaveProperty('amount', desserts[1].price * stock);
       expect(received).toHaveProperty('updatedAt');
       expect(received).toHaveProperty('createdAt');
