@@ -72,7 +72,7 @@ describe('LikesService', () => {
         }),
       );
       const received = await likeService.findLikes(newDessert.id);
-      console.log(received)
+      console.log(received);
       expect((await likeService.findLikes(newDessert.id)).length).toEqual(
         likes.length,
       );
@@ -80,7 +80,7 @@ describe('LikesService', () => {
     it('should throw a error if dessert doesnt found', async () => {
       const received = likeService.findLikes(faker.datatype.number());
       await expect(received).rejects.toThrow(
-        new NotFoundException('No dessert found'),
+        new NotFoundException('No Dessert found'),
       );
     });
     it('should return a empty list', async () => {
@@ -97,7 +97,7 @@ describe('LikesService', () => {
       expect(received).toHaveProperty('dessertId', dessert.id);
       expect(received).toHaveProperty('userId', createUser.id);
       expect(received).toHaveProperty('isLike', expect.any(Boolean));
-      expect(received).toHaveProperty('createdAt', expect.any(Date));
+      expect(received).toHaveProperty('createdAt', expect.any(String));
     });
 
     it('should update a like and return a like properties', async () => {
@@ -114,7 +114,6 @@ describe('LikesService', () => {
       expect(received).toHaveProperty('dessertId', createLike.dessertId);
       expect(received).toHaveProperty('userId', createLike.userId);
       expect(received).toHaveProperty('isLike', true);
-      expect(received).toHaveProperty('createdAt', createLike.createdAt);
     });
 
     it("should return a error if user doesn't exist", async () => {
