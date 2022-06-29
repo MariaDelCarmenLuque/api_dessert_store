@@ -4,7 +4,9 @@ import { Roles } from 'src/auth/decorators/roles.decorator';
 import { GqlJwtGuard } from 'src/auth/guards/gql-jwt.guard';
 import { GqlRolesGuard } from 'src/auth/guards/gql-roles.guard';
 import { Role } from 'src/auth/roles.enum';
+import { PaginationOptionsUserInput } from '../dtos/input/pagination-user.input';
 import { UpdateUserInput } from '../dtos/input/update-user.input';
+import { PaginatedUser } from '../models/paginated-user.model';
 import { User } from '../models/user.model';
 import { UsersService } from '../service/users.service';
 
@@ -22,14 +24,30 @@ export class UsersResolver {
     return await this.usersService.findOne(id);
   }
 
-  @Query(() => [User], {
-    description: 'Query: Return all users',
+  @Query(() => PaginatedUser, {
+    description: 'Query: Return a list of users',
     name: 'userGetAll',
   })
   @Roles(Role.ADMIN)
   @UseGuards(GqlJwtGuard, GqlRolesGuard)
-  async getAllUser() {
-    return await this.usersService.getAll();
+  async getAllUser(
+    @Args('paginationOptions') paginationOptions: PaginationOptionsUserInput,
+  ) {
+    const { users, pagination } = await this.usersService.getAll(
+      paginationOptions,
+    );
+    const data = users.map((user) => {
+      return {
+        node: {
+          ...user,
+        },
+      };
+    });
+
+    return {
+      edges: data,
+      pageInfo: pagination,
+    };
   }
 
   @Mutation(() => User, {
