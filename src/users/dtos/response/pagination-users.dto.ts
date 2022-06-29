@@ -6,14 +6,14 @@ import { UserDto } from './user.dto';
 export class PaginationUserDto {
   /**
    * List of Users
-   * @example [UserDto]
+   * @type [UserDto]
    */
   @Expose()
   users: UserDto[];
 
   /**
    * Pagination
-   * @example Pagination
+   * @type Pagination
    */
   @Expose()
   pagination: Pagination;
