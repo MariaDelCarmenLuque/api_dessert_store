@@ -49,22 +49,19 @@ export class UserDto {
    * @example '2016-03-26 10:10:10-05:00'
    */
   @Expose()
-  @Transform(({ value }) => value?.toISOString())
-  readonly createdAt: string = 'CURRENT_TIMESTAMP';
+  readonly createdAt: Date;
 
   /**
    * User's update date
    * @example '2016-03-26 10:10:10-05:00'
    */
   @Expose()
-  @Transform(({ value }) => value?.toISOString())
-  readonly updatedAt: string = 'CURRENT_TIMESTAMP';
+  readonly updatedAt: Date;
 
   /**
    * User's delete date
    * @example '2016-03-26 10:10:10-05:00'
    */
   @Expose()
-  @Transform(({ value }) => value?.toISOString())
   readonly deletedAt?: Date;
 }

@@ -2,17 +2,56 @@ import { BadRequestException, HttpStatus, Injectable } from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
 import { PrismaService } from '../../prisma.service';
 import { UpdateUserDto } from '../dtos/request/update-user.dto';
+import { PaginationUserDto } from '../dtos/response/pagination-users.dto';
 import { UserDto } from '../dtos/response/user.dto';
 
 @Injectable()
 export class UsersService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getAll(): Promise<UserDto[]> {
-    const users = await this.prisma.user.findMany({
-      orderBy: { createdAt: 'asc' },
-    });
-    return plainToInstance(UserDto, users);
+  async getAll(pagination) {
+    try {
+      const { page, take } = pagination;
+      const users = await this.prisma.user.findMany({
+        skip: take * (page - 1),
+        take: take,
+        orderBy: { createdAt: 'asc' },
+      });
+      const totalItems = await this.prisma.user.count();
+      console.log(totalItems);
+      const totalPages = Math.ceil(totalItems / take);
+      console.log(totalPages);
+
+      if (!totalPages) {
+        return plainToInstance(PaginationUserDto, {
+          users: [],
+          pagination: {
+            totalItems,
+            totalPages,
+            currentPage: 1,
+            prevPage: null,
+            nextPage: null,
+          },
+        });
+      }
+      if (page > totalPages) {
+        throw new BadRequestException('Required page is out of range');
+      }
+      const prevPage = page === 1 ? null : page - 1;
+      const nextPage = page === totalPages ? null : page + 1;
+      return plainToInstance(PaginationUserDto, {
+        users: plainToInstance(UserDto, users),
+        pagination: {
+          totalItems,
+          totalPages,
+          currentPage: page,
+          prevPage,
+          nextPage,
+        },
+      });
+    } catch (error) {
+      throw error;
+    }
   }
 
   async findOne(id: number): Promise<UserDto | null> {

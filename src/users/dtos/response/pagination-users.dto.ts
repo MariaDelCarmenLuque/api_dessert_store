@@ -1,9 +1,9 @@
 import { Exclude, Expose } from 'class-transformer';
-import { Pagination } from 'src/utils/dtos/pagination.dto';
+import { Pagination } from '../../../utils/dtos/response/pagination.dto';
 import { UserDto } from './user.dto';
 
 @Exclude()
-export class PagonationUserDto {
+export class PaginationUserDto {
   /**
    * List of Users
    * @example [UserDto]
