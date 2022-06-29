@@ -2,13 +2,16 @@ import {
   BadRequestException,
   Body,
   Controller,
+  DefaultValuePipe,
   Delete,
   ForbiddenException,
   Get,
   InternalServerErrorException,
   NotFoundException,
   Param,
+  ParseIntPipe,
   Patch,
+  Query,
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
@@ -19,6 +22,7 @@ import {
   ApiInternalServerErrorResponse,
   ApiNotFoundResponse,
   ApiOperation,
+  ApiQuery,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
@@ -29,6 +33,7 @@ import { UpdateUserDto } from '../dtos/request/update-user.dto';
 import { UserDto } from '../dtos/response/user.dto';
 import { UsersService } from '../service/users.service';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
+import { PaginationUserDto } from '../dtos/response/pagination-users.dto';
 
 @ApiTags('Users')
 @Controller('users')
@@ -39,9 +44,25 @@ export class UsersController {
   @ApiBearerAuth()
   @Roles(Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiQuery({
+    name: 'take',
+    description: 'quantity of items per page',
+    required: false,
+    example: 10,
+  })
+  @ApiQuery({
+    name: 'page',
+    description: 'page number',
+    required: false,
+    example: 1,
+  })
   @ApiOperation({ summary: 'Get data of all Users' })
-  async getAll(): Promise<UserDto[]> {
-    return await this.userService.getAll();
+  async getAll(
+    @Query('page', new DefaultValuePipe(10), ParseIntPipe) page?,
+    @Query('take', new DefaultValuePipe(1), ParseIntPipe) take?,
+  ): Promise<PaginationUserDto> {
+    const optionsPagination = { page, take };
+    return await this.userService.getAll(optionsPagination);
   }
 
   @Get(':id')
