@@ -5,8 +5,8 @@ import { DessertDto } from './dessert.dto';
 @Exclude()
 export class PaginationDessertDto {
   /**
-   * List of Users
-   * @type [UserDto]
+   * List of Desserts
+   * @type [DessertDto]
    */
   @Expose()
   readonly desserts: DessertDto[];
