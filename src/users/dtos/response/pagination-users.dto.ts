@@ -9,12 +9,12 @@ export class PaginationUserDto {
    * @type [UserDto]
    */
   @Expose()
-  users: UserDto[];
+  readonly users: UserDto[];
 
   /**
    * Pagination
    * @type Pagination
    */
   @Expose()
-  pagination: Pagination;
+  readonly pagination: Pagination;
 }
