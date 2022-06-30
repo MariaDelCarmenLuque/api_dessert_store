@@ -2,7 +2,6 @@ import {
   BadRequestException,
   Body,
   Controller,
-  DefaultValuePipe,
   Delete,
   ForbiddenException,
   Get,
@@ -10,7 +9,6 @@ import {
   InternalServerErrorException,
   NotFoundException,
   Param,
-  ParseIntPipe,
   Patch,
   Post,
   Put,
@@ -25,7 +23,6 @@ import {
   ApiInternalServerErrorResponse,
   ApiNotFoundResponse,
   ApiOperation,
-  ApiQuery,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
@@ -44,6 +41,7 @@ import { LikeDto } from 'src/likes/dtos/response/like.dto';
 import { ImageDto } from '../dtos/response/image.dto';
 import { CreateLikeDto } from 'src/likes/dtos/request/create-like.dto';
 import { PaginationDessertDto } from '../dtos/response/pagination-desserts.dto';
+import { PaginationOptionsDessertDto } from '../dtos/request/pagination-options-dessert.dto';
 
 @ApiTags('Desserts')
 @Controller('desserts')
@@ -55,30 +53,9 @@ export class DessertsController {
 
   @Get()
   @ApiOperation({ summary: 'Get all Desserts with optional filters' })
-  @ApiQuery({
-    name: 'take',
-    description: 'quantity of items per page',
-    required: false,
-    example: 10,
-  })
-  @ApiQuery({
-    name: 'page',
-    description: 'page number',
-    required: false,
-    example: 1,
-  })
-  @ApiQuery({
-    name: 'categoryId',
-    description: 'Id of Category',
-    required: false,
-  })
   async getAllDesserts(
-    @Query('take', new DefaultValuePipe(10), ParseIntPipe) take?: number,
-    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page?: number,
-    @Query('categoryId', new DefaultValuePipe(null), ParseIntPipe)
-    categoryId?,
+    @Query() optionsPagination: PaginationOptionsDessertDto,
   ): Promise<PaginationDessertDto> {
-    const optionsPagination = { take, page, categoryId };
     return await this.dessertsService.getAllDesserts(optionsPagination);
   }
 
