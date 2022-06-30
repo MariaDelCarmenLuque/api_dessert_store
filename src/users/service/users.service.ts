@@ -9,7 +9,7 @@ import { UserDto } from '../dtos/response/user.dto';
 export class UsersService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getAll(pagination) {
+  async getAll(pagination): Promise<PaginationUserDto> {
     try {
       const { page, take } = pagination;
       const users = await this.prisma.user.findMany({
@@ -18,9 +18,7 @@ export class UsersService {
         orderBy: { createdAt: 'asc' },
       });
       const totalItems = await this.prisma.user.count();
-      console.log(totalItems);
       const totalPages = Math.ceil(totalItems / take);
-      console.log(totalPages);
 
       if (!totalPages) {
         return plainToInstance(PaginationUserDto, {
