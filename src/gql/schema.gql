@@ -36,6 +36,10 @@ type Category {
   updatedAt: DateTime!
 }
 
+type CategoryEdge {
+  node: Category!
+}
+
 """Category information to create a Category"""
 input CreateCategoryInput {
   """Category's name"""
@@ -274,13 +278,29 @@ type PageInfo {
   totalPages: Int!
 }
 
+type PaginatedCategory {
+  edges: [CategoryEdge]!
+  pageInfo: PageInfo!
+}
+
 type PaginatedUser {
   edges: [UserEdge]!
   pageInfo: PageInfo!
 }
 
-input PaginationOptionsUserInput {
+input PaginationOptionsCategoryInput {
+  """Number of page"""
   page: Float = 1
+
+  """Quantity of item per page"""
+  take: Float = 10
+}
+
+input PaginationOptionsUserInput {
+  """Number of page"""
+  page: Float = 1
+
+  """Quantity of item per page"""
   take: Float = 10
 }
 
@@ -288,8 +308,8 @@ type Query {
   """ Query: Return all items in a Cart"""
   cartGetAllItems: [CartItem!]!
 
-  """Query: Return all categories"""
-  categoryGetAll: [Category!]!
+  """Query: Return a list of categories"""
+  categoryGetAll(paginationOptions: PaginationOptionsCategoryInput!): PaginatedCategory!
 
   """Query: Return a category by Id"""
   categoryGetOne(id: Float!): Category!
