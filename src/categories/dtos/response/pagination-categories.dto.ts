@@ -3,7 +3,7 @@ import { Pagination } from '../../../utils/dtos/response/pagination.dto';
 import { CategoryDto } from './category.dto';
 
 @Exclude()
-export class PaginationUserDto {
+export class PaginationCategoryDto {
   /**
    * List of Categories
    * @type [CategoryDto]
