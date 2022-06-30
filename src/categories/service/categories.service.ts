@@ -1,18 +1,55 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
 import { PrismaService } from '../../prisma.service';
 import { CategoryDto } from '../dtos/response/category.dto';
 import { CreateCategoryDto } from '../dtos/request/create-category.dto';
 import { UpdateCategoryDto } from '../dtos/request/update-category.dto';
+import { PaginationCategoryDto } from '../dtos/response/pagination-categories.dto';
 
 @Injectable()
 export class CategoriesService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getAll(): Promise<CategoryDto[]> {
-    return this.prisma.category.findMany({
-      orderBy: { createdAt: 'desc' },
-    });
+  async getAll(pagination) {
+    try {
+      const { page, take } = pagination;
+      const categories = await this.prisma.category.findMany({
+        skip: take * (page - 1),
+        take: take,
+        orderBy: { createdAt: 'asc' },
+      });
+      const totalItems = await this.prisma.category.count();
+      const totalPages = Math.ceil(totalItems / take);
+      if (!totalPages) {
+        return plainToInstance(PaginationCategoryDto, {
+          categories: [],
+          pagination: {
+            totalItems,
+            totalPages,
+            currentPage: 1,
+            prevPage: null,
+            nextPage: null,
+          },
+        });
+      }
+      if (page > totalPages) {
+        throw new BadRequestException('Required page is out of range');
+      }
+      const prevPage = page === 1 ? null : page - 1;
+      const nextPage = page === totalPages ? null : page + 1;
+      return plainToInstance(PaginationCategoryDto, {
+        categories: plainToInstance(CategoryDto, categories),
+        pagination: {
+          totalItems,
+          totalPages,
+          currentPage: page,
+          prevPage,
+          nextPage,
+        },
+      });
+    } catch (error) {
+      throw error;
+    }
   }
 
   async getCategoryByDessert(dessertId: number) {
