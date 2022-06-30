@@ -10,7 +10,7 @@ import { PaginationCategoryDto } from '../dtos/response/pagination-categories.dt
 export class CategoriesService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getAll(pagination) {
+  async getAll(pagination): Promise<PaginationCategoryDto> {
     try {
       const { page, take } = pagination;
       const categories = await this.prisma.category.findMany({
