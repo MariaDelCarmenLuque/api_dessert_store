@@ -14,6 +14,7 @@ import { CreateDessertDto } from '../dtos/request/create-dessert.dto';
 import { DessertDto } from '../dtos/response/dessert.dto';
 import { ImageDto } from '../dtos/response/image.dto';
 import { UpdateDessertDto } from '../dtos/request/update-dessert.dto';
+import { PaginationDessertDto } from '../dtos/response/pagination-desserts.dto';
 
 @Injectable()
 export class DessertsService {
@@ -22,36 +23,57 @@ export class DessertsService {
     private readonly filesService: FilesService,
   ) {}
 
-  async getAllDesserts(): Promise<DessertDto[]> {
-    const desserts = await this.prisma.dessert.findMany({
-      orderBy: { id: 'desc' },
-    });
-    return plainToInstance(DessertDto, desserts);
-  }
-  async getPaginationList(params: {
-    skip?: number;
-    take?: number;
-    category?: number;
-  }): Promise<DessertDto[]> {
-    const { skip, take, category } = params;
-    let desserts;
-    if (isNaN(skip)) {
+  async getAllDesserts(pagination): Promise<PaginationDessertDto> {
+    const { page, take, categoryId } = pagination;
+    let desserts, totalItems;
+    if (isNaN(categoryId)) {
       desserts = await this.prisma.dessert.findMany({
-        take,
-        where: { categoryId: category },
+        skip: take * (page - 1),
+        take: take,
+        orderBy: { createdAt: 'asc' },
       });
-      return desserts;
+      totalItems = await this.prisma.dessert.count();
     } else {
-      desserts = this.prisma.dessert.findMany({
-        skip,
-        take,
-        where: { categoryId: category },
-        orderBy: {
-          id: 'asc',
+      desserts = await this.prisma.dessert.findMany({
+        skip: take * (page - 1),
+        take: take,
+        orderBy: { createdAt: 'asc' },
+        where: {
+          categoryId,
         },
       });
-      return desserts;
+      totalItems = await this.prisma.dessert.count({ where: { categoryId } });
     }
+
+    const totalPages = Math.ceil(totalItems / take);
+    if (!totalPages) {
+      return plainToInstance(PaginationDessertDto, {
+        desserts: [],
+        pagination: {
+          totalItems,
+          totalPages,
+          perPage: take,
+          currentPage: 1,
+          prevPage: null,
+          nextPage: null,
+        },
+      });
+    }
+    if (page > totalPages) {
+      throw new BadRequestException('Required page is out of range');
+    }
+    const prevPage = page === 1 ? null : page - 1;
+    const nextPage = page === totalPages ? null : page + 1;
+    return plainToInstance(PaginationDessertDto, {
+      desserts: plainToInstance(DessertDto, desserts),
+      pagination: {
+        totalItems,
+        totalPages,
+        currentPage: page,
+        prevPage,
+        nextPage,
+      },
+    });
   }
 
   async findOne(dessertId: number): Promise<DessertDto> {
