@@ -1,4 +1,4 @@
-import { Exclude, Expose } from 'class-transformer';
+import { Exclude, Expose, Type } from 'class-transformer';
 import { Pagination } from '../../../utils/dtos/response/pagination.dto';
 import { UserDto } from './user.dto';
 
@@ -8,6 +8,7 @@ export class PaginationUserDto {
    * List of Users
    * @type [UserDto]
    */
+  @Type(() => UserDto)
   @Expose()
   readonly users: UserDto[];
 
@@ -15,6 +16,7 @@ export class PaginationUserDto {
    * Pagination
    * @type Pagination
    */
+  @Type(() => Pagination)
   @Expose()
   readonly pagination: Pagination;
 }
