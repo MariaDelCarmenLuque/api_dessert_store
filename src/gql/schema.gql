@@ -134,6 +134,10 @@ type Dessert {
   uuid: String!
 }
 
+type DessertEdge {
+  node: Dessert!
+}
+
 type Image {
   """Image's created date """
   createdAt: DateTime!
@@ -283,12 +287,36 @@ type PaginatedCategory {
   pageInfo: PageInfo!
 }
 
+type PaginatedDessert {
+  edges: [DessertEdge]!
+  pageInfo: PageInfo!
+}
+
 type PaginatedUser {
   edges: [UserEdge]!
   pageInfo: PageInfo!
 }
 
+input PaginationOptionsCartItemInput {
+  """Number of page"""
+  page: Float = 1
+
+  """Quantity of item per page"""
+  take: Float = 10
+}
+
 input PaginationOptionsCategoryInput {
+  """Number of page"""
+  page: Float = 1
+
+  """Quantity of item per page"""
+  take: Float = 10
+}
+
+input PaginationOptionsDessertInput {
+  """Category's Id of Dessert"""
+  categoryId: Float
+
   """Number of page"""
   page: Float = 1
 
@@ -306,7 +334,7 @@ input PaginationOptionsUserInput {
 
 type Query {
   """ Query: Return all items in a Cart"""
-  cartGetAllItems: [CartItem!]!
+  cartGetAllItems(paginationOptions: PaginationOptionsCartItemInput!): [CartItem!]!
 
   """Query: Return a list of categories"""
   categoryGetAll(paginationOptions: PaginationOptionsCategoryInput!): PaginatedCategory!
@@ -315,7 +343,7 @@ type Query {
   categoryGetOne(id: Float!): Category!
 
   """Query: Return all Dessertss"""
-  dessertGetAll: [Dessert!]!
+  dessertGetAll(paginationOptions: PaginationOptionsDessertInput!): PaginatedDessert!
 
   """Query: Return a dessert by ID"""
   dessertGetOne(id: Float!): Dessert!
