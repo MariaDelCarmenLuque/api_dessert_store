@@ -5,7 +5,7 @@ import { CategoryDto } from '../dtos/response/category.dto';
 import { CreateCategoryDto } from '../dtos/request/create-category.dto';
 import { UpdateCategoryDto } from '../dtos/request/update-category.dto';
 import { PaginationCategoryDto } from '../dtos/response/pagination-categories.dto';
-import { getPagination } from 'src/utils/pagination.utils';
+import { getPagination } from '../../utils/pagination.utils';
 
 @Injectable()
 export class CategoriesService {
