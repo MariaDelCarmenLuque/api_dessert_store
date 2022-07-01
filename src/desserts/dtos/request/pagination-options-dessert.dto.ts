@@ -20,5 +20,5 @@ export class PaginationOptionsDessertDto {
    */
   @IsOptional()
   @IsNumber()
-  readonly categoryId?: number | null = null;
+  readonly categoryId?: number = null;
 }
