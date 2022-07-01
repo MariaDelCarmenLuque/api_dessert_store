@@ -1,6 +1,6 @@
 import { BadRequestException, HttpStatus, Injectable } from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
-import { getPagination } from 'src/utils/pagination.utils';
+import { getPagination } from '../../utils/pagination.utils';
 import { PrismaService } from '../../prisma.service';
 import { UpdateUserDto } from '../dtos/request/update-user.dto';
 import { PaginationUserDto } from '../dtos/response/pagination-users.dto';
