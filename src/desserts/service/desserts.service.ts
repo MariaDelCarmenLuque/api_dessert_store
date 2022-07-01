@@ -16,7 +16,7 @@ import { ImageDto } from '../dtos/response/image.dto';
 import { UpdateDessertDto } from '../dtos/request/update-dessert.dto';
 import { PaginationDessertDto } from '../dtos/response/pagination-desserts.dto';
 import { PaginationOptionsDessertDto } from '../dtos/request/pagination-options-dessert.dto';
-import { getPagination } from 'src/utils/pagination.utils';
+import { getPagination } from '../../utils/pagination.utils';
 
 @Injectable()
 export class DessertsService {

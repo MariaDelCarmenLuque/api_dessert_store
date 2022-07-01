@@ -61,6 +61,15 @@ describe('DessertsService', () => {
     await prisma.$disconnect();
   });
 
+  describe('getAll', () => {
+    it('should return a list of desserts with a specific pagination', async () => {
+      const paginationOptions = { take: 4, page: 1, categoryId: 1 };
+      const received = await dessertService.getAllDesserts(paginationOptions);
+      expect(received).toHaveProperty('desserts', expect.any(Array));
+      expect(received).toHaveProperty('pagination');
+    });
+  });
+
   describe('findOne', () => {
     beforeAll(async () => {
       jest.mock('jsonwebtoken', () => ({
