@@ -9,9 +9,10 @@ import { plainToClass, plainToInstance } from 'class-transformer';
 import { OrdersService } from '../../orders/service/orders.service';
 import { DessertDto } from '../../desserts/dtos/response/dessert.dto';
 import { PrismaService } from '../../prisma.service';
-import { CartItemsDto } from '../dtos/response/cart-item.dto';
 import { CartDto } from '../dtos/response/cart.dto';
 import { CreateCartItemDto } from '../dtos/request/create-cart-item.dto';
+import { PaginationCartItemDto } from '../dtos/response/pagination-cart-item.dto';
+import { getPagination } from 'src/utils/pagination.utils';
 
 @Injectable()
 export class CartService {
@@ -20,8 +21,9 @@ export class CartService {
     private readonly orderService: OrdersService,
   ) {}
 
-  async getItems(userId: number): Promise<CartItemsDto[]> {
+  async getItems(userId: number, pagination): Promise<PaginationCartItemDto> {
     try {
+      const { page, take } = pagination;
       const cart = await this.prisma.cart.findUnique({
         where: {
           userId: userId,
@@ -35,8 +37,16 @@ export class CartService {
           unitPrice: true,
           totalPrice: true,
         },
+        skip: take * (page - 1),
+        take: take,
+        orderBy: { createdAt: 'asc' },
       });
-      return plainToInstance(CartItemsDto, cartItems);
+      const totalItems = await this.prisma.cartItem.count();
+      const cartItemsResponse = {
+        cartItems,
+        pagination: getPagination(pagination, totalItems),
+      };
+      return plainToInstance(PaginationCartItemDto, cartItemsResponse);
     } catch (error) {
       throw error;
     }
