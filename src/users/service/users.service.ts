@@ -1,5 +1,6 @@
 import { BadRequestException, HttpStatus, Injectable } from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
+import { getPagination } from 'src/utils/pagination.utils';
 import { PrismaService } from '../../prisma.service';
 import { UpdateUserDto } from '../dtos/request/update-user.dto';
 import { PaginationUserDto } from '../dtos/response/pagination-users.dto';
@@ -10,46 +11,18 @@ export class UsersService {
   constructor(private readonly prisma: PrismaService) {}
 
   async getAll(pagination): Promise<PaginationUserDto> {
-    try {
-      const { page, take } = pagination;
-      const users = await this.prisma.user.findMany({
-        skip: take * (page - 1),
-        take: take,
-        orderBy: { createdAt: 'asc' },
-      });
-      const totalItems = await this.prisma.user.count();
-      const totalPages = Math.ceil(totalItems / take);
-
-      if (!totalPages) {
-        return plainToInstance(PaginationUserDto, {
-          users: [],
-          pagination: {
-            totalItems,
-            totalPages,
-            currentPage: 1,
-            prevPage: null,
-            nextPage: null,
-          },
-        });
-      }
-      if (page > totalPages) {
-        throw new BadRequestException('Required page is out of range');
-      }
-      const prevPage = page === 1 ? null : page - 1;
-      const nextPage = page === totalPages ? null : page + 1;
-      return plainToInstance(PaginationUserDto, {
-        users: plainToInstance(UserDto, users),
-        pagination: {
-          totalItems,
-          totalPages,
-          currentPage: page,
-          prevPage,
-          nextPage,
-        },
-      });
-    } catch (error) {
-      throw error;
-    }
+    const { page, take } = pagination;
+    const users = await this.prisma.user.findMany({
+      skip: take * (page - 1),
+      take: take,
+      orderBy: { createdAt: 'asc' },
+    });
+    const totalItems = await this.prisma.user.count();
+    const usersResponse = {
+      users,
+      pagination: getPagination(pagination, totalItems),
+    };
+    return plainToInstance(PaginationUserDto, usersResponse);
   }
 
   async findOne(id: number): Promise<UserDto | null> {
