@@ -12,7 +12,7 @@ import { PrismaService } from '../../prisma.service';
 import { CartDto } from '../dtos/response/cart.dto';
 import { CreateCartItemDto } from '../dtos/request/create-cart-item.dto';
 import { PaginationCartItemDto } from '../dtos/response/pagination-cart-item.dto';
-import { getPagination } from 'src/utils/pagination.utils';
+import { getPagination } from '../../utils/pagination.utils';
 
 @Injectable()
 export class CartService {

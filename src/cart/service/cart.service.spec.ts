@@ -66,11 +66,15 @@ describe('CartService', () => {
   });
 
   describe('getItems', () => {
+    const paginationOptions = { take: 4, page: 1 };
     it('should return a empty list', async () => {
-      const received = await cartService.getItems(createUser.id);
-      expect(received).toEqual([]);
+      const received = await cartService.getItems(
+        createUser.id,
+        paginationOptions,
+      );
+      expect(received.cartItems.length).toEqual(0);
     });
-    it("should return a list of products in user's cart", async () => {
+    it("should return a list of dessert in user's cart with a specific pagination", async () => {
       const cart = await prisma.cart.findUnique({
         where: {
           userId: createUser.id,
@@ -97,14 +101,17 @@ describe('CartService', () => {
         cartItems.push(newcartItem);
       }
 
-      const received = await cartService.getItems(createUser.id);
-
-      expect(received.length).toEqual(desserts.length);
+      const received = await cartService.getItems(
+        createUser.id,
+        paginationOptions,
+      );
+      expect(received).toHaveProperty('cartItems', expect.any(Array));
+      expect(received).toHaveProperty('pagination');
     });
 
     it("should throw a error if user doesn't exist", async () => {
       await expect(
-        cartService.getItems(faker.datatype.number()),
+        cartService.getItems(faker.datatype.number(), paginationOptions),
       ).rejects.toThrow(new NotFoundException('No Cart found'));
     });
   });
