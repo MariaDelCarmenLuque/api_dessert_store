@@ -54,7 +54,7 @@ export class DessertsController {
   @Get()
   @ApiOperation({ summary: 'Get all Desserts with optional filters' })
   async getAllDesserts(
-    @Query() optionsPagination: PaginationOptionsDessertDto,
+    @Query('optionsPagination') optionsPagination: PaginationOptionsDessertDto,
   ): Promise<PaginationDessertDto> {
     return await this.dessertsService.getAllDesserts(optionsPagination);
   }
