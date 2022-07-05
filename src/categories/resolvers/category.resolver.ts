@@ -5,7 +5,7 @@ import { GqlJwtGuard } from 'src/auth/guards/gql-jwt.guard';
 import { GqlRolesGuard } from 'src/auth/guards/gql-roles.guard';
 import { Role } from 'src/auth/roles.enum';
 import { CreateCategoryInput } from '../dtos/input/create-category.input';
-import { PaginationOptionsCategoryInput } from '../dtos/input/pagination-category.input';
+import { PaginationOptionsCategoryInput } from '../dtos/input/pagination-options-category.input';
 import { UpdateCategoryInput } from '../dtos/input/update-category.input';
 import { Category } from '../models/category.model';
 import { PaginatedCategory } from '../models/paginated-category.model';

@@ -19,7 +19,7 @@ import { Like } from 'src/likes/models/like.model';
 import { LikesService } from 'src/likes/service/likes.service';
 import { CreateDessertInput } from '../dtos/input/create-dessert.input';
 import { ImageInput } from '../dtos/input/create-image.input';
-import { PaginationOptionsDessertInput } from '../dtos/input/pagination-dessert.input';
+import { PaginationOptionsDessertInput } from '../dtos/input/pagination-options-dessert.input';
 import { UpdateDessertInput } from '../dtos/input/update-dessert.input';
 import { Dessert } from '../models/dessert.model';
 import { Image } from '../models/image.model';

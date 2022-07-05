@@ -6,7 +6,7 @@ import { GqlJwtGuard } from 'src/auth/guards/gql-jwt.guard';
 import { GqlRolesGuard } from 'src/auth/guards/gql-roles.guard';
 import { Role } from 'src/auth/roles.enum';
 import { CartItemInput } from '../dtos/input/create-cart-item.input';
-import { PaginationOptionsCartItemInput } from '../dtos/input/pagination-cart-item.input';
+import { PaginationOptionsCartItemInput } from '../dtos/input/pagination-options-cart-item.input';
 import { CartItem } from '../models/cart-item.model';
 import { Cart } from '../models/cart.model';
 import { CartService } from '../service/cart.service';
