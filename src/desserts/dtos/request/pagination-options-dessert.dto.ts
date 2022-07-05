@@ -1,20 +1,7 @@
 import { IsNumber, IsOptional } from 'class-validator';
+import { PaginationOptionsDto } from '../../../utils/dtos/request/pagination-options.dto';
 
-export class PaginationOptionsDessertDto {
-  /**
-   * Number of page
-   */
-  @IsOptional()
-  @IsNumber()
-  readonly page?: number = 1;
-
-  /**
-   * Quantity of desserts per page
-   */
-  @IsOptional()
-  @IsNumber()
-  readonly take?: number = 10;
-
+export class PaginationOptionsDessertDto extends PaginationOptionsDto {
   /**
    * Category's Id of Dessert
    */
