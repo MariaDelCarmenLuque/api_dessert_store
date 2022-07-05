@@ -36,7 +36,7 @@ import { PaginationCategoryDto } from '../dtos/response/pagination-categories.dt
 export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
-  @Get('all')
+  @Get()
   @ApiQuery({
     name: 'take',
     description: 'quantity of items per page',

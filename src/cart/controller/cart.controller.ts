@@ -42,7 +42,7 @@ import { PaginationCartItemDto } from '../dtos/response/pagination-cart-item.dto
 export class CartController {
   constructor(private readonly cartService: CartService) {}
 
-  @Get('')
+  @Get()
   @Roles(Role.USER)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiBearerAuth()

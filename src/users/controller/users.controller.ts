@@ -40,7 +40,7 @@ import { PaginationUserDto } from '../dtos/response/pagination-users.dto';
 export class UsersController {
   constructor(private readonly userService: UsersService) {}
 
-  @Get('all')
+  @Get()
   @ApiBearerAuth()
   @Roles(Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
