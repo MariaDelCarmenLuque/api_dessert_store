@@ -53,14 +53,11 @@ export class DessertsResolver {
     const { desserts, pagination } = await this.dessertService.getAllDesserts(
       paginationOptions,
     );
-    // console.log(paginationOptions);
-    const data = desserts.map((dessert) => {
-      return {
-        node: {
-          ...dessert,
-        },
-      };
-    });
+    const data = desserts.map((dessert) => ({
+      node: {
+        ...dessert,
+      },
+    }));
 
     return {
       edges: data,

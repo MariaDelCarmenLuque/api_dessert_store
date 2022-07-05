@@ -36,13 +36,11 @@ export class UsersResolver {
     const { users, pagination } = await this.usersService.getAll(
       paginationOptions,
     );
-    const data = users.map((user) => {
-      return {
-        node: {
-          ...user,
-        },
-      };
-    });
+    const data = users.map((user) => ({
+      node: {
+        ...user,
+      },
+    }));
 
     return {
       edges: data,

@@ -30,13 +30,11 @@ export class CartResolver {
       user.id,
       paginationOptions,
     );
-    const data = cartItems.map((cartItem) => {
-      return {
-        node: {
-          ...cartItem,
-        },
-      };
-    });
+    const data = cartItems.map((cartItem) => ({
+      node: {
+        ...cartItem,
+      },
+    }));
 
     return {
       edges: data,

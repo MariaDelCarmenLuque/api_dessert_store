@@ -26,13 +26,11 @@ export class CategoriesResolver {
     const { categories, pagination } = await this.categoriesService.getAll(
       paginationOptions,
     );
-    const data = categories.map((category) => {
-      return {
-        node: {
-          ...category,
-        },
-      };
-    });
+    const data = categories.map((category) => ({
+      node: {
+        ...category,
+      },
+    }));
 
     return {
       edges: data,
