@@ -3,13 +3,11 @@ import {
   Body,
   ConflictException,
   Controller,
-  DefaultValuePipe,
   Delete,
   ForbiddenException,
   Get,
   NotFoundException,
   Param,
-  ParseIntPipe,
   Patch,
   Query,
   UnauthorizedException,
@@ -22,7 +20,6 @@ import {
   ApiForbiddenResponse,
   ApiNotFoundResponse,
   ApiOperation,
-  ApiQuery,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
@@ -36,6 +33,7 @@ import { CreateCartItemDto } from '../dtos/request/create-cart-item.dto';
 import { CartService } from '../service/cart.service';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { PaginationCartItemDto } from '../dtos/response/pagination-cart-item.dto';
+import { PaginationOptionsCartItemDto } from '../dtos/request/pagination-options-cart-item.dto';
 
 @ApiTags('Cart')
 @Controller('cart')
@@ -65,24 +63,10 @@ export class CartController {
       example: new ForbiddenException().getResponse(),
     },
   })
-  @ApiQuery({
-    name: 'take',
-    description: 'quantity of items per page',
-    required: false,
-    example: 10,
-  })
-  @ApiQuery({
-    name: 'page',
-    description: 'page number',
-    required: false,
-    example: 1,
-  })
   async getAllItems(
     @GetUser() user: UserDto,
-    @Query('page', new DefaultValuePipe(10), ParseIntPipe) page?,
-    @Query('take', new DefaultValuePipe(1), ParseIntPipe) take?,
+    @Query('optionsPagination') optionsPagination: PaginationOptionsCartItemDto,
   ): Promise<PaginationCartItemDto> {
-    const optionsPagination = { page, take };
     return await this.cartService.getItems(user.id, optionsPagination);
   }
 

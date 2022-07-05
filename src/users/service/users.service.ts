@@ -5,12 +5,15 @@ import { PrismaService } from '../../prisma.service';
 import { UpdateUserDto } from '../dtos/request/update-user.dto';
 import { PaginationUserDto } from '../dtos/response/pagination-users.dto';
 import { UserDto } from '../dtos/response/user.dto';
+import { PaginationOptionsUserDto } from '../dtos/request/pagination-options-user.dto';
 
 @Injectable()
 export class UsersService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getAll(pagination): Promise<PaginationUserDto> {
+  async getAll(
+    pagination: PaginationOptionsUserDto,
+  ): Promise<PaginationUserDto> {
     const { page, take } = pagination;
     const users = await this.prisma.user.findMany({
       skip: take * (page - 1),

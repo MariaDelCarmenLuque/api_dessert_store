@@ -1,12 +1,10 @@
 import {
   Body,
   Controller,
-  DefaultValuePipe,
   ForbiddenException,
   Get,
   NotFoundException,
   Param,
-  ParseIntPipe,
   Patch,
   Post,
   Query,
@@ -18,7 +16,6 @@ import {
   ApiForbiddenResponse,
   ApiNotFoundResponse,
   ApiOperation,
-  ApiQuery,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
@@ -30,6 +27,7 @@ import { CategoryDto } from '../dtos/response/category.dto';
 import { CategoriesService } from '../service/categories.service';
 import { CreateCategoryDto } from '../dtos/request/create-category.dto';
 import { PaginationCategoryDto } from '../dtos/response/pagination-categories.dto';
+import { PaginationOptionsCategoryDto } from '../dtos/request/pagination-options-category.dto';
 
 @ApiTags('Categories')
 @Controller('categories')
@@ -37,24 +35,10 @@ export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
   @Get()
-  @ApiQuery({
-    name: 'take',
-    description: 'quantity of items per page',
-    required: false,
-    example: 10,
-  })
-  @ApiQuery({
-    name: 'page',
-    description: 'page number',
-    required: false,
-    example: 1,
-  })
   @ApiOperation({ summary: 'Get all categories' })
   async getAll(
-    @Query('page', new DefaultValuePipe(10), ParseIntPipe) page?,
-    @Query('take', new DefaultValuePipe(1), ParseIntPipe) take?,
+    @Query('optionsPagination') optionsPagination: PaginationOptionsCategoryDto,
   ): Promise<PaginationCategoryDto> {
-    const optionsPagination = { page, take };
     return await this.categoriesService.getAll(optionsPagination);
   }
 

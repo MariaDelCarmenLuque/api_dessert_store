@@ -13,6 +13,7 @@ import { CartDto } from '../dtos/response/cart.dto';
 import { CreateCartItemDto } from '../dtos/request/create-cart-item.dto';
 import { PaginationCartItemDto } from '../dtos/response/pagination-cart-item.dto';
 import { getPagination } from '../../utils/pagination.utils';
+import { PaginationOptionsCartItemDto } from '../dtos/request/pagination-options-cart-item.dto';
 
 @Injectable()
 export class CartService {
@@ -21,7 +22,10 @@ export class CartService {
     private readonly orderService: OrdersService,
   ) {}
 
-  async getItems(userId: number, pagination): Promise<PaginationCartItemDto> {
+  async getItems(
+    userId: number,
+    pagination: PaginationOptionsCartItemDto,
+  ): Promise<PaginationCartItemDto> {
     try {
       const { page, take } = pagination;
       const cart = await this.prisma.cart.findUnique({

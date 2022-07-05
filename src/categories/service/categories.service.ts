@@ -6,12 +6,15 @@ import { CreateCategoryDto } from '../dtos/request/create-category.dto';
 import { UpdateCategoryDto } from '../dtos/request/update-category.dto';
 import { PaginationCategoryDto } from '../dtos/response/pagination-categories.dto';
 import { getPagination } from '../../utils/pagination.utils';
+import { PaginationOptionsCategoryDto } from '../dtos/request/pagination-options-category.dto';
 
 @Injectable()
 export class CategoriesService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getAll(pagination): Promise<PaginationCategoryDto> {
+  async getAll(
+    pagination: PaginationOptionsCategoryDto,
+  ): Promise<PaginationCategoryDto> {
     const { page, take } = pagination;
     const categories = await this.prisma.category.findMany({
       skip: take * (page - 1),
