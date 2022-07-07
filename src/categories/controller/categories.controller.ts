@@ -7,6 +7,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
@@ -25,16 +26,20 @@ import { Role } from 'src/auth/roles.enum';
 import { CategoryDto } from '../dtos/response/category.dto';
 import { CategoriesService } from '../service/categories.service';
 import { CreateCategoryDto } from '../dtos/request/create-category.dto';
+import { PaginationCategoryDto } from '../dtos/response/pagination-categories.dto';
+import { PaginationOptionsCategoryDto } from '../dtos/request/pagination-options-category.dto';
 
 @ApiTags('Categories')
 @Controller('categories')
 export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
-  @Get('all')
+  @Get()
   @ApiOperation({ summary: 'Get all categories' })
-  async getAll(): Promise<CategoryDto[]> {
-    return await this.categoriesService.getAll();
+  async getAll(
+    @Query('optionsPagination') optionsPagination: PaginationOptionsCategoryDto,
+  ): Promise<PaginationCategoryDto> {
+    return await this.categoriesService.getAll(optionsPagination);
   }
 
   @Get('/:id')

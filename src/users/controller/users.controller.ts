@@ -9,6 +9,7 @@ import {
   NotFoundException,
   Param,
   Patch,
+  Query,
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
@@ -29,19 +30,23 @@ import { UpdateUserDto } from '../dtos/request/update-user.dto';
 import { UserDto } from '../dtos/response/user.dto';
 import { UsersService } from '../service/users.service';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
+import { PaginationUserDto } from '../dtos/response/pagination-users.dto';
+import { PaginationOptionsUserDto } from '../dtos/request/pagination-options-user.dto';
 
 @ApiTags('Users')
 @Controller('users')
 export class UsersController {
   constructor(private readonly userService: UsersService) {}
 
-  @Get('all')
+  @Get()
   @ApiBearerAuth()
   @Roles(Role.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: 'Get data of all Users' })
-  async getAll(): Promise<UserDto[]> {
-    return await this.userService.getAll();
+  async getAll(
+    @Query('optionsPagination') optionsPagination: PaginationOptionsUserDto,
+  ): Promise<PaginationUserDto> {
+    return await this.userService.getAll(optionsPagination);
   }
 
   @Get(':id')

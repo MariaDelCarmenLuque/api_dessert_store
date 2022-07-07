@@ -4,15 +4,29 @@ import { PrismaService } from '../../prisma.service';
 import { CategoryDto } from '../dtos/response/category.dto';
 import { CreateCategoryDto } from '../dtos/request/create-category.dto';
 import { UpdateCategoryDto } from '../dtos/request/update-category.dto';
+import { PaginationCategoryDto } from '../dtos/response/pagination-categories.dto';
+import { getPagination } from '../../utils/pagination.utils';
+import { PaginationOptionsCategoryDto } from '../dtos/request/pagination-options-category.dto';
 
 @Injectable()
 export class CategoriesService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getAll(): Promise<CategoryDto[]> {
-    return this.prisma.category.findMany({
-      orderBy: { createdAt: 'desc' },
+  async getAll(
+    pagination: PaginationOptionsCategoryDto,
+  ): Promise<PaginationCategoryDto> {
+    const { page, take } = pagination;
+    const categories = await this.prisma.category.findMany({
+      skip: take * (page - 1),
+      take: take,
+      orderBy: { createdAt: 'asc' },
     });
+    const totalItems = await this.prisma.category.count();
+    const categoriesResponse = {
+      categories,
+      pagination: getPagination(pagination, totalItems),
+    };
+    return plainToInstance(PaginationCategoryDto, categoriesResponse);
   }
 
   async getCategoryByDessert(dessertId: number) {

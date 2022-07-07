@@ -36,6 +36,10 @@ type Category {
   updatedAt: DateTime!
 }
 
+type CategoryEdge {
+  node: Category!
+}
+
 """Category information to create a Category"""
 input CreateCategoryInput {
   """Category's name"""
@@ -130,6 +134,10 @@ type Dessert {
   uuid: String!
 }
 
+type DessertEdge {
+  node: Dessert!
+}
+
 type Image {
   """Image's created date """
   createdAt: DateTime!
@@ -209,11 +217,17 @@ type Mutation {
   """Mutation: Create a Order"""
   orderCreate: Order!
 
+  """Mutation: Delete a User"""
+  userDelete(id: Float!): User!
+
   """Mutation: Login a User"""
   userLogin(loginInput: LoginInput!): Token!
 
   """Mutation: Register a new User"""
   userRegister(createUserInput: CreateUserInput!): Token!
+
+  """Mutation: Update a User"""
+  userUpdate(id: Float!, updateDessertInput: UpdateUserInput!): User!
 }
 
 type Order {
@@ -248,24 +262,100 @@ type OrderItem {
   unitPrice: Float!
 }
 
+type PageInfo {
+  """Number of current page"""
+  currentPage: Int!
+
+  """Number of next page"""
+  nextPage: Int
+
+  """Items per page"""
+  perPage: Int!
+
+  """Number of previous page"""
+  prevPage: Int
+
+  """Total items"""
+  totalItems: Int!
+
+  """Total pages"""
+  totalPages: Int!
+}
+
+type PaginatedCategory {
+  edges: [CategoryEdge]!
+  pageInfo: PageInfo!
+}
+
+type PaginatedDessert {
+  edges: [DessertEdge]!
+  pageInfo: PageInfo!
+}
+
+type PaginatedUser {
+  edges: [UserEdge]!
+  pageInfo: PageInfo!
+}
+
+input PaginationOptionsCartItemInput {
+  """Number of page"""
+  page: Float = 1
+
+  """Quantity of item per page"""
+  take: Float = 10
+}
+
+input PaginationOptionsCategoryInput {
+  """Number of page"""
+  page: Float = 1
+
+  """Quantity of item per page"""
+  take: Float = 10
+}
+
+input PaginationOptionsDessertInput {
+  """Category's Id of Dessert"""
+  categoryId: Float
+
+  """Number of page"""
+  page: Float = 1
+
+  """Quantity of item per page"""
+  take: Float = 10
+}
+
+input PaginationOptionsUserInput {
+  """Number of page"""
+  page: Float = 1
+
+  """Quantity of item per page"""
+  take: Float = 10
+}
+
 type Query {
   """ Query: Return all items in a Cart"""
-  cartGetAllItems: [CartItem!]!
+  cartGetAllItems(paginationOptions: PaginationOptionsCartItemInput!): [CartItem!]!
 
-  """Query: Return all categories"""
-  categoryGetAll: [Category!]!
+  """Query: Return a list of categories"""
+  categoryGetAll(paginationOptions: PaginationOptionsCategoryInput!): PaginatedCategory!
 
   """Query: Return a category by Id"""
   categoryGetOne(id: Float!): Category!
 
   """Query: Return all Dessertss"""
-  dessertGetAll: [Dessert!]!
+  dessertGetAll(paginationOptions: PaginationOptionsDessertInput!): PaginatedDessert!
 
   """Query: Return a dessert by ID"""
   dessertGetOne(id: Float!): Dessert!
 
   """Query; Return all Orders of a User"""
   orderGetAll: [Order!]!
+
+  """Query: Return a list of users"""
+  userGetAll(paginationOptions: PaginationOptionsUserInput!): PaginatedUser!
+
+  """Query: Return a User by Id"""
+  userGetOne(id: Float!): User!
 }
 
 enum Role {
@@ -306,4 +396,55 @@ input UpdateDessertInput {
 
   """Dessert's stock"""
   stock: Int
+}
+
+"""User information to update a User"""
+input UpdateUserInput {
+  """User's email"""
+  email: String!
+
+  """User's first name"""
+  firstName: String!
+
+  """User's last name"""
+  lastName: String!
+
+  """User's Role"""
+  role: Role!
+
+  """User's username"""
+  userName: String!
+}
+
+type User {
+  """User's created date """
+  createdAt: DateTime!
+
+  """User's deleted date"""
+  deletedAt: DateTime
+
+  """User's email"""
+  email: String!
+
+  """User's first name"""
+  firstName: String!
+
+  """User id"""
+  id: Float!
+
+  """User's last name"""
+  lastName: String!
+
+  """User's email"""
+  role: String!
+
+  """User's updated date """
+  updatedAt: DateTime!
+
+  """User's username"""
+  userName: String!
+}
+
+type UserEdge {
+  node: User!
 }

@@ -71,15 +71,13 @@ export class DessertDto {
    * @default null
    */
   @Expose()
-  @Transform(({ value }) => value?.toISOString())
-  readonly deletedAt?: Date = null;
+  readonly deletedAt?: Date;
 
   /**
    * Dessert's update date
    * @example '2016-03-26 10:10:10-05:00'
    */
   @Expose()
-  @Transform(({ value }) => value?.toISOString())
   readonly updatedAt: Date;
 
   /**
@@ -87,6 +85,5 @@ export class DessertDto {
    * @example '2016-03-26 10:10:10-05:00'
    */
   @Expose()
-  @Transform(({ value }) => value?.toISOString())
   readonly createdAt: Date;
 }

@@ -9,6 +9,7 @@ import {
   NotFoundException,
   Param,
   Patch,
+  Query,
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
@@ -27,18 +28,19 @@ import { Roles } from '../../auth/decorators/roles.decorator';
 import { GetUser } from '../../auth/decorators/user.decorator';
 import { JwtAuthGuard } from '../../auth/guards/jwt.guard';
 import { Role } from '../../auth/roles.enum';
-import { CartItemsDto } from '../dtos/response/cart-item.dto';
 import { CartDto } from '../dtos/response/cart.dto';
 import { CreateCartItemDto } from '../dtos/request/create-cart-item.dto';
 import { CartService } from '../service/cart.service';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { PaginationCartItemDto } from '../dtos/response/pagination-cart-item.dto';
+import { PaginationOptionsCartItemDto } from '../dtos/request/pagination-options-cart-item.dto';
 
 @ApiTags('Cart')
 @Controller('cart')
 export class CartController {
   constructor(private readonly cartService: CartService) {}
 
-  @Get('')
+  @Get()
   @Roles(Role.USER)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiBearerAuth()
@@ -61,8 +63,11 @@ export class CartController {
       example: new ForbiddenException().getResponse(),
     },
   })
-  async getAllItems(@GetUser() user: UserDto): Promise<CartItemsDto[]> {
-    return await this.cartService.getItems(user.id);
+  async getAllItems(
+    @GetUser() user: UserDto,
+    @Query('optionsPagination') optionsPagination: PaginationOptionsCartItemDto,
+  ): Promise<PaginationCartItemDto> {
+    return await this.cartService.getItems(user.id, optionsPagination);
   }
 
   @Patch('/cart-item')

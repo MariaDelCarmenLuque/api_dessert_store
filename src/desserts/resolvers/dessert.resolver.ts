@@ -19,9 +19,11 @@ import { Like } from 'src/likes/models/like.model';
 import { LikesService } from 'src/likes/service/likes.service';
 import { CreateDessertInput } from '../dtos/input/create-dessert.input';
 import { ImageInput } from '../dtos/input/create-image.input';
+import { PaginationOptionsDessertInput } from '../dtos/input/pagination-options-dessert.input';
 import { UpdateDessertInput } from '../dtos/input/update-dessert.input';
 import { Dessert } from '../models/dessert.model';
 import { Image } from '../models/image.model';
+import { PaginatedDessert } from '../models/paginated-dessert-model';
 import { DessertsService } from '../service/desserts.service';
 
 @Resolver(() => Dessert)
@@ -40,12 +42,27 @@ export class DessertsResolver {
     return await this.dessertService.findOne(id);
   }
 
-  @Query(() => [Dessert], {
+  @Query(() => PaginatedDessert, {
     description: 'Query: Return all Dessertss',
     name: 'dessertGetAll',
   })
-  async getAllDessert(): Promise<Dessert[]> {
-    return await this.dessertService.getAllDesserts();
+  async getAllDessert(
+    @Args('paginationOptions')
+    paginationOptions: PaginationOptionsDessertInput,
+  ) {
+    const { desserts, pagination } = await this.dessertService.getAllDesserts(
+      paginationOptions,
+    );
+    const data = desserts.map((dessert) => ({
+      node: {
+        ...dessert,
+      },
+    }));
+
+    return {
+      edges: data,
+      pageInfo: pagination,
+    };
   }
 
   @Mutation(() => Dessert, {

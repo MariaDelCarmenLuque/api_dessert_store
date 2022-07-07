@@ -2,7 +2,6 @@ import {
   BadRequestException,
   Body,
   Controller,
-  DefaultValuePipe,
   Delete,
   ForbiddenException,
   Get,
@@ -10,7 +9,6 @@ import {
   InternalServerErrorException,
   NotFoundException,
   Param,
-  ParseIntPipe,
   Patch,
   Post,
   Put,
@@ -42,6 +40,8 @@ import { GetUser } from 'src/auth/decorators/user.decorator';
 import { LikeDto } from 'src/likes/dtos/response/like.dto';
 import { ImageDto } from '../dtos/response/image.dto';
 import { CreateLikeDto } from 'src/likes/dtos/request/create-like.dto';
+import { PaginationDessertDto } from '../dtos/response/pagination-desserts.dto';
+import { PaginationOptionsDessertDto } from '../dtos/request/pagination-options-dessert.dto';
 
 @ApiTags('Desserts')
 @Controller('desserts')
@@ -54,13 +54,9 @@ export class DessertsController {
   @Get()
   @ApiOperation({ summary: 'Get all Desserts with optional filters' })
   async getAllDesserts(
-    @Query('take', new DefaultValuePipe(10), ParseIntPipe) take,
-    @Query('skip', new DefaultValuePipe(1), ParseIntPipe) skip,
-    @Query('category', new DefaultValuePipe(null), ParseIntPipe)
-    category?: number,
-  ): Promise<DessertDto[]> {
-    const params = { take, skip, category };
-    return await this.dessertsService.getPaginationList(params);
+    @Query('optionsPagination') optionsPagination: PaginationOptionsDessertDto,
+  ): Promise<PaginationDessertDto> {
+    return await this.dessertsService.getAllDesserts(optionsPagination);
   }
 
   @Get('/:id')

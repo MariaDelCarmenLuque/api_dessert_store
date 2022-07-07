@@ -5,20 +5,37 @@ import { GqlJwtGuard } from 'src/auth/guards/gql-jwt.guard';
 import { GqlRolesGuard } from 'src/auth/guards/gql-roles.guard';
 import { Role } from 'src/auth/roles.enum';
 import { CreateCategoryInput } from '../dtos/input/create-category.input';
+import { PaginationOptionsCategoryInput } from '../dtos/input/pagination-options-category.input';
 import { UpdateCategoryInput } from '../dtos/input/update-category.input';
 import { Category } from '../models/category.model';
+import { PaginatedCategory } from '../models/paginated-category.model';
 import { CategoriesService } from '../service/categories.service';
 
 @Resolver()
 export class CategoriesResolver {
   constructor(private readonly categoriesService: CategoriesService) {}
 
-  @Query(() => [Category], {
-    description: 'Query: Return all categories',
+  @Query(() => PaginatedCategory, {
+    description: 'Query: Return a list of categories',
     name: 'categoryGetAll',
   })
-  async getAllCategories() {
-    return await this.categoriesService.getAll();
+  async getAllCategories(
+    @Args('paginationOptions')
+    paginationOptions: PaginationOptionsCategoryInput,
+  ) {
+    const { categories, pagination } = await this.categoriesService.getAll(
+      paginationOptions,
+    );
+    const data = categories.map((category) => ({
+      node: {
+        ...category,
+      },
+    }));
+
+    return {
+      edges: data,
+      pageInfo: pagination,
+    };
   }
 
   @Query(() => Category, {

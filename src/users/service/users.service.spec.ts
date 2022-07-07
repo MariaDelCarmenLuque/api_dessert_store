@@ -5,7 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { Role, User } from '@prisma/client';
+import { Role } from '@prisma/client';
 import { hashSync } from 'bcryptjs';
 import { plainToClass, plainToInstance } from 'class-transformer';
 import { PrismaService } from '../../prisma.service';
@@ -19,7 +19,6 @@ describe('UsersService', () => {
   let prisma: PrismaService;
   let userFactory: UserFactory;
   let mockUser;
-  let users: User[];
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -29,7 +28,6 @@ describe('UsersService', () => {
     usersService = module.get<UsersService>(UsersService);
     prisma = module.get<PrismaService>(PrismaService);
     userFactory = new UserFactory(prisma);
-    users = await userFactory.makeMany(5);
   });
 
   beforeEach(() => {
@@ -47,9 +45,11 @@ describe('UsersService', () => {
     await prisma.$disconnect();
   });
   describe('getAll', () => {
-    it('should return a list of all user', async () => {
-      const received = await usersService.getAll();
-      expect(received.length).toEqual(users.length);
+    it('should return a list of all user with a specific pagination', async () => {
+      const paginationOptions = { take: 4, page: 1 };
+      const received = await usersService.getAll(paginationOptions);
+      expect(received).toHaveProperty('users', expect.any(Array));
+      expect(received).toHaveProperty('pagination');
     });
   });
 

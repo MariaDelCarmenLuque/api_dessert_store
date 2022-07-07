@@ -33,9 +33,11 @@ describe('CategoriesService', () => {
     await prisma.$disconnect();
   });
   describe('getAll', () => {
-    it('should return a list of all categories', async () => {
-      const received = await categoryService.getAll();
-      expect(received.length).toEqual(categories.length);
+    it('should return a list of all categories with a specific pagination', async () => {
+      const paginationOptions = { take: 4, page: 1 };
+      const received = await categoryService.getAll(paginationOptions);
+      expect(received).toHaveProperty('categories', expect.any(Array));
+      expect(received).toHaveProperty('pagination');
     });
   });
 

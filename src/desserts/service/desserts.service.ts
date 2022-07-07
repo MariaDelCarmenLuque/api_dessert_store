@@ -14,6 +14,9 @@ import { CreateDessertDto } from '../dtos/request/create-dessert.dto';
 import { DessertDto } from '../dtos/response/dessert.dto';
 import { ImageDto } from '../dtos/response/image.dto';
 import { UpdateDessertDto } from '../dtos/request/update-dessert.dto';
+import { PaginationDessertDto } from '../dtos/response/pagination-desserts.dto';
+import { PaginationOptionsDessertDto } from '../dtos/request/pagination-options-dessert.dto';
+import { getPagination } from '../../utils/pagination.utils';
 
 @Injectable()
 export class DessertsService {
@@ -22,36 +25,28 @@ export class DessertsService {
     private readonly filesService: FilesService,
   ) {}
 
-  async getAllDesserts(): Promise<DessertDto[]> {
-    const desserts = await this.prisma.dessert.findMany({
-      orderBy: { id: 'desc' },
-    });
-    return plainToInstance(DessertDto, desserts);
-  }
-  async getPaginationList(params: {
-    skip?: number;
-    take?: number;
-    category?: number;
-  }): Promise<DessertDto[]> {
-    const { skip, take, category } = params;
-    let desserts;
-    if (isNaN(skip)) {
-      desserts = await this.prisma.dessert.findMany({
-        take,
-        where: { categoryId: category },
-      });
-      return desserts;
-    } else {
-      desserts = this.prisma.dessert.findMany({
-        skip,
-        take,
-        where: { categoryId: category },
-        orderBy: {
-          id: 'asc',
-        },
-      });
-      return desserts;
+  async getAllDesserts(
+    pagination: PaginationOptionsDessertDto,
+  ): Promise<PaginationDessertDto> {
+    const { page, take, categoryId } = pagination;
+    let where = {};
+    if (categoryId) {
+      where = { categoryId };
     }
+
+    const totalItems = await this.prisma.dessert.count({ where });
+    const desserts = await this.prisma.dessert.findMany({
+      where,
+      skip: take * (page - 1),
+      take: take,
+      orderBy: { createdAt: 'asc' },
+    });
+
+    const dessertResponse = {
+      desserts,
+      pagination: getPagination(pagination, totalItems),
+    };
+    return plainToInstance(PaginationDessertDto, dessertResponse);
   }
 
   async findOne(dessertId: number): Promise<DessertDto> {
